@@ -1,0 +1,264 @@
+% ============================================================
+% tree.py paper -- Section 1 + Section 2
+% Wiley NJD two-column format, 80-char line limit
+% ============================================================
+% 
+
+% We mar18
+% early: vavetas: not all ai can be repal;ced by these techniquens. dialgo generation stays, itnefacing begietween disptierat tools, feature extarction over ehtregenous sources, covnersion to differenr report forsts,  all remains, con
+
+% but one to look at this is what arethe tools that udner the hood an agentic system will ahave to use. soemthings these will be compelx embeddigns and sometimes they wont. and when they arent' systemrun faste with lset cost to the suer
+
+
+% sstartd obejctslions:
+% - simple is ok but ore siphisticated sytems work better. to wichw e reply, ahve you tied? and useds stats to comaprereuslts before afetr? you sure that the new says are stsitically distinguishable by more than a smalle ffect? we ask since as shown here, we ae apply such stats, we rarely see an improvement (which of course ight not be true for other domaisn)
+
+% - only for simple data. jsut low diemansiaon talbles tables (1000 colsumsn or less). well inreply we say "jsut" tables is not really just. for jighly structure soruces, LLMs are known to ahv troube. also, we have results from high diesnioanl text minign data wehre we kick ass
+
+% section: run faster
+
+% 1. runtimes>
+% 2. labelling effort
+
+%
+\documentclass[AMA,STIX2COL]{WileyNJDv5}
+
+\begin{document}
+
+\title{The \texttt{EZR.py} Toolkit: How Far Can We Go
+       With Simple AI?}
+\author{Anonymous Authors}
+
+\maketitle
+
+% ============================================================
+\section{Introduction}\label{sec:intro}
+% ============================================================
+
+Software engineering is, for the most part, racing toward
+complexity. Few-shot prompting has evolved into agentic
+workflows where large language models~(LLMs) orchestrate
+multi-agent collaboration and repository-scale
+comprehension. There is much success with this paradigm,
+and much promise for what such systems will
+deliver~\cite{ma2023scope,wang2022machine,%
+Dong2025SurveyCodeAgents,DBLP:journals/corr/abs-2507-15003}.
+
+
+Yet there are growing reasons to reconsider that ``complexity-first'' approach.
+
+Sustainability
+concerns loom large: if LLM services are no longer
+venture-subsidized, will their costs rise by one to two
+orders of magnitude? And quite apart from economics, a
+long string of open challenges persists (Table~\ref{cautions}).
+Problems with explanation make certification and ongoing
+validation difficult, particularly for high-stakes
+applications in law, medicine, and safety-critical systems.
+Not all deployment environments are CPU-intensive, either;
+edge computing demands something leaner.
+
+So while we say ``agentic, yes,'' we ask whether every
+\emph{part} of an agentic pipeline must be a
+resource-intensive LLM. Recent results offer a reason for
+optimism. PromiseTune~\cite{chen2026promisetune} shows that
+configuration landscapes collapse into causally promising
+regions; the BINGO effect~\cite{ganguly2025lowgodatalightse}
+shows that SE data concentrates in surprisingly few
+multi-dimensional buckets. Both results suggest that the
+effective state space of many SE problems is far smaller
+than it appears---and that a handful of lightweight probes
+can navigate it.
+
+To test that hypothesis we built \texttt{tree.py}: a
+symbolic AI written with the simplest methods we could
+muster, then extended with additional learners to measure
+how little new code each new capability required. The usual
+concern is that simpler methods perform worse. To stress-test
+that concern we evaluated on 120+ SE tasks from the MOOT
+repository~\cite{menzies2026moot}---up to 1,000 independent
+variables, up to 8 goals, and some datasets with hundreds
+of thousands of examples. The verdict: our simpler methods
+are remarkably competitive. They require very few labeled
+examples, complete in seconds, produce insightful
+explanations of complex problems, and fit in a $\sim$300-line
+core plus $\sim$60-line application modules.
+
+Caveats are necessary. We do not claim that every SE task
+can be simplified. Some inherently require LLMs: translation,
+text summarization, dialog generation, extracting structure
+from large heterogeneous sources. What we show is that
+\emph{some} SE tasks---and the list is not short---can be
+solved without trillion-parameter models. The MOOT benchmark
+spans regression, prediction, multi-objective optimization,
+configuration, performance tuning, hyperparameter
+optimization, product line engineering, project health
+forecasting, defect prediction, software testing, process
+and cost estimation, cross-domain generalization, data
+generation, and text mining. Clearly there is a large space
+of possible simplifications, and future work will be needed
+to see how far simplicity can reach.
+
+\begin{table}[!t]
+\caption{Some reported issues with LLMs.}\label{cautions}
+\begin{tabular}{l|p{5cm}}
+\textbf{Issue} & \textbf{Evidence} \\ \hline
+Hallucinations
+  & Over half of ChatGPT answers contain incorrect
+    information~\cite{S12} \\
+Human error
+  & Humans overlook AI errors 39\% of the time~\cite{S12} \\
+Code quality
+  & 70\% faulty: 29\% correct, 51\% partial,
+    20\% wrong~\cite{S15} \\
+Expert caution
+  & Google developers accept $\le 25\%$ of AI
+    suggestions~\cite{tabachnyk22completion} \\
+Training bias
+  & LLMs regenerate bugs from training
+    data~\cite{S13} \\
+Energy         & High consumption. \\
+Explanation
+  & Subsymbolic: no causal or explanatory
+    reasoning; hard to debug or edit. \\
+Verification   & Prompt output is rarely verified. \\
+Planning
+  & ``Vibe coding'' skips planning, raising
+    test costs. \\
+Ownership
+  & Copy-pasting reduces developer
+    job satisfaction. \\
+Bubble bursting & Withdrawal of investor capital? \\
+Subsidies ending?
+  & If capital moves, will LLM costs
+    rise 10$\times$--100$\times$? \\
+Cognitive debt
+  & Agentic AI lets teams move fast while quietly
+    eroding shared understanding of system
+    design~\cite{CognitiveDebt} \\
+Maintenance
+  & Lack of ``under-the-hood'' skills
+    $\rightarrow$ disasters? \\
+\end{tabular}
+\end{table}
+
+% ============================================================
+\section{Why Simplicity?}\label{sec:simplicity}
+% ============================================================
+
+\subsection{The Case for Simple Methods}
+
+Simplicity is no new idea. Ptolemy~(130~A.D.) urged
+explaining phenomena by ``the simplest hypothesis
+possible.'' William of Occam warned that entities must
+not be multiplied beyond necessity. The documented benefits
+are concrete: lower compute and energy
+costs~\cite{calrero15,monserrate2022cloud}, easier
+explanation~\cite{veerappa2011understanding}, and faster
+tuning~\cite{fu2016tuning}. Rudin~\cite{rudin2019stop}
+puts it plainly:
+
+\begin{quote}
+{\em ``Stop explaining black box machine learning models
+for high stakes decisions and use interpretable models
+instead.''}
+\end{quote}
+
+History bears this out. In the ``Shockingly Simple'' paper,
+Menzies~\cite{Menzies21shockingly} documents a recurring
+pattern: a few variables (``keys'') govern the rest of a
+system, so that very simple models---built from small
+samples, greedy search, or Na{\"i}ve Bayes---routinely
+match or beat state-of-the-art performance while running
+100$\times$--1000$\times$
+faster~\cite{majumder2018500+,grinsztajn2022why,%
+Tawosi23,Ling24,Fu17}. Table~\ref{less} catalogues
+illustrative examples from the literature.
+
+\begin{table}[!t]
+\caption{Selected cases where simpler methods matched
+  or outperformed complex ones.}\label{less}
+\begin{tabular}{l|p{5cm}}
+\textbf{Domain} & \textbf{Finding} \\ \hline
+Effort estimation
+  & SVM+TFIDF beat deep learners and ran
+    100$\times$ faster~\cite{Tawosi23} \\
+Defect prediction
+  & K-Means pre-clustering matched deep learning
+    at 500$\times$ speedup~\cite{majumder2018500+} \\
+Data synthesis
+  & Parametric statistics equalled GANs with
+    less compute~\cite{Ling24} \\
+Hyperparameter opt.
+  & Very fast tuning worked as well as
+    complex grid search~\cite{Fu17} \\
+Tabular data
+  & Tree-based models outperform deep nets
+    on medium-sized tables~\cite{grinsztajn2022why} \\
+\end{tabular}
+\end{table}
+
+Yet the lesson goes unheeded. A survey of 229 SE papers
+using LLMs found that only 5\% compared against a simpler
+baseline~\cite{Hou24}. We conjecture a cognitive cause:
+Adams and Fillon et al.~\cite{adams2021people,Fillon25}
+found that across 400+ subjects given design tasks, people
+chose additive over subtractive changes at a 4:1 ratio.
+{\em Humans needlessly complicate their designs.}
+
+\subsection{The BINGO Effect: Encouragement to Simplify}
+
+The ``How Low Can You Go?'' data-light SE
+challenge~\cite{ganguly2025lowgodatalightse} provides
+empirical grounding for our optimism. Across 127 SE
+optimization tasks from the MOOT repository, the
+\emph{BINGO effect} holds: when data is partitioned into
+$n$ buckets across $d$ dimensions divided into $b$ bins,
+most data concentrates in surprisingly few buckets
+($n \ll b^d$). In one representative study with 10,000
+rows, the expected $b^d = 4{,}096$ buckets collapsed to
+just 100 occupied ones. Because the effective search space
+is so small, a handful of labeled examples is enough to
+find near-optimal solutions.
+
+Concretely, using only a few dozen labels, simple
+pool-based methods---diversity sampling, a minimal Bayesian
+learner, or even random probes---achieved over 90\% of the
+best results found by state-of-the-art optimizers like
+SMAC, TPE, and DEHB, while running more than two orders
+of magnitude faster. This is a profound encouragement to
+see how far we can go with very simple AI.
+
+\subsection{Our Test Bed: The MOOT Repository}
+
+To put these ideas to work we used the MOOT repository of
+multi-objective optimization
+tasks~\cite{menzies2026moot}. MOOT's 120+ tasks span a
+wide range of SE challenges; Table~\ref{moot} summarises
+the diversity. Each task is a table of $x$ inputs and $y$
+goals; goal columns are annotated with $+/-$ to indicate
+maximize/minimize. Dataset sizes range from 93 to
+166,975 rows; dimensionality ranges from 3 to 1,044
+independent variables; goal counts range from 1 to 8.
+This variety makes MOOT a demanding proving ground for
+any claim that simple methods suffice.
+
+One striking finding from our experience with MOOT is
+that the inference machinery is largely shared across
+tasks. For example:
+\begin{itemize}
+\item Coding a nearest-neighbor classifier provided nearly
+  everything needed for stochastic optimization.
+\item Coding an optimizer provided nearly everything needed
+  for software configuration and tuning.
+\end{itemize}
+This convergence suggests a radical reframing: rather than
+a zoo of specialized algorithms, AI may reduce to a
+handful of core operations, each ``different'' technique
+merely a thin variation on the same kernel. The field has
+been making things harder than they need to be.
+\texttt{tree.py} is an existence proof that a simpler
+foundation is both possible and practical.
+
+\bibliography{main}
+\end{document}

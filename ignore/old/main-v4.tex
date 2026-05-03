@@ -1,0 +1,2625 @@
+ \documentclass[AMA,STIX2COL]{WileyNJDv5}
+
+\usepackage{etoolbox}
+\usepackage{geometry} 
+\usepackage{enumitem} 
+\usepackage{alltt} 
+
+ \usepackage{alltt,xcolor}
+%\linespread{0.95} % A value of 1.0 is default; 0.95 tightens it slightly
+\renewcommand{\baselinestretch}{0.9} % Shrinks space by 10%
+\PassOptionsToPackage{dvipsnames}{xcolor}
+%\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{listings}
+\usepackage{fvextra}
+\usepackage{fontspec}
+\usepackage[font=small]{caption}
+\hypersetup{hidelinks}
+\setmonofont{Fira Code}
+\usepackage{hyperref}
+\newcommand{\IT}{{\sffamily EZR}}
+
+\usepackage{tabularx}  % For the width-controlled table
+\usepackage{booktabs}  % For \toprule, \midrule, \bottomrule (much cleaner look)
+\usepackage{ragged2e}  % For better text alignment in narrow columns
+
+\usepackage[table]{xcolor} % Required for \rowcolors
+ 
+\usepackage{makecell} % Required for \rowcolor and \cellcolor
+% Colors
+\definecolor{bggray}{gray}{0.98}
+\definecolor{kwblue}{rgb}{0.1,0.2,0.7}
+\definecolor{strgreen}{rgb}{0.0,0.6,0.3}
+\definecolor{commentrust}{rgb}{0.6,0.2,0.1}
+\definecolor{ident}{rgb}{0.1,0.1,0.1}
+
+% --- Toggleable tiny boxed markers (black <-> Maroon) -----------------
+
+\definecolor{Maroon}{RGB}{128,0,0}
+\newif\ifcircledred
+\circledredfalse
+
+\newcommand{\circledblack}{\global\circledredfalse}
+\newcommand{\circledred}{\global\circledredtrue}
+\newcommand{\circledtoggle}{%
+  \ifcircledred
+    \global\circledredfalse
+  \else
+    \global\circledredtrue
+  \fi
+}
+
+\DeclareRobustCommand*\circled[1]{%
+  \setlength{\fboxsep}{1.2pt}%
+  \ifcircledred
+    \fcolorbox{Maroon}{Maroon}{\color{white}\tiny\bfseries #1}%
+  \else
+    \fcolorbox{black}{black}{\color{white}\tiny\bfseries #1}%
+  \fi
+}
+\DeclareRobustCommand{\one}{\circled{1}}
+\DeclareRobustCommand{\two}{\circled{2}}
+\DeclareRobustCommand{\three}{\circled{3}}
+% ----------------------------------------------------------------------
+\usepackage{tabularx}
+% nicer mono (pick ONE)
+\setmonofont{JetBrains Mono} % crisp, modern
+% \setmonofont{Iosevka}
+% \setmonofont{IBM Plex Mono}
+% \setmonofont{Inconsolata}
+
+% stronger keyword color (RoyalBlue is from dvipsnames)
+\definecolor{kwblue}{named}{RoyalBlue}
+
+\lstdefinestyle{prettyPython}{
+  language=Python,
+  basicstyle=\fontsize{6.0}{7}\selectfont\ttfamily,
+  keywordstyle=\color{kwblue}\bfseries,
+  stringstyle=\color{strgreen},
+  commentstyle=\color{commentrust}\itshape,
+  identifierstyle=\color{ident},
+  numberstyle=\fontsize{4.4}{5.0}\selectfont\color{gray},
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=2,
+  frame=none,
+  rulecolor=\color{gray},
+  framerule=0.25pt,
+  framesep=0.35em,
+  aboveskip=0.6em,
+  belowskip=0.6em,
+  frameb=false,
+  escapeinside={(*@}{@*)}  % <<<<<< changed from !! .. !!
+}
+
+\lstset{style=prettyPython}
+
+\newcommand{\CODE}[1]{%
+  \begin{listing}
+  \begingroup
+  \setlength{\fboxsep}{0pt}
+  \colorbox{bggray}{%
+    \begin{minipage}{\linewidth}
+    \lstinputlisting[style=prettyPython]{src/#1}
+    \vspace{-0.5em}\color{bggray}\rule{\linewidth}{0.5pt}
+    \end{minipage}
+  }
+  \endgroup
+  \caption{\texttt{#1}}
+  \label{lst:#1}
+  \end{listing}
+}
+
+\articletype{Research Paper}
+\received{Date Month Year}
+\revised{Date Month Year}
+\accepted{Date Month Year}
+\journal{Journal}
+\volume{00}
+\copyyear{2023}
+\startpage{1}
+
+ 
+
+\usepackage{booktabs}   % Required for \midrule
+\usepackage{adjustbox}  % Required for the \begin{adjustbox} environment
+\usepackage{array}      % Required to define the custom 'C' column type
+\usepackage{xcolor}     % Required for the \BLUE text color command
+
+\usepackage[most]{tcolorbox}
+
+\newtcolorbox{hence}[1]{
+  enhanced, breakable,
+  colback=gray!5, colframe=black!70,
+  fonttitle=\bfseries, coltitle=white,
+  title=#1,
+  left=5pt, right=5pt, top=4pt, bottom=4pt,
+  boxrule=0.5pt, arc=2pt,
+}
+
+\usepackage{xcolor}
+\definecolor{darkyellow}{RGB}{204,153,0}   % mustard — my pick
+\definecolor{darkyellow}{RGB}{184,134,11}  % "dark goldenrod", a bit browner
+\definecolor{darkyellow}{RGB}{218,165,32}  % "goldenrod", slightly lighter
+
+\usepackage{tikz}
+
+  % Solid disc marker: bold white text on filled colored disc.
+  % \disc{1}         -> black disc, "1"
+  % \disc[Maroon]{2} -> Maroon disc, "2"
+  \newcommand{\disc}[2][black]{%
+    \tikz[baseline=(c.base)]%
+      \node[circle, fill=#1, draw=#1,
+            inner sep=0pt, minimum size=1.2ex,
+            text=white, font=\tiny\bfseries]
+      (c) {#2};%
+  }
+
+%   \usepackage{minted}
+% \definecolor{codebg}{gray}{0.96}
+% \setminted{
+%   fontsize=\fontsize{7}{7.5}\selectfont,
+%   bgcolor=codebg,
+%   frame=none,
+%   framerule=0pt,
+%   framesep=2mm,
+%   baselinestretch=0.95,
+%   breaklines=true,
+%   breakanywhere=true,
+%   autogobble=true,
+%   escapeinside=||,
+%   rulecolor=\color{black},
+% }
+% \setminted[python]{style=friendly}
+
+
+\usepackage{minted}
+\usepackage{caption}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\definecolor{codebg}{gray}{0.98}
+\captionsetup[listing]{skip=0pt,position=top}
+\setminted{
+  fontsize=\fontsize{6.5}{7.5}\selectfont,
+  bgcolor=codebg,
+  frame=none,
+  framerule=0.5pt,
+  rulecolor=\color{gray},
+  framesep=2mm,
+  xleftmargin=0pt,
+  numbersep=2mm,
+  linenos,
+  firstnumber=last,
+  baselinestretch=0.95,
+  breaklines=true,
+  breakanywhere=true,
+  autogobble=true,
+  escapeinside=||
+}
+\setminted[python]{style=bw}
+\renewcommand{\theFancyVerbLine}{%
+  \color{gray}\fontsize{4}{4}\selectfont\arabic{FancyVerbLine}}
+\newcommand{\lnlabel}[1]{%
+  \refstepcounter{FancyVerbLine}\label{#1}%
+  \addtocounter{FancyVerbLine}{-1}}
+\makeatletter
+\renewenvironment{listing}{\@float{listing}}{\end@float}
+\makeatother
+\newminted[repl]{python}{linenos=false,firstnumber=last}
+
+  
+
+% Prevent minted blocks from breaking across columns
+\BeforeBeginEnvironment{minted}{\par\nopagebreak\minipage{\linewidth}}
+\AfterEndEnvironment{minted}{\endminipage\par\noindent}
+  
+  % \DeclareRobustCommand{\one}{\disc{1}}
+  % \DeclareRobustCommand{\two}{\disc{2}}
+  % \DeclareRobustCommand{\three}{\disc{3}}
+  % % old \rc (red textcircled) — replace
+  % \newcommand{\rc}[1]{\disc[red]{#1}}
+\usepackage{float}
+\usepackage{etoolbox}
+\newtoggle{rcred}
+\toggletrue{rcred}   % initial state
+
+\newcommand{\rctoggle}{\iftoggle{rcred}{\togglefalse{rcred}}{\toggletrue{rcred}}}
+
+\newcommand{\rc}[1]{%
+  \iftoggle{rcred}{\disc[red]{#1}}{\disc[black]{#1}}%
+}
+ 
+\definecolor{clsbg}{gray}{0.9}  % medium gray
+\newcommand{\cls}[1]{%
+  \setlength{\fboxsep}{1.5pt}%
+  \colorbox{clsbg}{\sffamily\bfseries{#1}}%
+}
+\begin{document}
+
+\title{Simpler AI via Small, Speedy Symbolic Scripts (the EZR toolkit) }
+
+\author[1]{Tim Menzies}
+ 
+
+\author[2]{Author Two}
+ 
+
+\authormark{TAYLOR \textsc{et al.}}
+\titlemark{Small Scripts for Symbolic AI: Why and How (an EZR approach)}
+
+\address[1]{\orgdiv{Com.Sci.}, \orgname{NC STate}, \orgaddress{\state{North Carolina}, \country{USA}}}
+
+\address[2]{\orgdiv{Department Name}, \orgname{Institution Name}, \orgaddress{\state{State Name}, \country{Country Name}}}
+ 
+
+\corres{Corresponding author Tim Menzies,   \email{timm@ieee.org}}
+ 
+ %  %% Clean acmart preamble -- tested against acmart 2024
+% %% Key fixes vs previous version:
+% %%   - removed caption package (acmart loads it; reloading corrupts title)
+% %%   - removed dblfloatfix (conflicts with acmart float hooks)
+% %%   - added copyright suppression block (required for review draft)
+% %%   - kept manuscript,review options for double-column draft layout
+
+% \documentclass[manuscript,screen,review]{acmart}
+
+% %% Safe to add alongside acmart:
+% \usepackage{textcomp}   % extra text symbols
+% \usepackage{float}      % [H] placement
+% \usepackage{balance}    % balances last page columns
+
+% %% DO NOT load:  caption, dblfloatfix, algorithmic, cite
+% %% acmart bundles all of these; loading them again breaks layout.
+
+% %% ---- Suppress ACM rights metadata (required for review draft) ------
+% \setcopyright{none}
+% \copyrightyear{}
+% \acmYear{}
+% \acmDOI{}
+% \acmConference{}{}{}{}
+% \acmBooktitle{}
+% \acmPrice{}
+% \acmISBN{}
+% %% -------------------------------------------------------------------
+
+% \begin{document}
+
+% \title{EZR.py:  A Tiny Script for Explainable AI for Multi-objective Optimization}
+
+% \author{Tim Menzies}
+% \affiliation{%
+%   \institution{North Carolina State University}
+%   \department{Department of Computer Science}
+%   \city{Raleigh}
+%   \state{NC}
+%   \country{USA}}
+% \email{timm@ieee.org}
+% \author{Kishan Kumar Ganguly}
+% \affiliation{%
+%   \institution{North Carolina State University}
+%   \department{Department of Computer Science}
+%   \city{Raleigh}
+%   \state{NC}
+%   \country{USA}}
+% \email{kgangul@ncsu.edu}
+
+ 
+
+% %% ---- body goes here ------------------------------ 
+
+\abstract[Abstract]{
+\renewcommand{\baselinestretch}{0.9} 
+EZR.py is a tiny open-sources AI toolkit for software engineering (SE) research and education that embodies a data-lite, model-lite, and code-lite philosophy. It uses active learning to build effective models from fewer than 100 labeled examples, producing models with under ten parameters from high-dimensional data in just a few hundred lines of code. Tested on  120+ SE tasks, EZR.py
+ rivals state-of-the-art explanation tools and   optimizers, EZR.py is useful
+ for teaching AI to newcomers and for applications in r data-scarce domains where heavyweight approaches are impractical. This paper
+ explored EZR's internal design and offers lessons learned during construction. We also present a new result: light-weight relevance filtering for research papers via text mining with EZR.py. 
+The tool can be installed via 
+ \href{https://pypi.org/project/ezr/}{\footnotesize\texttt{pip install ezr}}. 
+The source code is available fro
+\href{http://githib.com/timm/ezr}{\footnotesize\texttt {githib.com/timm/ezr}}
+and sample data at
+\href{http://githib.com/timm/moot}{\footnotesize\texttt{githib.com/timm/moot}}.
+}
+
+
+\keywords{Software Engineering, Optimization, AI Teaching,
+Tool Design, 
+Minimal Toolkits}
+
+\jnlcitation{\cname{%
+\author{Menzies T.},
+\author{Srinath }, 
+\ctitle{Small Scripts for Symbolic AI: Why and How (an EZR approach)}} \cjournal{\it Software Practice and Experience.} \cvol{2025;00(00):1--18}.}
+
+\maketitle 
+%% ============================================================
+ 
+ 
+
+
+\section{Introduction}
+\label{sec:intro}
+
+Several prominent voices in 2025--2026 have argued that humans no
+longer need to read code. Ryan Dahl (creator of Node.js) has
+suggested the era of humans writing code is ending. Jensen Huang
+advises against learning to code at all. Elon Musk predicts
+traditional coding ends in 2026. Replit's CEO tells students to
+focus on ``how to communicate with machines'' rather than how to
+program. The framing varies, but the underlying claim is the same:
+AI is the new compiler, and you do not read the output of a
+compiler.
+
+We take the opposite view. There is value in pausing to read code,
+and more value still in pausing to refactor it. Much can be
+discovered on the ground that you cannot see when you fly over
+everything.
+
+This paper is an existence proof. We report lessons from EZR.py,
+a small Python toolkit for AI in software engineering, developed
+across several years of repeated reading and rewriting. We did
+not start with EZR's current shape. We arrived at it by sitting
+with the code, noticing structural similarities across distant
+parts of the system, and deleting what those similarities made
+redundant. The result is around 500 lines of dependency-light
+Python that, on 120+ multi-objective SE tasks from the MOOT
+repository, matches state-of-the-art optimizers and explanation
+tools while:
+
+\begin{itemize}
+\item Building effective models from fewer than 100 labeled examples;
+\item Producing decision trees that use fewer than ten variables,
+even on tasks with thousands of features;
+\item Running in milliseconds, with model updates 10{,}000$\times$
+faster than SMAC.
+\end{itemize}
+
+These are real and useful properties. But the substantive claim
+of this paper is methodological, not numerical: \emph{we found
+these properties by reading the code}. The smallness of the
+data, the smallness of the models, and the smallness of the code
+are not three independent design goals we set out to satisfy.
+They are three facets of a single thing we discovered by looking
+carefully — that AI systems for SE contain far more structural
+redundancy than is commonly assumed, and that pulling the
+redundancy out leaves something surprisingly small.
+
+This matters now, because the argument against reading code is
+gaining ground at exactly the moment when reading code is most
+needed. AI-generated systems exhibit hallucinations
+(52\% of ChatGPT answers are partially incorrect~\cite{S12}),
+faulty logic (70\% of generated code is wrong or partial in
+some way~\cite{S15}), regenerated training-set bugs~\cite{S13},
+and what is now called ``cognitive debt''~\cite{CognitiveDebt} —
+teams losing shared understanding of their own systems.
+Reviewers, maintainers, and the broader community are left to
+clean up the resulting ``AI slop''~\cite{baltes2026anendlessstreamai}.
+A culture that does not read code cannot fix any of this.
+
+EZR.py argues, by example, for the alternative: a small,
+dependency-light, function-oriented codebase that one developer
+can hold in their head; ablation discipline (in the sense of
+Cohen~\cite{cohen1995}) that strips away every part not
+demonstrably earning its place; and an output (a tree of fewer
+than ten variables) that the engineer can actually read and act
+on. The same discipline applies at every level. EZR's tree is
+small because we read it. EZR's data needs are small because we
+read which examples mattered. EZR's code is small because we
+read it, then read it again, then refactored.
+
+This is, of course, not a universal prescription. Generative
+tasks (translation, summarization, natural-language interfaces)
+genuinely require LLMs and the data scales that come with them.
+But many SE tasks — configuration, tuning, defect prediction,
+testing, cost estimation, and as we show in
+\S\ref{sec:textmining}, even relevance filtering for research
+papers — admit dramatically simpler solutions. The right move
+is to try the simple thing first. Even when it is eventually
+outperformed, the simple thing sets a strict performance floor
+(you can quantify exactly what the complex model adds) and
+provides the kind of transparency a black-box model cannot
+(you can read it).
+
+\subsection*{Contributions}
+
+The remainder of this paper documents what reading and
+refactoring revealed:
+
+\begin{itemize}
+\item \textbf{The Small Data Effect} (\S\ref{sec:tiny}):
+across 120+ MOOT tasks, fewer than ten variables suffice
+to model behavior, even when thousands are available.
+\item \textbf{Active learning with $O(1)$ updates}
+(\S\ref{sec:active}): a two-class best/rest split,
+maintained incrementally with Welford's algorithm, replaces
+SMAC's regression-tree ensemble at four orders of magnitude
+less update cost.
+\item \textbf{The two-phase economy of small models}
+(\S\ref{sec:results}): a modest training budget plus a tiny
+checking budget reaches 90\% of the global optimum, mirroring
+the train-once, deploy-cheaply economics of larger AI
+systems but at vanishingly small scale.
+\item \textbf{The mathematics of Near-Enough Optimization}
+(\S\ref{sec:neomath}): given the noise floor of real SE
+measurements, fewer than 100 random evaluations suffice for
+99\% confidence; heuristic ordering reduces this further.
+\item \textbf{An application to text mining}
+(\S\ref{sec:textmining}): the same toolkit performs
+light-weight relevance filtering of research papers,
+demonstrating the approach generalizes beyond optimization.
+\item \textbf{A literate codebase} (throughout): every
+algorithm in this paper appears as Python that fits within a
+60-character column. The tool is available via
+\href{https://pypi.org/project/ezr/}{\texttt{pip install ezr}};
+data and source at
+\href{http://github.com/timm/moot}{\texttt{github.com/timm/moot}}
+and
+\href{http://github.com/timm/ezr}{\texttt{github.com/timm/ezr}}.
+\end{itemize}
+
+ 
+
+
+
+% This paper asks how little data,
+% code, and model complexity we actually need for AI-- and finds the answer
+% is far less than widely assumed.
+% Simple code with no external dependencies can outperform bloated
+% pipelines. Tiny models can beat black boxes where it counts (they can
+% be audited, fixed, and trusted).
+
+ 
+% Specifically, we report lessons learned from EZR.py, a data-lite,
+% code-lite, model-lite tool developed for AI research and teaching
+% at NC State University:
+% \begin{itemize}
+% \item {\em Code-lite:} EZR.py comprises five $\times$ 100-line
+% Python sections. Such a small base is  amenable to rapid prototyping as well as
+% teaching newcomers about AI.
+% \item {\em Data-lite:} EZR.py targets data-scarce SE domains
+% (e.g. Table~\ref{slow}) where even, say, 100 labeled examples can be
+% difficult to obtain. Its active learner iteratively reflects on
+% a small model built so far to select the most informative
+% examples to label next, enabling effective models to be
+% constructed from fewer than 100 labels by discarding noise,
+% irrelevant features, and superfluous detail.
+% \item {\em Model-lite:} Even when training data contains
+% thousands of parameters, EZR.py's models use less than ten parameters,
+% yielding models that are far more interpretable than those
+% produced by large language models.
+% \end{itemize}
+% Prior papers on EZR.py have documented its effectiveness: despite needing very
+% little data and generating tiny models, it 
+%  EZR.py's explanations and optimizations
+% are competitive with state-of-the-art~\cite{Amiraliminimaldata,ganguly2025lowgodatalightse}.
+% This paper summarizes those prior results and  reports a new result
+% concerning {\bf light-weight relevance
+% filtering for  research papers} via text mining using EZR. Also,
+% as befits this journal,   we focus  
+% on the {\bf  software's internal design} as well
+% as {\bf lessons learned during the construction}:
+% \begin{itemize}
+% \item Many models can be tiny.
+% \item The effectiveness of random search;
+% \item The ubiquitousness of a data structure called DATA;
+% \item How, under the hood,  optimization, classification, and regression are all very similar;
+% \item  The value of  simple methods and  a very small code base.
+% \end{itemize}
+% The value of this last point might be criticized,  since the effectiveness of simple methods is "common knowledge." 
+% But cognitive psychology note that humans systematically usually overlook useful subtractive changes~\cite{Fillon25,adams2021people}.  In SE, this is certainly true:    im  a   survey of 229 SE papers using LLMs, only 5\% baselined against non-LLMs~\cite{Hou24} (which is an   error since  non-LLM methods can run faster, perform better, or both~\cite{grinsztajn2022why,somvanshi2024survey,Tawosi23,majumder2018500+,Ling24,Fu17,johnson2024ai}). By addressing this bias, a core contribution of this article is to demonstrate that subtractive change is a potent, but underutilized, technique.
+
+% % old \circled/\one/\two/\three — drop entire block
+
+
+% % \begin{figure}[!t]
+% % \begin{minted}{python}
+% % # Summarizes rows of data. |\rc{20}|
+% % # e.g. Read csv file with  Data(csv(filename)).
+
+% % def csv(f, clean=lambda txt: \
+% %                    txt.partition("#")[0].split(",")):
+% %   "Yield typed rows from a CSV file."
+% %   with open(f, encoding="utf-8") as file:
+% %     for txt in file:
+% %       row = clean(txt)
+% %       if any(x.strip() for x in row): 
+% %          yield [thing(x) for x in row]
+
+% % def thing(txt):
+% %   "Coerce string to number or bool."
+% %   txt = txt.strip()
+% %   b = lambda s: {"true":1,"false":0}.get(s.lower(), s)
+% %   for f in [int, float, b]:
+% %     try: return f(txt)
+% %     except ValueError: pass
+    
+% % def Col(txt="", a=0):
+% %   "Return a Num or Sym column,  based on name case."
+% %   return (Num if txt[0].isupper() else Sym)(txt, a)
+
+% % class Num:
+% %   "Summarizes a stream of numbers." \rc{3}
+% %   def __init__(i, txt="", a=0):
+% %     i.txt, i.at, i.n = txt, a, 0
+% %     i.mu, i.m2, i.sd = 0, 0, 0
+% %     i.heaven = txt[-1:] != "-"
+
+% % class Sym:
+% %   "Summarizes a stream of symbols."
+% %   def __init__(i, txt="", a=0):
+% %     i.txt, i.at, i.n, i.has = txt, a, 0, {}
+
+% % class Data:
+% %   "Rows + summarized columns."
+% %   def __init__(i, src=None):
+% %     src = iter(src or {})
+% %     i.rows, i.cols = [], Cols(next(src))
+% %     i._centroid = None
+% %     adds(src, i)
+
+% % class Cols:
+% %   "Factory: generates Num/Sym columns from header names."
+% %   def __init__(i, names):
+% %     i.names = names
+% %     i.all = [Col(txt,j)  for j,txt in enumerate(names)]
+% %     i.xs = [c for c in i.all  if c.txt[-1] not in "+-!X"]
+% %     i.ys = [c for c in i.all  if c.txt[-1] in "+-!"]
+% %     i.klass = next((c for c in i.all  if c.txt[-1]=="!"),
+% %                    None)
+
+% % def sub(it, v):
+% %   "Remove value/row (add with w=-1)."
+% %   return add(it, v, -1)
+
+% % def add(it, v, w=1):
+% %   "Add value/row to Data,Cols,Num,Sym."
+% %   if Data is type(it):
+% %     it._centroid = None
+% %     add(it.cols, v, w)
+% %     (it.rows.append if w > 0 else it.rows.remove)(v)
+% %   elif Cols is type(it):
+% %     [add(col, v[col.at], w) for col in it.all]
+% %   elif v != "?":
+% %     if Sym == type(it):
+% %       it.has[v] = w + it.has.get(v, 0)
+% %     elif w < 0 and it.n <= 2:
+% %       it.n = it.mu = it.m2 = it.sd = 0
+% %     else:
+% %       it.n += w
+% %       delta = v - it.mu
+% %       it.mu += w * delta / it.n
+% %       it.m2 += w * delta * (v - it.mu)
+% %       it.sd = ((max(0, it.m2)/(it.n-1))**.5
+% %                if it.n > 1 else 0)
+% %   return v
+% % \end{minted}
+% % \caption{Summarizes rows of data. e.g. Read csv file
+% % with \verb+Data(csv(filename))+ .} \label{fig:sorter}
+% % \end{figure}
+ 
+% % The rest of this paper is organized as follows.
+% % \S\ref{sec:datascarcity} documents the SE data-scarcity
+% % problem. \S\ref{sec:motivation} situates EZR against the
+% % Bitter Lesson. \S\ref{sec:neomath} derives the NEO sampling
+% % bounds. \S\ref{sec:algo} details the EZR algorithm.
+% % \S\ref{sec:results} presents experimental results.
+% % \S\ref{sec:discussion} discusses implications and limitations.
+
+% Before beginning, we offer an obvious caveat: not all AI tasks can be simplified. Generative tasks (e.g., translation, code summarization, or NL interfaces) genuinely require LLMs. 
+% However, we demonstrate that many SE tasks
+% (including configuration, tuning, defect prediction, testing, and cost estimation) possess simple solutions. 
+
+% So
+% our message is this: {\bf to avoid unnecessary complexity,  try simple methods first}.  Even if tools like  EZR.py are ultimately outperformed, establishing this baseline is very useful. Methodologically, it sets a strict performance floor, allowing researchers to quantify exactly how much value the complex model actually adds. Practically, its transparency offers quick, interpretable insights into the domain itself (something a black-box model   cannot provide).
+
+\subsection{A Peek at the Code}
+Just to give a taste of what is to come,   this section 
+shows the EZR functions that reads csv files (e.g.\ Table~\ref{moot}) and summarizes its \textsf{rows} into \cls{Data} classes.  Per Martin's clean-code rules~\cite{martin2009clean} (write functions small, then smaller still), \texttt{EZR.py}'s  44 functions   average $5{\pm}4$
+lines. To allow for inclusion in documents like this, each line of code
+is under   60 characters wide. 
+
+Following Hatton~\cite{Hatton:1998}, EZR {\em avoids inheritance} since that complicates both  functional composition~\cite{GoF:1995} and debugging~\cite{hatton1998oo}. EZR  implements {\em polymorphism} by  casing 
+on type.. 
+
+EZR also prefers {\em functions over methods}. Standard Python forces method code to scatter across classes, while functions let related code group together (e.g. see the  \textsf{mid, mu, mode} example on this page). 
+
+To dodge {\em supply-chain risk}, EZR minimizes its use of imported packages.
+For example, rather than     trusting the 500K+ lines of pandas, EZR's
+csv parsing uses the following 14 lines. This \texttt{csv} reader skips \texttt{\#} comments, splits on commas, and yields rows. Lastly. within each row, \textsf{thing} coerces cells to int, float, bool, or string.
+\begin{minted}{python}
+def clean(txt): return txt.partition("#")[0].split(","))
+
+def csv(fileName, clear=clean): |\label{csv}|
+  with open(fileName, encoding="utf-8") as file:
+    for txt in file:
+      row = clean(txt)
+      if any(x.strip() for x in row):
+        yield [thing(x) for x in row]
+
+def thing(txt):
+  """Coerce string to number or bool."""
+  def bool(s): return {"true":1,"false":0}.get(s.lower(), s)
+  txt = txt.strip() 
+  for f in [int, float,bool]:
+    try: return f(txt)
+    except ValueError: pass
+\end{minted}
+(Aside: obviously, the pandas package has more functionality
+than these  13 lines of code. That said,  there is something to be said for using just enough code and
+not too much.)
+
+
+
+
+To support {\em encapsulation}, EZR uses Python's classes. Four classes
+that are used   frequently are:
+\begin{itemize}
+\item \cls{Num},\cls{Sym} to summarize columns of nums  or symbols;
+\item \cls{Data}   stores rows, summarized as \cls{Num}s and  \cls{Sym}s
+\item \cls{Cols} is a factory that inputs   column names from row1 of a csv file, to output the associated \cls{Num}s and \cls{Sym}s.
+\end{itemize}
+In EZR, data columns know their \textsf{txt} name and their column position (\textsf{at}).
+They also keep a counter of how many \textsf{n}  items have been seen in that column.
+
+\begin{table}[!t]
+\caption{Example MOOT datasets.}
+\label{moot}
+\begin{center}
+\begin{minipage}{3in}
+\normalsize{(a) Configuration tuning:}
+{\fontsize{6pt}{7.2pt}\selectfont
+
+\begin{verbatim}
+x = independent values      | y = dependent values
+----------------------------|-----------------------
+Spout_wait, Spliters, Cntr. | Throughput+, Latency-
+    10,        6,       17  |    23075,    158.68
+     8,        6,       17  |    22887,    172.74
+     9,        6,       17  |    22799,    156.83
+[Skipped],  ...,      ...   |       ...,      ...
+ 10000,        1,       10  |    460.81,    8761.6
+ 10000,        1,       18  |    402.53,    8797.5
+ 10000,        1,        1  |    310.06,    9421
+-------------------------------------------------------
+\end{verbatim}}
+\normalsize{(b) Defect prediction}
+{\fontsize{6pt}{7.2pt}\selectfont
+\begin{verbatim}
+x = independent values    | y = dependent values
+--------------------------|---------------------
+Numobs, Length, ..., Churn| Class+
+ 3317,   2990, ...,  0.2  |   1
+ 5873,   1923, ...,  0.4  |   2
+ 2357,   1333, ...,  0.0  |   2
+[Skipped],     ...,  ...  |   ...
+ 1104,    891, ...,  0.4  |   3
+  204,     38, ...,  0.4  |   3
+ 1939,   1236, ...,  0.1  |   3
+-------------------------------------------------------
+\end{verbatim}}
+\normalsize{(c) Hyperparameters for Software Health Prediction}
+{\fontsize{6pt}{7.2pt}\selectfont
+\begin{verbatim}
+x = independent values          | y = dependent values
+-------------------------------|----------------------
+N_est, Min_leaf, ..., Min_imp. | MRE-, ACC+, PRED40+
+   40,      1,    ...,    0.25 | 0.205, 0.826, 1.00
+  120,      1,    ...,    4.75 | 0.191, 0.756, 1.00
+   10,      1,    ...,    6.75 | 0.000, 0.790, 0.86
+[Skipped],      ...,    ...    |   ...,   ...,   ...
+   10,     11,    ...,    5.25 | 0.925, 0.391, 0.00
+   90,     12,    ...,    5.00 | 0.911, 0.397, 0.00
+  130,      9,    ...,    9.75 | 0.914, 0.395, 0.00
+\end{verbatim}}
+\end{minipage}
+\end{center}
+\end{table}
+\cls{Num}eric columns   track   a running mean (\texttt{mu}), 
+second moment (\texttt{m2}), standard deviation (\texttt{sd}, calculated from \texttt{m2}), and the goal direction 
+\texttt{heaven} (things to be minimized/maximized end in ``-'' or ``+'' 
+and have a \textsf{heaven}   of 0 or 1):
+\begin{minted}{python}
+class Num:
+  def __init__(i, txt="", at=0):
+    i.txt, i.at, i.n = txt, at, 0
+    i.mu = i.m2 = i.sd = 0
+    i.heaven = txt[-1:]!="+" |\label{heaven}|
+\end{minted}
+\cls{Sym}bolic columns   keep   frequency counts in a \textsf{has} dictionary:
+\begin{minted}{python}
+class Sym:
+  def __init__(i, txt="", at=0):
+    i.txt, i.at, i.n, i.has = txt, at, 0, {}
+\end{minted}
+A column's central tendency is mean \textsf{num.mu} for numbers, and mode for symbols:
+\begin{minted}{python}
+def mid(col):
+  return col.mu if Num==type(col) else mode(col.has)
+
+def mode(dct): return max(dct, key=dct.get)
+\end{minted}
+Variability is standard deviation for numbers, and entropy for symbols:
+\begin{minted}{python}
+def spread(col):
+  return col.sd if Num==type(col) else entropy(col.has)
+
+def entropy(dct): 
+  n = sum(dct.values())
+  return -sum(v/n*log2(v/n) for v in dct.values())
+\end{minted}
+Normalization maps numeric values to $[0,1]$ via a logistic sigmoid clamped 
+to $\pm3$ standard deviations, handling missing values (``?'') as a pass-through:
+\begin{minted}{python}
+def norm(num, v):
+  if v == "?": return v
+  z = max(-3, min(3, (v - num.mu)/(num.sd + 1e-32)))
+  return 1 / (1 + exp(-1.7 * z))
+\end{minted}
+Recall that Table~\ref{moot}
+showed examples of the    the csv files processed in this study. EZR
+reads these tables and summarizes their columns as \cls{Num}s or \cls{Sym}s
+Note that these tables have $x$ inputs and $y$ goals where
+(a) the first row shows the column names;
+(b) numeric columns start with uppercase, all others are symbolic;
+(c)~goal columns are marked with ``+'' and ``-'' for values to be maximized or minimized.
+For example:
+\begin{itemize}
+\item
+In  Table~\ref{moot}.a configuration parameters such as {\em Spout\_wait, Spliters, and Counters} are tuned to maximize Throughput and minimize Latency,
+\item
+See also  Table~\ref{moot}.b where software metric sets are identified to best predict defect classes.
+\item
+Finally, in Table~\ref{moot}.c, machine-learning hyperparameters are adjusted to improve prediction accuracy and reduce error in software health prediction.  
+\end{itemize}
+\cls{Data} stores rows and uses \cls{Cols} as a factory to parse the header row into appropriate column types:
+\begin{minted}{python}
+class Data:
+  def __init__(i, src=None):
+    src = iter(src or {})
+    i.rows, i._centroid = [], None
+    i.cols = Cols(next(src))
+    adds(src, i)
+\end{minted}
+Note the use of \textsf{iter(src pr []))}.  \cls{Data}   accepts rows of data or iterators (like \textsfcsv}). Hence, it can be used
+to   read data from   a disk file or from another \cls{Data} that is already loaded.
+\begin{repl} 
+>>> data1 = Data(csv(fileName)) # "csv" defined in line |\ref{csv}|  
+>>> data2 = Data([data1.cols.names]) # mimic another data
+\end{repl}
+In this example, the \textsf{data1.cols} variable points to an instance of class \cls{Cols}.
+Under the hood,\cls{Data} uses \cls{Cols} to
+organize columns by role. To understand the following code, recall that
+(a)~names ending in ``X'' are ignored; (b)~``!'' marks a symbolic class column; (c)~``+'' or ``-'' are goals (\textsf{ys}) and everything else are independent attributes (\texttt{xs}). Also, (d)~names starting with upper case are \clas{Num}eric columns.
+\begin{minted}{python}
+def Col(txt="", a=0):  
+  return (Num if txt[:1].isupper() else Sym)(txt, a)
+  
+class Cols:
+  def __init__(i, names):
+    i.names = names
+    i.klass, i.xs, i.ys, i.all = None, [], [], []
+    for j, txt in enumerate(names):
+      i.all.append(col := Col(txt, j))  
+      if txt[-1] != "X":
+        if txt[-1] == "!": i.klass = col
+        role = i.ys if txt[-1] in "+-!" else i.xs
+        role.append(col)
+\end{minted}
+ 
+
+ 
+
+% \begin{figure*}
+% \begin{center}
+% \includegraphics[width=4in]{one.pdf}
+
+% \includegraphics[width=4in]{two.pdf}
+
+% \includegraphics[width=4in]{three.pdf}
+
+
+% \end{center}
+% \end{figure*}
+%  \section{Motivation}
+% This section motivates why EZR.py takes a code-lite, model-lite, and data-lite approach to AI.
+% We will argue that   for  ecosystems where verification is a primary bottleneck and data is scarce (like software engineering), the minimalist path of EZR.py  is not a compromise, but   a statistically and economically justified choice.
+
+% \subsection{Why not ``code-heavy''?}
+% In this era of vibe coding,'' AI coding tools tempt us to build code-heavy'' applications hastily assembled from many packages . EZR.py instead uses extensive refactoring to minimize dependencies and total lines of code.
+
+% Such  code minimization is good science. Cohen \cite{cohen1995} recommends baselining sophisticated methods against simpler straw-man implementations via {\em ablation studies}\footnote{Identify the seemingly important parts of your system; try removing them or replacing them with something simpler.}. EZR.py is the product of many years of such ablation. We discarded multi-generational genetic algorithms  by over-sampling in generation one \cite{nair2016accidental,chen18}. We  found simple greedy search matches complex adaptive active learning sampling \cite{ganguly2025lowgodatalightse, 303]. We replaced heavyweight packages like \texttt{pandas} with native Python; our CSV reader, for instance, is only 20 lines.
+
+% {\bf Secondly,} code minimization is good software engineering. Minimizing dependencies reduces supply-chain security risks. While libraries like \texttt{pandas} are battle-tested, they introduce massive surface area for backdoors hacker attacks~\cite{martinez2021}.. Minimizing dependencies, or ``backpacking'' \cite{hipp2021}, ensures software remains functional, secure, and independent. SQLite author Richard Hipp avoided external vendors by building his own editor, servers, and storage engine. By shunning Berkeley DB—which Oracle later acquired and relicensed—he ensured SQLite remained free. Consequently, it now ships on all Android/iOS devices, major browsers (Chrome, Firefox, Safari), Linux distributions, and even Mars rovers.  As Hipp puts it:
+
+% \begin{quote}
+% ``If you want to be free, that means doing things yourself'' \cite{hipp2021}.
+% \end{quote}
+% \subsection{Why not ``model-heavy''?}
+% AI trends now favor billions of parameters \cite{astor26}, yet EZR.py distills complex SE tasks into tiny, readable trees with fewer than ten variables \cite{rayegan26,menzies26}. While Sutton’s {\em bitter lesson} \cite{sutton2019} argues for leveraging computation at scale , we find this assumption can fail in SE for five reasons. N 
+% {\bf First}, mega-scale compute may be   unavailable. Many edge devices operate under power constraints where algorithmic efficiency is a necessity, not a distraction. Also, as argued below, the data required for mega-computation may be unavailable.
+
+% {\bf Second}, Sutton’s lesson offered examples with  clear objective functions (vision systems, game playing software, etc). In
+% SE,  initial success can incur   subsequent costs  like security flaws
+% \cite{S15} and cognitive debt \cite{CognitiveDebt, 330}. Scaling AI
+% accelerates the creation of ``AI slop'' \cite{baltes2026anendlessstreamai},
+% shifting effort from creation to a grueling verification
+% bottleneck \cite{S10, 108].
+% {\bf Third}, runaway compute is unsustainable. Analysts warn of a $800 billion gap between AI revenue and data-center costs through 2030. Furthermore, training data will be exhausted by 2030 \cite{villalobosposition}, risking ``model collapse'' on synthetic data \cite{shumailov2024, 329].
+
+% {\bf Fourth}, safety-critical domains require auditable, repairable models. As Rudin \cite{rudin2019stop} argues, we should use interpretable models instead of trying to explain black boxes.
+
+% {\bf Fifth}, the complexity LLMs attempt to capture is often illusory. Most variable interactions in SE exhibit a large variability.
+% In such domains, below a epsilon (e.g. Cohen's $d < 0.35\sigma$), further “improvement” is actually spurious EZR.py reveals that 1,000-variable systems are often controlled by fewer than ten, meaning practitioners often waste 99% of their effort on irrelevant details.
+
+% \subsection{Why not ``data-heavy''?}
+% Data-heavy models require trillions of tokens \cite{Sutton19}, but
+% EZR.py's data-lite approach reaches state-of-the-art results with
+% fewer than 100 labels \cite{ganguly25,rayegan26, 312]. This is
+% essential because, in the SE, the experience with labelling is that it is:
+% \begin{itemize} \item Expert-limited: Expert labeling is sluggish and fatigue-prone \cite{easterby1980design}, taking hours per case for security or technical debt tasks. \item Noisy: Historical logs are unreliable; up to 90% of technical debt entries are false positives \cite{yu2020identifying, 496]. \item Oracle-constrained: Automated oracles are either crude heuristics \cite{kamei2012large} or too slow to scale \cite{DBLP:conf/wosp/ValovPGFC17, 316]. \end{itemize}
+% Asking an LLM to label data does not resolve this. Studies show human-model agreement is not a proxy for ground truth \cite{ahmed2024can}, meaning LLMs remain conditional collaborators rather than replacements.
+
+
+% For all these reasons, some research must explore lower bounds on
+% data requirements. EZR.py shows that for 120+ SE optimization
+% problems, 100 labels or fewer can suffice.  
+
+
+% \begin{table}[!t] \caption{Cheap features ($X$) vs. Expensive labels ($Y$) in SE .} \label{slow} \begin{center} {\footnotesize \begin{tabular}{p{.45\columnwidth}|p{.45\columnwidth}} \rowcolor{gray!20} Cheap Acquisition ($X$) & Expensive Determination ($Y$)\\hline GitHub metadata (code size). & Market valuation or man-hours.\ \rowcolor{gray!10} Quantify system classes. & Audit actual maintenance effort.\ List all design permutations. & Stakeholder consensus validation.\ \rowcolor{gray!10} Enumerate software parameters. & Full test suites for unique builds.\ Identify hyper-parameters. & Exhaustive grid searches.\ \rowcolor{gray!10} Generate fuzzing inputs. & Audit outputs for anomalies.\ \end{tabular}} \end{center} \end{table}
+
+
+\section{ Using EZR}
+
+Having argued for {\em why}, we now explore {\em how} to use EZR.py.  Specifically, we will explore EZR.py's {\em input} as well as how to assess its
+{\em output}.
+ 
+For input, we use the  120+ multi-objective tasks from the MOOT repository~\cite{menzies2025moot} shown in Table~\ref{mootdata}.
+Most of these tasks are from recent software engineering papers, plus a few
+others (e.g. car engine design) that are useful for teaching EZR and MOOT to those outside the SE community.  
+ To the best of our knowledge, 
+MOOT is the largest  repository of real multi-objective
+optimization tasks in SE.  
+We use MOOT since
+it enables   evaluation-at-scale  across a   wide range of 
+tasks including optimization, configuration,
+cloud tuning, project health, feature/process
+modeling, behavioral analytics,
+financial risk, churn, health,   sales, testing, and text mining.
+Unlike other 
+resources (SPLOT) or   toolkits that offer synthetic
+examples (like the ZDT test suite in Pygmo,and Platypus), 
+MOOT uses data from 120+ real world tasks
+ from recent publications   at  top venues (ICSE, FSE, TSE, IST, EMSE, TOSEM, ASE).
+
+
+
+For each of the examples in Table~\ref{mootdata}, EZR tries to learn a model
+that can predict for rows that are ``better'' (where ``better'' is defined
+in the next paragraph). 
+\S\ref{dataheavy} argued that we should strive to build models   using very little data.
+Accordingly, when working on a MOOT task, we assume EZR can only
+access a few dozen labels of the $y$ objective columns.  
+ 
+
+To define ``better'', we note that many of   MOOT data sets have multiple goals; i.e. EZR must handle multi-objective optimization.
+Initially,  EZR defined ``better'' in terms of the standard
+multi-objective measures like  spread, HV, IGD, and GD, as
+recommended in Chen's 2022 TSE paper~\cite{Li22}. Subsequent work by
+Chen~\cite{chen2026promisetune} and others~\cite{ganguly2025lowgodatalightse}
+showed that such broad searches are   inefficient, since high-quality
+solutions are   found in  tiny regions of the frontier.
+Hence, EZR.py  uses \textsf{\em disty}; i.e.  the Euclidean distance from a row to an   ideal ``heaven'' point.  Recall from line \S\ref{heaven} of the code
+that each of our goal columns knows its ideal value (0,1 for minimization or maximization). With that knowledge,    we can calculate \textsf{\em disty} as follows. Note that {\em lower} values are {\em better} since they are closer to heaven.
+\begin{minted}{python}
+the.p = 2 # config
+
+def disty(data, row): |\label{disty}|
+  """Distance to heaven, calcuated on Y columns."""
+  return minkowski((abs(norm(y,row[y.at]) - y.heaven)
+                    for y in data.cols.ys), the.p)
+
+def minkowski(items, p=2): |\label{minkowski}|
+  """Minkowski at p=2 means "Euclidean"."""
+  tot, n = 0, 1e-32
+  for item in items: tot,n = tot + item**p,n + 1
+  return (tot/n) ** (1/p)  # always return values 0..1
+\end{minted}
+
+  
+
+\begin{figure}[!b]
+{\fontsize{6pt}{7.2pt}\selectfont
+\begin{alltt}
+disty                                  DEFECTS-   EFFORT-   KLOC- 
+-------------------------------------------------------------------
+.52                                |    4698  |    771  |  113 \rc{1}
+.50    time != xh                  |          |         |
+.49    |  pmat != l                |          |         |
+.48    |  |  ltex != n             |          |         |
+.45    |  |  |  pcap == vh         |    4381  |    379  |  162 \rc{2}
+.48    |  |  |  pcap != vh         |          |         |
+.48    |  |  |  |  pvol != h       |          |         |
+.48    |  |  |  |  |  stor == n    |          |         |
+.47    |  |  |  |  |  |  pcap == h |          |         |
+.48    |  |  |  |  |  |  pcap != h |          |         |
+.48    |  |  |  |  |  stor != n    |          |         |
+.50    |  |  |  |  pvol == h       |          |         |
+.52    |  |  ltex == n             |          |         |
+.51    |  |  |  rely != h          |          |         |
+.54    |  |  |  rely == h          |          |         |
+.55    |  pmat == l                |          |         |
+.48    |  |  rely == n             |          |         |
+.60    |  |  rely != n             |          |         |
+.54    |  |  |  plex == h          |          |         |
+.66    |  |  |  plex != h          |          |         |
+\end{alltt}
+}
+\caption{EZR's regression trees predict for  \testsf{disty}.}\label{htree}
+\end{figure}
+\begin{figure*}
+\begin{center}
+\includegraphics[width=.9\linewidth]{used.pdf}
+\end{center}
+\caption{
+As shown by the  
+   \color{red}{\bf red line}\color{black}~line,
+ EZR's models   need very few attributes, even for tasks with 100s to 1000s of $x$ attributes.}\label{used}
+\end{figure*}
+ Even small changes to \textsf{disty} can be of tremendous business significance. 
+For example, Figure~\ref{htree} shows a   small regression tree learned by EZR.py.
+The left-hand-side column shows the mean \textsf{disty} for the rows in   that line of the tree:
+\begin{itemize}
+\item \rc{1} marks the untreated rows where median  \textsf{disty} of 0.52;
+\item \rc{2} marks the   rows selected by the branch that offers most improvement. Those
+rows have a \textsf{disty} of 0.45.
+\end{itemize}
+
+
+%       |.69    time == xh                  |          |    
+
+The  \textsf{disty}  gap between \rc{1} and \rc{2} seems trivially small \mbox{($0.52 - 0.45 = 0.07$)}  until we look at
+the raw goal values. Note that defects have barely changed, yet if we use
+programmers with very high capability (\texttt{pcap=vh}) then we can deliver
+$\frac{162-113}{113} = 43\%$ more code with $\frac{379}{771} = 49\%$ of the
+effort (all without much change to defects).
+
+In practice, the {\em gap size} between(a)~ median  \textsf{disty} in the untreated rows and (b)~ the   row with best \textsf{disty} 
+  is very different in different data sets. Hence, to compare
+results across different data sets, we normalize  any observed improvement
+in  \textsf{disty}  by the {\em gap size}.  
+To avoid spurious conclusions, results
+must    be different from the best \textsf{disty} value by more than a small effect (as per Sawilowsky~\cite{sawilowsky2009new}, we use 35\% of one standard deviation of all the \textsf{disty} values). For \textsf{win}, {\em larger values} are {\em better}
+since these move more towards the best known result. 
+\begin{minted}{python}
+def wins(data): |\label{wins}|
+  """Score rows by distance to heaven.
+  Clamp d2h within lo+0.35*sd to lo."""
+  ys = sorted(disty(data, row1) # <---- defined at line |\ref{disty}|
+               for row1 in data.rows)
+  ten = len(ys)//10
+  lo,med,sd = ys[0], ys[5*ten], (ys[9*ten] - ys[ten])/2.56
+  def f(row2):
+    x = disty(data, row2)
+    if x < lo + 0.35*sd: x = lo
+    return max(-100, int(100*(1 - (x-lo)/(med-lo + 1e-32))))
+  return f
+\end{minted}
+For readers familiar with the reinforcement learning literature, we note that
+the \textsf{wins} calculation  is the complement of {\em regret} (the gap between
+the reward actually obtained and the reward achievable under the optimal
+policy) normalized by the range of achievable improvement.
+
+
+\section{ Many Models can be Tiny}
+Figure~\ref{htree} shows the results of learning one tree from one data set.
+Interestingly, that tree only used a subset of the attributes in the data set: 
+\begin{itemize}
+\item That data set had 24 unique attributes;
+\item Of which, that tree only used eight.
+\end{itemize}
+It turns out, this is a repeated effect in EZR: its models are built using a small fraction
+of the available attributes.
+Figure~\ref{used} shows results from building trees across all the MOOT data:
+\begin{itemize}
+\item
+ The \color{darkyellow}{\bf yellow line}\color{black}~ reports
+ that MOOT data sets have up to 1000 $x$ attributes.
+ \item
+ The \color{red}{\bf red line}\color{black}~
+ reports that less than ten unique attributes are used in the
+ trees learned by EZR;
+ The \color{blue}{\bf blue line}\color{black}~ shows that despite
+ using so few variables, EZR  can win up to 100\% of the times.
+ \item Also, the \color{blue}{\bf blue line}\color{black}~does
+ \underline{\bf not} exhibit a downward trend from left to right. This is to
+ say that even as the number of data attributes increase, models with less than ten attributes can be very effective.
+ \end{itemize}
+ Hence we can document our first research contribution:
+
+ \begin{hence}{The Small Data Effect}
+In stark contrast to a on ``big data'' approach to reasoning, we show here that {\bf  
+many tasks can be be modeled using   fewer than ten  variables}.
+\end{hence}
+ Just to repeat a comment above,  the small data effect does not hold for all tasks.
+ Some tasks require extensive knowledge of the dialog space; e.g. text generation or summarization. But as shown here, there exist
+hundreds of common SE problems that can be addressed via much simpler methods.
+
+Note that other researchers have reported a similar small data effect\footnote{(a) Pearson argued in 1902 that many dimensions can be modeled by just a few "principal components"~\cite{pca}. (b) Chang showed in 1974 that many rows can be replaced by a smaller set of exemplars, without harming nearest-neighbor classification scores~\cite{chang74}. (c) Johnson and Lindenstrauss proved in 1984 that high-dimensional data can be randomly projected into a surprisingly small number of dimensions while preserving pairwise distances almost exactly, no matter how large the original dimensionality~\cite{johnson1984extensions}. (d) Kohavi and John reported in 1997 that up to 80\% of features can be discarded without loss of accuracy~\cite{kohavi97}. (e) Zhu's 2005 survey of semi-supervised learning observed that high-dimensional data typically lies on a much lower-dimensional manifold~\cite{zhu2005semi}. (f) Settles argued in 2009 that a learner querying only the most informative rows can match one trained on the full set~\cite{settles2009active}. (g) And across 2003--2021, our own work on SE "keys" found that a handful of parameters govern the behavior of many software models~\cite{me03a,me07a,me21a,menzies2008implications}.}.
+Most of those prior reports were for classification and regression problems.  EZR extends those prior results showing that hundreds of SE multi-objective optimization
+problems can be addressed using very small models.
+
+An appendix to this paper shows EZR's  code for creating and using tree like Figure~\ref{htree}.
+Taht code is less than 70 lines long (an observation
+that is  consistent with overall ``simplicity can be  very effective'' theme
+of this paper.
+
+
+
+% \item {\bf 1902}, {\em PCA}: reduce  data to a few principal components \cite{pca}. 
+%   \item {\bf 1974}, {\em Prototypes}: speed up $k$-NN by reduce rows to a few    exemplars \cite{chang74}.
+%   \item {\bf 1984}, {\em JL lemma}: random projection to $k=O(\varepsilon^{-2}\log n)$ dimensions can preserve pairwise distances to within some error $(1\pm\varepsilon)$ \cite{johnson1984extensions}.
+ 
+%   \item {\bf 1997}, {\em Feature selection}: ignore up to 80\% of features \cite{kohavi97}.
+ 
+%   \item {\bf 2005}, {\em Semi-supervised learning}: data can be approximated on a much lower-dimensional manifold \cite{zhu2005semi}.
+%   \item {\bf 2009}, {\em Active learning}: only use most informative rows  \cite{settles2009active}.
+%   \item {\bf 2003–2021}, {\em SE “keys”}: a few parameters govern many SE models \cite{me03a,me07a,me21a,menzies2008implications}.
+ 
+
+  
+% Even tiny changes in distance to heaven may be very interesting to business users. For example, EZR.py outputs it optimization recommendations as a decision tree. The left-hand-side column shows the 
+% mean $H_\mu$ value calculated from Equation~\ref{eq:h}, applied to the rows that fall to that part of the tree.  
+% {\fontsize{6pt}{7.2pt}\selectfont
+% \begin{alltt}
+% mu(H)                                DEFECTS-   EFFORT-   KLOC- 
+% -------------------------------------------------------------------
+% .52                                |    4698  |    771  |  113 \rc{1}
+% .50    time != xh                  |          |         |
+% .49    |  pmat != l                |          |         |
+% .48    |  |  ltex != n             |          |         |
+% .45    |  |  |  pcap == vh         |    4381  |    379  |  162 \rc{2}
+% .48    |  |  |  pcap != vh         |          |         |
+% .48    |  |  |  |  pvol != h       |          |         |
+% .48    |  |  |  |  |  stor == n    |          |         |
+% .47    |  |  |  |  |  |  pcap == h |          |         |
+% .48    |  |  |  |  |  |  pcap != h |          |         |
+% .48    |  |  |  |  |  stor != n    |          |         |
+% .50    |  |  |  |  pvol == h       |          |         |
+% .52    |  |  ltex == n             |          |         |
+% .51    |  |  |  rely != h          |          |         |
+% .54    |  |  |  rely == h          |          |         |
+% .55    |  pmat == l                |          |         |
+% .48    |  |  rely == n             |          |         |
+% .60    |  |  rely != n             |          |         |
+% .54    |  |  |  plex == h          |          |         |
+% .66    |  |  |  plex != h          |          |         |
+% .69    time == xh                  |          |         |
+% \end{alltt}
+% }
+
+% Observe the two rows marked with a red circle:
+% \begin{itemize}
+% \item  \rc{1} shows all the rows, before being treated by EZR.py: the rows in this data set have mean   distance to heaven of $H_{0}=0.52$.
+% \item \rc{2} shows the best result seen during training: the rows
+% in this part of the tree have  $H_{\mathit{min}}$=0.45$ 
+% \end{itemize}
+% The gap between them ($0.52-0.45=0.07$) seems
+% trivial, until we look at the raw goal values. Note that defects
+% have not changed yet if we use programmers with very high capability
+% (pcap=vh) then we can deliver  $\frac{162}{113}=143\%$
+% more code with $\frac{370}{771}=44\%$ of the effort without 
+% increasing defects.
+% Clearly, when comparing improvements in different data sets,
+% it can be uninformative to look just at the  raw $H$ values. Hence, we normalize
+% any observed improvement to $H$ by the gap between $H_{0}$ and
+% $H_{\mathit{min}}$:
+
+% \begin{equation}\label{eq:win}
+% \mathit{win}= int\left(100\times\left(1 - \frac{H - H_{\mathit{min}}}{H_{\mathit{min}} - H_0}\right)\right)
+% \end{equation}
+% (For readers familar with the reinformacement learning litareture,
+% we say that Equation~\ref{win} is the complement of  
+% {\em regret}
+% (the gap between the reward you actually got and the reward you could have gotten with the optimal policy), normalized by the size pfXXX 
+
+\section{Active Learning}
+ Why does EZR build such small models? The answer is that it is an {\em active learning}.
+ Standard learners build their models using all available data.
+ Active learners~\cite{settles2009active,van2020survey}, on the other hand,  (a)~reflect on the models built so far in order to (b)~select the next
+ most informative example. This new example is then ``labeled''; i.e., assigned a $y$ value by some oracle. All the labeled examples are then used to
+ update the internal models and the
+ process repeats. In this way, active learners supports our {\em data-lite}
+ requirement (to learn from every little data)  since they
+ can skip over surplus,
+ irrelevant, or noisy examples.
+
+The cost of active learning is model updating.  The arrival of  new data forces a   rebuild
+of all known models.
+ For example, the SMAC active learner~\cite{hutter2011sequential} runs all
+ unlabeled examples across an  ensemble of regression trees to find the mean and variance
+ of that example's predictions. This active learner can then choose the unlabeled
+ example that, say, has greatest mean value but most variance. 
+ Once that new example is found, SMAC must update its models (the entire ensemble of trees), which can be a slow process.
+
+ Ganguly~\cite{ganguly2026lowgodatalightse} reports that EZR's model update procedure   is 10,000 times faster than SMAC. This increased speed is due to some carefully 
+  refactoring:
+ \begin{itemize}
+\item  SMAC builds $N\ge10$ models. But EZR only uses $N=2$.
+\item
+EZR's {\em best} model holds the best  $\sqrt{N}$ labeled examples
+(where best is defined by \textsf{dbest}).
+\item
+EZR's {\em rest} model holds the  remaining $N-\sqrt{N}$ examples.
+\item
+Newly labeled examples go to {\em best} and the worst {\em best}
+is then popped and  added to {\em rest}.
+\end{itemize}
+SAMC's models are decision trees, while EZR's models are   distribution counts on the rows in {\em best} and {\em rest}. 
+Such distributions can be updated very quickly.
+  Updating a \cls{Data} with a row triggers recursive update
+  to   \textsf{Num}s and \textsf{Sym}s (see lines \ref{addrec1} and \ref{addrec2}).
+Updating   symbol distributions counts is just a matter of adding 1 or -1 (for adding or subtracting) to \cls{Sym}.\textsf{has} (see line \ref{symaddsub}). 
+Finally, updating the mean and standard deviation in \cls{Num} can be done
+incrementally using Welford's algorithm~\cite{Knuth1998TAOCP2} (see line \ref{welford}).  
+\begin{minted}{python}
+def add(it, v, w=1):
+  """Add value/row to Data,Cols,Num,Sym."""
+  if Data is type(it):
+    it._centroid = None |\label{zap}|
+    add(it.cols, v, w) |\label{addrec1}| 
+    if w>0: it.rows.append(v)
+    else  : it.rows.remove(v)
+  elif Cols is type(it):
+    [add(col, v[col.at], w) for col in it.all] |\label{addrec2}| 
+  elif v != "?": # skip "don't know" values
+    if Sym == type(it):
+      it.has[v] = w + it.has.get(v, 0) |\label{symaddsub}|
+    elif w < 0 and it.n <= 2:
+      it.n=it.mu=it.m2=it.sd=0
+    else: #  Welford's algorithm starts here |\label{welford}|
+      it.n  += w   
+      delta  = v - it.mu
+      it.mu += w * delta / it.n
+      it.m2 += w * delta * (v - it.mu)
+      it.sd  = sqrt(max(0,it.m2)/(it.n-1)) if it.n>1 else 0
+  return v
+\end{minted}
+Once \textsf{add} is defined as above, then \textsf{sub} is just a matter of calling
+\textsf{add}   with a negative weight:
+\begin{minted}{python}
+def sub(it, v): return add(it, v, w = -1)
+\end{minted}
+Moving a row from {\em best} to {\rest} is now very simple and very fast.
+EZR needs only to sort the small $\sqrt{N}$ {\em best} set
+(but never the larger $N- \sqrt{N}$  {\em rest} set).
+After sorting, the row to remove is found at the ends of the {\em best}.\textsf{rows}, so it is fast
+to pop off.
+\begin{minted}{python}
+def dont_let_Best_grow_too_big(best, rest, lab): |\label{dontlet}|
+  if len(best.rows) > sqrt(len(lab.rows)):
+    best.rows.sort(key=lambda row:disty(lab,row))
+    rest.rows.append( |\label{nested1}|
+      add(rest.cols, sub(best.cols, best.rows.pop()))) |\label{nested2}|
+\end{minted}
+To understand the nested call on lines \ref{nested1} and \ref{nested2},  the \textsf{add,sub} functions return the item being added/subtracted. Hence, the item that is removed from \textsf{best} is then added to \textsf{rest}.
+ 
+The above code incrementally maintains the {\em best} and {\em rest distributions}.
+Whenever these distributions are updated, their \textsf{\_centroids} are zapped
+(see line \ref{zap}), to be recreated, cached  during the active learning search. 
+\begin{minted}{python}
+def mids(data): 
+  data._centroid = data._centroid or [
+                    mid(col) for col in data.cols.all]
+  return data._centroid
+\end{minted}
+EZR's active learner sorts  the unlabelled according to how close
+they are to the {\em  centroid} and how far awyay they are from the  {\em  rest} centroid. For that purposes, EZR uses the Euclidean 
+\begin{minted}{python}
+def acquireWithCentroid(data, best, rest, row): 
+  return (distx(data,row,mids(best)) -
+          distx(data,row,mids(rest)))
+
+def distx(data, r1, r2): 
+  return minkowski((aha(x,r1[x.at],r2[x.at]) 
+                    for x in data.cols.xs), the.p)
+
+def aha(col, u, v):
+  """Distance between two values."""
+  if u == v == "?": return 1
+  if Sym == type(col): return u != v
+  u, v = norm(col, u), norm(col, v)
+  u = u if u!="?" else (0 if v>0.5 else 1)
+  v = v if v!="?" else (0 if u>0.5 else 1)
+  return abs(u - v)
+\end{minted}
+EZR labels the top ranked items in that sort (see lines \ref{s1} \ref{s2}, \ref{s3})
+then calls \textsf{dont\_let\_Best\_grow\_too\_big} (see line \ref{dontlet})  to add the newly labeled item
+to {\em best} (possibly triggering an update to {\em rest}, as described above).
+\begin{minted}{python}
+def acquire(data, score=acquireWithCentroid, |\label{s1}|
+            label=lambda _,row:row): 
+  rows = data.rows[:]
+  shuffle(rows)
+  lab,best,rest,unlab = warm_start(data,rows[:the.few],label)|\label{few}|
+  fn = lambda row: score(lab,best,rest,row) |\label{s2}|
+  for _ in range(the.learn.budget): |\label{budget}|
+    if not unlab: break
+    pick, *unlab = sorted(unlab, key=fn) |\label{s3}|
+    add(lab, add(best, label(data, pick)))
+    dont_let_Best_grow_too_big(best, rest, lab) |\label{dl}|
+  lab.rows.sort(key=lambda r:disty(lab,r))
+  return lab
+\end{minted}
+This labeling process is repeated for some \textsf{budget} number of
+times (see line \ref{budget}). The function then returns the labeled
+items, sorted by \textsf{disty}.
+
+
+One final detail: the active learning loop of line \ref{budget} is preceded
+by a {\em warm\_start} procedure that initializes {\em best} and {em rest}
+from four randomly selected rows.
+ 
+ \begin{minted}{python}
+def warm_start(data, rows, label): 
+  lab = clone(data, rows[:the.learn.start])
+  lab.rows.sort(key=lambda row:disty(lab,label(data,row)))
+  n = int(sqrt(len(lab.rows)))
+  return (lab,clone(data,lab.rows[:n]),
+              clone(data,lab.rows[n:]),
+              rows[the.learn.start:])
+\end{minted}
+Experience with the algorithm showed that EZR did not have to search all the unlabeled
+rows. Instead, it suffices to explore just, say \textsf{the.few}=128 rows (see
+line \ref{few}.
+ 
+
+\section{Lessons Learned: Famous Algorithms, Tiny Code}
+Our main point is that if we take the time to read and refactor
+AI code, we find ways to dramatically simplify it. Under the hood,
+the \cls{Data}, \cls{Num}, and \cls{Sym} classes turned out to be
+so reusable that by the time we had built our active learner, we
+already had all the primitives needed for many other inference
+tasks---classifiers, clusterers, and more. AI courses typically
+devote a lecture each to Na\"ive Bayes, $k$-means, and $k$-means++,
+yet once the \cls{Num}/\cls{Sym}/\cls{Data} machinery was in place,
+all three collapsed to 30-odd lines between them.
+
+\subsection*{Na\"ive Bayes (in under  30 lines) 
+The core of Na\"ive Bayes is one question: how much does a column
+{\em like} a value? \textsf{like} answers that. For a \cls{Sym}, it
+is a smoothed frequency count from \textsf{has} (the same dictionary
+\textsf{add} updates at line~\ref{symaddsub}). For a \cls{Num}, it
+is a Gaussian PDF using the running \textsf{mu} and \textsf{sd} that
+\textsf{add} maintains via Welford (line~\ref{welford}):
+\begin{minted}{python}
+the.k=1   # config
+def like(col, v, prior):
+  """How much a column likes a value."""
+  if type(col) == Sym:
+    return (col.has.get(v,0) +
+      the.bayes.k*prior)/(col.n+the.bayes.k)
+  sd=col.sd+1e-32; z=2*sd*sd
+  return exp(-(v-col.mu)**2/z)/sqrt(pi*z)
+\end{minted}
+Note what is {\em not} here: no fitting pass, no separate training
+phase. The \cls{Num}/\cls{Sym} columns inside a \cls{Data} are
+{\em already} a fitted Bayes model, because \textsf{add} kept them
+fitted incrementally as rows arrived. \textsf{like} just reads them.
+
+\textsf{likes} aggregates one row's worth of evidence. It multiplies
+per-column likelihoods (in log space, for numerical stability) with
+an $m$-estimate prior on class size:
+\begin{minted}{python}
+the.m = 2 # config
+
+def likes(data, row, n_rows, n_klasses):
+  """Log likelihood of row given data."""
+  prior = (len(data.rows)+the.bayes.m
+           ) / (n_rows+the.bayes.m*n_klasses)
+  ls = [like(col,v,prior) for col in data.cols.xs
+        if (v:=row[col.at])!="?"]
+  return log(prior)+sum(log(v) for v in ls if v>0)
+\end{minted}
+That is a complete Na\"ive Bayes classifier with Laplace/$m$
+smoothing, Gaussian numeric attributes, and missing-value
+handling---in two functions. The textbook treatment is a chapter.
+
+To put \textsf{like}/\textsf{likes} to work, \textsf{classify}
+implements the standard incremental {\em test-then-train} protocol.
+Each row is first classified using the model so far (the row is
+assigned to the \cls{Data} with the highest \textsf{likes} score),
+then added to its true class's \cls{Data}. Because \textsf{add} is
+incremental, this is genuinely streaming---no retraining ever
+happens, no batch passes are made:
+\begin{minted}{python}
+def classify(src, wait=10):
+  """Test then train: classify before update."""
+  src = iter(src)
+  h,cf,all = {}, None, Data([next(src)])
+  for n, row in enumerate(src):
+    want = row[all.cols.klass.at]
+    if n >= wait:
+      cf=dinc(want,max(h,key=lambda kl:likes(
+        h[kl],row,len(all.rows),len(h))),cf)
+    if want not in h: h[want] = clone(all)
+    add(all, add(h[want], row))
+  return cf
+\end{minted}
+The \textsf{wait=10} parameter holds off scoring until the model
+has seen enough rows to be worth consulting. \textsf{dinc}
+accumulates a confusion matrix; \textsf{h} is a dictionary mapping
+each class label to its own \cls{Data}; \textsf{all} is the union.
+On standard MOOT classification benchmarks (soybean, diabetes,
+etc.), \textsf{classify} is competitive with sklearn's batch Na\"ive
+Bayes---using two functions of inference logic and one of
+bookkeeping.
+
+\subsection*{$k$-means in thirteen lines}
+
+\textsf{kmeans} cycles assignment and update. Assignment uses the
+same \textsf{distx} that \textsf{acquireWithCentroid} used. Update
+uses the same \textsf{mids} that caches centroids for
+\textsf{acquire}. Cluster membership is just a list of \cls{Data}s,
+each populated by \textsf{add}:
+\begin{minted}{python}
+def kmeans(d, rs=None, k=10, n=10, cents=None):
+  """Cluster rows into k groups."""
+  rs, out = rs or d.rows, []
+  cents = cents or choices(rs, k=k)
+  for _ in range(n):
+    out = [clone(d) for _ in cents]
+    for r in rs:
+      add(out[min(range(len(cents)),
+        key=lambda j:distx(d,cents[j],r))],r)
+    cents = [mids(kid) for kid in out if kid.rows]
+  return out
+\end{minted}
+Every primitive in this loop---\textsf{clone}, \textsf{add},
+\textsf{distx}, \textsf{mids}---was built for active learning.
+$k$-means rides on it, free.
+
+\subsection*{$k$-means++ in eleven lines}
+
+The standard $k$-means++ initialization rule says: pick one centroid
+at random, then pick each subsequent centroid with probability
+proportional to its squared distance from the nearest existing
+centroid. The phrase ``with probability proportional to'' is the
+work; everything else is bookkeeping.
+
+EZR already had that work done. \textsf{pick} samples from a
+weighted distribution---a \cls{Sym}'s \textsf{has} dictionary, a
+\cls{Num}'s Gaussian, or a plain dict of weights---using the same
+polymorphism-by-type that \textsf{mid} and \textsf{spread} use:
+\begin{minted}{python}
+def pick(it, v=None):
+  """Sample from distribution."""
+  if Sym == type(it): return pick(it.has)
+  if Num == type(it):
+    tmp=v if v is not None and v!="?" else it.mu
+    lo,hi=it.mu-3*it.sd,it.mu+3*it.sd
+    new=tmp+it.sd*2*(rand()+rand()+rand()-1.5)
+    return lo + (new-lo) % (hi-lo + 1e-32)
+  if dict == type(it):
+    n = sum(it.values()) * rand()
+    for k, v in it.items():
+      n -= v
+      if n <= 0: return k
+\end{minted}
+The dict branch is the classic roulette-wheel sampler: accumulate
+random mass, return the key where it runs out. \textsf{pick} was
+written to support synthetic-data generation in mutation operators,
+but the dict branch is exactly what $k$-means++ needs.
+
+So $k$-means++ is just: build the weight dict, sample, repeat:
+\begin{minted}{python}
+def kpp(d, rs=None, k=10, few=256):
+  """k-means++ centroid selection."""
+  rs = rs or d.rows
+  out = [choice(rs)]
+  while len(out) < k:
+    t = sample(rs, min(few, len(rs)))
+    ws = {i: min(distx(d,t[i],c)**2
+                 for c in out)
+          for i in range(len(t))}
+    out.append(t[pick(ws)])
+  return out
+\end{minted}
+The \textsf{few=256} subsample is a pragmatic shortcut: on large
+data sets, scanning all rows for each new centroid is wasteful when
+256 random ones give an adequate distribution. The same instinct
+that made \textsf{the.few}=128 enough for active learning makes
+\textsf{few}=256 enough here. {\em Reading the code} surfaces this
+kind of cross-algorithm symmetry; vibe-coding misses it.
+
+\subsection*{The lesson}
+
+A $\sim$30-line section of EZR contains Na\"ive Bayes, $k$-means,
+and $k$-means++---three algorithms that fill three textbook chapters
+and three weeks of an AI course. They are this short because they
+are not really three algorithms. They are three uses of the same
+substrate: incrementally maintained \cls{Num}/\cls{Sym}
+distributions, summarized via \textsf{mid}/\textsf{spread}, queried
+via \textsf{like}/\textsf{distx}, sampled via \textsf{pick}.
+
+This is the kind of structural similarity Dahl, Huang, and Musk
+say humans no longer need to see. Without seeing it, you write the
+three algorithms three times, in three styles, with three sets of
+bugs. With it, you write one substrate and reuse it. The
+30-line outcome is not a clever compression. It is what is left
+when you read the code carefully enough to notice that the
+chapters were the same chapter all along.
+\section{Validation Studoes}
+
+
+As with any learner, the real test if a model
+is how well it performs on data not used in training.
+That is, can a  model built from
+\textsf{budget} actively-acquired labels   usefully predict on
+{\em new} rows. To check this, the validation rig in
+\textsf{test\_acquire} hides most of the labels from the learner
+and reports performance under two scenarios:
+\begin{itemize}
+\item Applying the model to the training set;
+\item Applying the model to the test set.
+\end{itemize}
+\textsf{ready} is the data-splitter. It shuffles the rows, gives
+the first half (capped at \textsf{the.few}=128) to the active
+learner as \textsf{d\_train}, and holds the second half as
+\textsf{test\_rows} the learner never sees during acquisition:
+\begin{minted}{python}
+def ready(file): 
+  d = (file if Data==type(file)
+       else Data(csv(file)))
+  random.shuffle(d.rows)
+  half = len(d.rows) // 2
+  return (d, clone(d,d.rows[:half][:the.few]),
+             d.rows[half:])
+\end{minted}
+\textsf{test\_acquire} runs the experiment 20 times per setting.
+Each repeat: split the data, run the active learner for
+\textsf{the.learn.budget} labels, grow a tree from those labels,
+then score the result two ways:
+\begin{minted}{python}
+the.learn.check = 5    # config
+the.learn.budget = 30  # config
+
+def test_acquire(file=egopt1):
+  d0 = Data(csv(file))
+  w1, w2 = Num(), Num()
+  win = wins(d0) # defined at line |\ref{wins}|
+  for _ in range(20):
+    d, d_train, test_rows = ready(d0)
+    lab = acquire(d_train)
+    t = treeGrow(d_train, lab.rows)
+    guess = sorted(test_rows,
+      key=lambda r: mid(treeLeaf(t, r).ynum))
+    add(w1, win(min(
+      lab.rows[:the.learn.check],
+      key=lambda r: disty(d_train, r))))
+    add(w2, win(min(
+      guess[:the.learn.check],
+      key=lambda r: disty(d_train, r))))
+\end{minted}
+The two scores are different views of the same idea, namely
+``sort by the model, take the top \textsf{check}, return the best
+of those.'' \textsf{w1} sorts the {\em training} labels by their
+known \textsf{disty} (this is the train-set view: how good is the
+model on data it has seen?). \textsf{w2} sorts the {\em test} rows
+by the tree's predicted \textsf{disty} (the held-out view: does the
+model travel?). In both cases the final answer is the
+\textsf{disty}-best of the top \textsf{check} candidates, scored
+via \textsf{wins} (line~\ref{wins}) so 100 means optimal and 0 means
+median.
+
+
+\begin{figure*}
+\begin{center}
+\includegraphics[width=4.5in]{train.pdf}
+\includegraphics[width=4.5in]{test.pdf}
+\end{center}
+\caption{Median \textsf{wins} as a function of acquisition \textsf{Budget} (rows) and checking budget \textsf{Check} (columns). {\bf Top:} performance scored on the training labels (\textsf{w1}). {\bf Bottom:} performance scored on held-out test rows ranked by the learned tree (\textsf{w2}). Contour lines show \textsf{wins} of 60, 70, 80, 90, 95. Note that the contours flatten toward the upper-right; i.e. increasing \textsf{Budget} past 50--100 and \textsf{checks} over 5 yields diminishing returns.}\label{check}
+\end{figure*}
+
+
+
+
+Repeating this 100,000 times across MOOT, with \textsf{budget} and \textsf{check} drawn at random from $[1,150]$
+  and  
+$[1,10]$, gives Figure~\ref{check}. Each cell aggregates the median \textsf{wins} score across all trials at that (\textsf{budget}, \textsf{check}) pair, smoothed by a small Gaussian blur over neighbouring cells\footnote{The 1,~2, and 3 nearest cells $c_1,c_2,c_3$
+$c_1,c_2,c_3$ in any direction contribute ($(71c_1 + 25c_2 + 4c_3)/100$}. The top panel reports \textsf{w1} (the train-set view: how good is the model on rows it built itself from?). The bottom panel reports \textsf{w2} (the held-out view: does the model travel?).
+
+The train panel (shown at top) is, as expected, very forgiving---wins reach 95
+almost everywhere. This is unsurprising: the model is being asked
+about rows it was built on. The interesting panel is the test panel (shown at bottom),
+where the tree is asked to rank rows it has never seen.
+
+Even there, the picture is encouraging. Once a model is in hand
+(say, built by some previous team with a  \textsf{budget} between 50 and 100), only 4--7 checks are
+needed to reach 85--95\% of the reference optimum. More striking
+is the {\em shape} of the contour lines. They spread out toward
+the upper right, which means diminishing returns: pushing
+\textsf{budget} much past 50--100 buys very little. The cost of
+optimization is dominated by the small initial investment, after
+which a handful of test-time checks does the rest.
+
+This mirrors the economics of larger AI systems. A pre-trained
+LLM costs hundreds of millions to build, and downstream users
+spend a few cents per query nudging conditional probabilities with
+a handful of in-context examples. EZR's training cost is 50--100
+labels, not $10^{12}$ tokens---but the two-phase shape is the same.
+Build a model once. Reuse it cheaply.
+
+
+# A Case Study: Light-Weight Relevance Filtering for Research Papers
+
+\subsection*{The relevance problem}
+
+Modern AI systems increasingly use Retrieval-Augmented
+Generation (RAG)~\cite{lewis2020retrieval} to answer questions
+about large document collections. RAG has two halves: (a) an
+{\em embedding} stage that finds relevant documents, and (b) a
+{\em generation} stage where an LLM synthesizes an answer from
+those documents. The first half is itself a classical problem:
+given a query and a corpus of thousands or millions of
+documents, return only those that are relevant. Most modern
+implementations solve this with dense vector embeddings from
+deep neural models (BERT, OpenAI's \texttt{text-embedding-3},
+sentence-transformers, etc.).
+
+But before embedding RAGs there were active learners. In 2018,
+Yu et al.~\cite{yu2018finding} studied this problem in a
+particularly painful instance: {\em primary study selection}
+for systematic literature reviews (SLRs) in software
+engineering. An SLR conductor starts with a search query
+returning thousands of candidate papers, of which a few dozen
+are actually relevant. Reading every candidate takes weeks
+or months~\cite{kitchenham2010,carver2013}. Yu et al.\ asked
+whether active learning could reduce that cost.
+
+Yu's approach, called FASTREAD, sat on top of three building
+blocks: a linear SVM, an active acquisition strategy
+(uncertainty sampling early, certainty sampling later), and
+aggressive undersampling for class balance. After reviewing
+$\sim$300--800 papers from corpora of 1{,}700--8{,}900,
+FASTREAD recovered 95\% of the relevant ones. That is a
+20--50\% reduction over the previous state of the art from
+medicine and legal e-discovery~\cite{wallace2010,miwa2014,
+cormack2014}.
+
+\subsection*{An EZR replication, with TWCNB instead of SVM}
+
+Yu's tool used SVMs. We asked: can EZR's substrate, plus
+TWCNB (Rennie et al., ICML 2003~\cite{rennie2003}), do the
+same thing? TWCNB (Transformed Weight-normalized Complement
+Naive Bayes) is the four-trick refinement of Naive Bayes that
+closed the gap to SVMs on text classification:
+\begin{enumerate}
+\item Estimate per-word weights from each class's
+{\em complement} (all rows {\em not} in that class),
+not the class itself. This corrects bias from skewed class
+sizes---which is severe here, where ``relevant'' is 1--2\% of
+the corpus.
+\item L1-normalize the per-class weight vectors so classes
+with strong word dependencies do not dominate.
+\item Replace raw term frequencies with $\log(1+f)$, since
+real text follows a power-law (``bursty'') distribution, not
+a multinomial.
+\item Down-weight common terms by inverse document frequency.
+\end{enumerate}
+The four tricks decompose into named pieces---\textsf{idfs},
+\textsf{counts}, \textsf{weights}---each of which is small.
+The full implementation (above) is around 30 lines, riding on
+the \cls{Data}/\cls{Sym}/\cls{Num} substrate already in EZR.
+
+\subsection*{Data and metrics}
+
+We use Yu's four corpora, each derived from a published SE
+SLR by reverse-engineering the search query and final
+inclusion list (see Yu's Table~1, reproduced here as
+Table~\ref{slr}). The datasets are named after the lead
+authors of the source SLRs: Hall et al.~\cite{hall2012} on
+fault prediction, Wahono~\cite{wahono2015} on defect
+prediction, Radjenovi\'c et al.~\cite{radjenovic2013} on
+software fault metrics, and Kitchenham et al.\
+\cite{kitchenham2010} on a tertiary review.
+
+\begin{table}[!t]
+\caption{The four SLR corpora from Yu et al.\
+\cite{yu2018finding}. Each is a search-engine query result
+where a small minority of candidates are relevant.
+Kitchenham has two relevance levels: 132 papers relevant by
+title/abstract, of which 45 survive content review.}
+\label{slr}
+\begin{center}
+\footnotesize
+\begin{tabular}{lrr}
+\hline
+Dataset & \#Candidate & \#Relevant \\
+\hline
+Wahono       & 7002 & 62 \\
+Hall         & 8911 & 104 \\
+Radjenovi\'c & 6000 & 48 \\
+Kitchenham   & 1704 & 45 (132) \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+We use two metrics from the IR literature, both standard:
+
+\begin{itemize}
+\item {\em Recall} $= \mathit{tp} / (\mathit{tp} +
+\mathit{fn})$: the fraction of truly relevant papers that
+were correctly retrieved. Higher is better. The Yu-style
+target is 95\% recall.
+\item {\em False alarm} (also called {\em pf}, false-positive
+rate) $= \mathit{fp} / (\mathit{fp} + \mathit{tn})$: the
+fraction of {\em irrelevant} papers that were incorrectly
+returned as relevant. Lower is better.
+\end{itemize}
+Yu's paper reported only recall; reporting recall alone hides
+how much {\em irrelevant} reading the user must still do.
+Reporting both is the right protocol.
+
+\subsection*{Experimental rig}
+
+For each dataset, we warm-start with 25 randomly drawn rows
+(both classes), train TWCNB, and then add one row at a time
+chosen by {\em certainty sampling} (the unlabeled row TWCNB
+ranks most strongly as ``yes''). After each label, we retrain
+and re-score. We report median and IQR over 20 repeats.
+Acquisition stops when 95\% recall is reached or the budget
+is exhausted.
+
+We ran this in two configurations:
+\begin{itemize}
+\item {\bf Non-normalized}: skip Rennie's L1 normalization
+(Rennie's trick \#2). All other tricks remain.
+\item {\bf Normalized}: include the L1 normalization, exactly
+as the TWCNB paper recommends.
+\end{itemize}
+
+\subsection*{Results}
+
+Figure~\ref{slrfig} shows recall and false alarm for both
+configurations on all four datasets.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\linewidth]{kit.pdf}
+\caption{Recall (top) and false alarm (bottom) as a function
+of labels acquired, for non-normalized TWCNB (blue) and
+normalized TWCNB (red). Warm start = 25; each curve is the
+median over 20 repeats with shaded IQR. Vertical bars mark
+the labeling budget at which Yu et al.~\cite{yu2018finding}
+reached the same recall with FASTREAD; numerical labels at
+left mark the recall after the warm start.}
+\label{slrfig}
+\end{figure*}
+
+Three things stand out.
+
+{\em First}, on three of the four corpora (Hall,
+Radjenovi\'c, Wahono), non-normalized TWCNB reaches Yu's
+95\% recall {\em immediately after the warm start}. The
+recall curves are flat across the entire budget. Forty
+labels are enough. This is well below the 290--630 labels
+FASTREAD required, which itself was a 20--50\% reduction
+over the state-of-the-art SVM methods of its time. The
+problem turns out to be substantially easier than Yu's
+results suggested.
+
+{\em Second}, normalization (the red lines) helps recall
+slightly on some datasets but {\em substantially harms}
+false alarm on all of them---non-normalized false alarms
+sit at 10--20\% while normalized false alarms sit at
+40--50\%. A user following the literal TWCNB recipe would
+end up reading 4--5$\times$ as many irrelevant papers as
+necessary. Rennie et al.\ recommended L1 normalization to
+correct weight-magnitude bias from feature dependencies; on
+their text-classification benchmarks (20 Newsgroups, Reuters,
+Industry Sector), it helped. On {\em our} relevance-filtering
+task, it does not. This is the kind of finding that only
+emerges if you re-run the prior work and report metrics the
+prior work omitted---in this case, false alarm, which Yu et
+al.~\cite{yu2018finding} did not measure.
+
+{\em Third}, the Kitchenham column is the interesting case.
+On the strict 45-paper relevance label, recall plateaus at
+85\%, well below the 95\% target. But Kitchenham's corpus
+has {\em two} relevance levels: 132 papers passed
+title/abstract review, of which 45 survived content review.
+At 82\% recall on the 132-paper label, TWCNB still finds
+roughly 108 relevant papers while missing fewer than 25.
+For a researcher whose goal is ``find me dozens of relevant
+papers, quickly,'' this is still useful---and, again,
+achieved with 40 labels.
+
+\subsection*{The lesson}
+
+This study replicates and extends prior SE work using a
+simple method. Compared to Yu's FASTREAD, EZR + TWCNB:
+\begin{itemize}
+\item uses fewer labels (40 vs.\ 290--630) on three of four
+corpora;
+\item uses a simpler classifier (Naive Bayes vs.\ linear SVM);
+\item uses a smaller codebase (the relevant filtering logic
+is around 30 lines of TWCNB plus a small driver, riding on
+EZR's existing substrate);
+\item reports both recall {\em and} false alarm, surfacing
+that one of TWCNB's recommended tricks (normalization) is
+counterproductive in this domain---a finding the original
+study could not have made without measuring false alarm.
+\end{itemize}
+
+This is half of RAG. The first half---finding the relevant
+documents in a large corpus---is exactly what active TWCNB
+does here, with no embeddings, no neural network, and no
+GPU. The second half---generating natural-language answers
+from those documents---is where LLMs are genuinely required.
+We are not arguing that LLMs are unnecessary; we are arguing
+that a non-trivial portion of what RAG pipelines do can be
+done by methods that pre-date the deep-learning revolution,
+when those methods are built on a substrate that makes them
+easy to express.
+
+The risk we want to flag is the inverse of Sutton's bitter
+lesson. Sutton warned that researchers cling to clever
+hand-crafted methods when scale would do better. The
+companion warning, equally important, is that researchers
+adopt scale-heavy methods reflexively---reaching for an LLM
+and an embedding API for problems where 30 lines of TWCNB
+on a 1{,}700-row corpus would suffice. The cognitive bias
+toward additive complexity~\cite{Fillon25,adams2021people}
+shows up here too: it is easier to add a vector database# A Case Study: Light-Weight Relevance Filtering for Research Papers
+
+\subsection*{The relevance problem}
+
+Modern AI systems increasingly use Retrieval-Augmented
+Generation (RAG)~\cite{lewis2020retrieval} to answer questions
+about large document collections. RAG has two halves: (a) an
+{\em embedding} stage that finds relevant documents, and (b) a
+{\em generation} stage where an LLM synthesizes an answer from
+those documents. The first half is itself a classical problem:
+given a query and a corpus of thousands or millions of
+documents, return only those that are relevant. Most modern
+implementations solve this with dense vector embeddings from
+deep neural models (BERT, OpenAI's \texttt{text-embedding-3},
+sentence-transformers, etc.).
+
+But before embedding RAGs there were active learners. In 2018,
+Yu et al.~\cite{yu2018finding} studied this problem in a
+particularly painful instance: {\em primary study selection}
+for systematic literature reviews (SLRs) in software
+engineering. An SLR conductor starts with a search query
+returning thousands of candidate papers, of which a few dozen
+are actually relevant. Reading every candidate takes weeks
+or months~\cite{kitchenham2010,carver2013}. Yu et al.\ asked
+whether active learning could reduce that cost.
+
+Yu's approach, called FASTREAD, sat on top of three building
+blocks: a linear SVM, an active acquisition strategy
+(uncertainty sampling early, certainty sampling later), and
+aggressive undersampling for class balance. After reviewing
+$\sim$300--800 papers from corpora of 1{,}700--8{,}900,
+FASTREAD recovered 95\% of the relevant ones. That is a
+20--50\% reduction over the previous state of the art from
+medicine and legal e-discovery~\cite{wallace2010,miwa2014,
+cormack2014}.
+
+\subsection*{An EZR replication, with TWCNB instead of SVM}
+
+Yu's tool used SVMs. We asked: can EZR's substrate, plus
+TWCNB (Rennie et al., ICML 2003~\cite{rennie2003}), do the
+same thing? TWCNB (Transformed Weight-normalized Complement
+Naive Bayes) is the four-trick refinement of Naive Bayes that
+closed the gap to SVMs on text classification:
+\begin{enumerate}
+\item Estimate per-word weights from each class's
+{\em complement} (all rows {\em not} in that class),
+not the class itself. This corrects bias from skewed class
+sizes---which is severe here, where ``relevant'' is 1--2\% of
+the corpus.
+\item L1-normalize the per-class weight vectors so classes
+with strong word dependencies do not dominate.
+\item Replace raw term frequencies with $\log(1+f)$, since
+real text follows a power-law (``bursty'') distribution, not
+a multinomial.
+\item Down-weight common terms by inverse document frequency.
+\end{enumerate}
+The four tricks decompose into named pieces---\textsf{idfs},
+\textsf{counts}, \textsf{weights}---each of which is small.
+The full implementation (above) is around 30 lines, riding on
+the \cls{Data}/\cls{Sym}/\cls{Num} substrate already in EZR.
+
+\subsection*{Data and metrics}
+
+We use Yu's four corpora, each derived from a published SE
+SLR by reverse-engineering the search query and final
+inclusion list (see Yu's Table~1, reproduced here as
+Table~\ref{slr}). The datasets are named after the lead
+authors of the source SLRs: Hall et al.~\cite{hall2012} on
+fault prediction, Wahono~\cite{wahono2015} on defect
+prediction, Radjenovi\'c et al.~\cite{radjenovic2013} on
+software fault metrics, and Kitchenham et al.\
+\cite{kitchenham2010} on a tertiary review.
+
+\begin{table}[!t]
+\caption{The four SLR corpora from Yu et al.\
+\cite{yu2018finding}. Each is a search-engine query result
+where a small minority of candidates are relevant.
+Kitchenham has two relevance levels: 132 papers relevant by
+title/abstract, of which 45 survive content review.}
+\label{slr}
+\begin{center}
+\footnotesize
+\begin{tabular}{lrr}
+\hline
+Dataset & \#Candidate & \#Relevant \\
+\hline
+Wahono       & 7002 & 62 \\
+Hall         & 8911 & 104 \\
+Radjenovi\'c & 6000 & 48 \\
+Kitchenham   & 1704 & 45 (132) \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+We use two metrics from the IR literature, both standard:
+
+\begin{itemize}
+\item {\em Recall} $= \mathit{tp} / (\mathit{tp} +
+\mathit{fn})$: the fraction of truly relevant papers that
+were correctly retrieved. Higher is better. The Yu-style
+target is 95\% recall.
+\item {\em False alarm} (also called {\em pf}, false-positive
+rate) $= \mathit{fp} / (\mathit{fp} + \mathit{tn})$: the
+fraction of {\em irrelevant} papers that were incorrectly
+returned as relevant. Lower is better.
+\end{itemize}
+Yu's paper reported only recall; reporting recall alone hides
+how much {\em irrelevant} reading the user must still do.
+Reporting both is the right protocol.
+
+\subsection*{Experimental rig}
+
+For each dataset, we warm-start with 25 randomly drawn rows
+(both classes), train TWCNB, and then add one row at a time
+chosen by {\em certainty sampling} (the unlabeled row TWCNB
+ranks most strongly as ``yes''). After each label, we retrain
+and re-score. We report median and IQR over 20 repeats.
+Acquisition stops when 95\% recall is reached or the budget
+is exhausted.
+
+We ran this in two configurations:
+\begin{itemize}
+\item {\bf Non-normalized}: skip Rennie's L1 normalization
+(Rennie's trick \#2). All other tricks remain.
+\item {\bf Normalized}: include the L1 normalization, exactly
+as the TWCNB paper recommends.
+\end{itemize}
+
+\subsection*{Results}
+
+Figure~\ref{slrfig} shows recall and false alarm for both
+configurations on all four datasets.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\linewidth]{kit.pdf}
+\caption{Recall (top) and false alarm (bottom) as a function
+of labels acquired, for non-normalized TWCNB (blue) and
+normalized TWCNB (red). Warm start = 25; each curve is the
+median over 20 repeats with shaded IQR. Vertical bars mark
+the labeling budget at which Yu et al.~\cite{yu2018finding}
+reached the same recall with FASTREAD; numerical labels at
+left mark the recall after the warm start.}
+\label{slrfig}
+\end{figure*}
+
+Three things stand out.
+
+{\em First}, on three of the four corpora (Hall,
+Radjenovi\'c, Wahono), non-normalized TWCNB reaches Yu's
+95\% recall {\em immediately after the warm start}. The
+recall curves are flat across the entire budget. Forty
+labels are enough. This is well below the 290--630 labels
+FASTREAD required, which itself was a 20--50\% reduction
+over the state-of-the-art SVM methods of its time. The
+problem turns out to be substantially easier than Yu's
+results suggested.
+
+{\em Second}, normalization (the red lines) helps recall
+slightly on some datasets but {\em substantially harms}
+false alarm on all of them---non-normalized false alarms
+sit at 10--20\% while normalized false alarms sit at
+40--50\%. A user following the literal TWCNB recipe would
+end up reading 4--5$\times$ as many irrelevant papers as
+necessary. Rennie et al.\ recommended L1 normalization to
+correct weight-magnitude bias from feature dependencies; on
+their text-classification benchmarks (20 Newsgroups, Reuters,
+Industry Sector), it helped. On {\em our} relevance-filtering
+task, it does not. This is the kind of finding that only
+emerges if you re-run the prior work and report metrics the
+prior work omitted---in this case, false alarm, which Yu et
+al.~\cite{yu2018finding} did not measure.
+
+{\em Third}, the Kitchenham column is the interesting case.
+On the strict 45-paper relevance label, recall plateaus at
+85\%, well below the 95\% target. But Kitchenham's corpus
+has {\em two} relevance levels: 132 papers passed
+title/abstract review, of which 45 survived content review.
+At 82\% recall on the 132-paper label, TWCNB still finds
+roughly 108 relevant papers while missing fewer than 25.
+For a researcher whose goal is ``find me dozens of relevant
+papers, quickly,'' this is still useful---and, again,
+achieved with 40 labels.
+
+\subsection*{The lesson}
+
+This study replicates and extends prior SE work using a
+simple method. Compared to Yu's FASTREAD, EZR + TWCNB:
+\begin{itemize}
+\item uses fewer labels (40 vs.\ 290--630) on three of four
+corpora;
+\item uses a simpler classifier (Naive Bayes vs.\ linear SVM);
+\item uses a smaller codebase (the relevant filtering logic
+is around 30 lines of TWCNB plus a small driver, riding on
+EZR's existing substrate);
+\item reports both recall {\em and} false alarm, surfacing
+that one of TWCNB's recommended tricks (normalization) is
+counterproductive in this domain---a finding the original
+study could not have made without measuring false alarm.
+\end{itemize}
+
+This is half of RAG. The first half---finding the relevant
+documents in a large corpus---is exactly what active TWCNB
+does here, with no embeddings, no neural network, and no
+GPU. The second half---generating natural-language answers
+from those documents---is where LLMs are genuinely required.
+We are not arguing that LLMs are unnecessary; we are arguing
+that a non-trivial portion of what RAG pipelines do can be
+done by methods that pre-date the deep-learning revolution,
+when those methods are built on a substrate that makes them
+easy to express.
+
+The risk we want to flag is the inverse of Sutton's bitter
+lesson. Sutton warned that researchers cling to clever
+hand-crafted methods when scale would do better. The
+companion warning, equally important, is that researchers
+adopt scale-heavy methods reflexively---reaching for an LLM
+and an embedding API for problems where 30 lines of TWCNB
+on a 1{,}700-row corpus would suffice. The cognitive bias
+toward additive complexity~\cite{Fillon25,adams2021people}
+shows up here too: it is easier to add a vector database
+than to ask whether one is needed. Trying the simple thing
+first costs almost nothing and, occasionally, ends the
+investigation.
+
+\section{Discussion: Is Simple Also Stupid?}\label{sec:disc}
+
+We started with a question. Five lessons in, with three
+empirical comparisons on the table, this is where we answer it.
+
+\subsection{The five lessons, in light of the evidence}
+
+The introduction listed five lessons. We can now check each one
+against what the body of the paper showed.
+
+\textit{Many models can be tiny.} Across 124 MOOT tasks, trees
+with under ten variables matched or beat heavier explanation
+tools (\cref{sec:tiny}, citing Amirali et al.~\cite{amirali}).
+
+\textit{Random search works better than expected.} On MOOT, the
+(1+1)-EA, simulated annealing, and local search were
+statistically indistinguishable. They differed only in a
+one-line accept rule (\cref{sec:opt}).
+
+\textit{One data structure suffices.} Naive Bayes, $k$-means,
+$k$-means++, three optimizers, the active learner, and TWCNB
+all sit on the same \cls{Num}/\cls{Sym}/\cls{Data} substrate
+(\cref{sec:peek} through \cref{sec:textmine}).
+
+\textit{Optimization, classification, and regression are nearly
+the same algorithm.} The textbook gives them separate chapters.
+The code gives them five sections of the same source file
+(\cref{sec:famous}, \cref{sec:opt}, \cref{sec:active}).
+
+\textit{Small codebases work.} \IT is around 500 lines, with no
+heavy dependencies. The active learner runs 10{,}000 times
+faster than SMAC~\cite{kashin}. The text-mining classifier runs
+in milliseconds on a laptop (\cref{sec:textmine}).
+
+Three independent comparisons. Three domains. The same pattern.
+
+\begin{table*}[!t]
+\caption{The three empirical comparisons that test \IT
+against state-of-the-art baselines from prior work.}
+\label{empirical}
+\begin{center}
+\footnotesize
+\begin{tabular}{p{0.18\textwidth}p{0.20\textwidth}p{0.18\textwidth}p{0.36\textwidth}}
+\toprule
+Domain & Baselines & Data & Result \\
+\midrule
+Explanation~\cite{amirali}
+  & SHAP, LIME, Anchors
+  & MOOT (124 tasks)
+  & \IT matched or exceeded the baselines on actionability and
+    faithfulness. \\
+\addlinespace
+Optimization~\cite{kashin}
+  & SMAC, TPE, HyperOpt
+  & MOOT (124 tasks)
+  & \IT matched on solution quality, with model updates
+    10{,}000$\times$ faster and 5--10$\times$ fewer labels. \\
+\addlinespace
+Relevance filtering (this paper)
+  & FASTREAD~\cite{yu2018finding}
+  & 4 SLR corpora
+  & \IT+TWCNB matched on recall with $\sim$1/7 the labels;
+    surfaced a false-alarm gap that Yu's recall-only protocol
+    could not see. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table*}
+
+\subsection{Where simple genuinely fails}
+
+\IT is not a universal substitute. There are real tasks for
+which no simple method we know of works.
+
+Generation is the clearest case. Translation, summarization,
+code synthesis, and natural-language interfaces require an
+understanding of language that no \cls{Num}/\cls{Sym}
+substrate can carry. The training data and compute budget that
+build LLMs are not bypass-able for these tasks.
+
+Dense perception is another. Image classification at scale,
+speech recognition under noise, and protein structure
+prediction have all moved decisively to large neural models.
+Smaller methods exist but lose on benchmarks that matter.
+
+Tasks with strong sequential dependencies are a third case.
+Sequence-to-sequence problems where context windows of
+thousands of tokens carry meaning are not what \IT is designed
+for.
+
+What \IT is good at is structured tabular data with explicit
+$x$ and $y$ columns where the $y$ column is expensive to
+compute. That covers a lot of SE: configuration tuning, defect
+prediction, hyperparameter search, test selection, cost
+estimation, and (as the case study showed) some text mining
+problems too. It does not cover everything.
+
+\subsection{The cognitive bias toward additive complexity}
+
+The simplification we found in \IT was not invisible. It was
+in the code. We had to read it.
+
+Adams et al.~\cite{adams2021people} document a robust cognitive
+bias: people, when given a problem, tend to add new components
+rather than remove existing ones. The bias survives when
+subtraction is the better choice and when the addition has a
+real cost. \IT is the product of repeatedly subtracting. We
+removed multi-generational genetic algorithms in favor of
+one-generation sampling. We removed adaptive active-learning
+samplers in favor of greedy search. We removed pandas in favor
+of 14 lines of CSV parsing. We removed regression-tree
+ensembles in favor of two \cls{Data}s.
+
+A survey by Hou et al.~\cite{Hou24} of 229 SE papers using
+LLMs found that only 5\% baselined against non-LLM
+alternatives. That is the additive bias at scale: the field
+reaches for the heavy method without checking whether the
+light one would have worked. When checked, the light method
+often does
+work~\cite{grinsztajn2022why,somvanshi2024survey,Tawosi23,
+majumder2018500+,Ling24,Fu17,johnson2024ai}.
+
+\IT is one demonstration. We do not claim it generalizes
+beyond SE multi-objective optimization, classification, and
+the relevance-filtering case study. We do claim that within
+those boundaries, the simpler tool kept reaching
+state-of-the-art results, and the simpler tool exposed gaps
+in prior measurement that the heavier tools missed.
+
+\subsection{Threats to validity}
+
+\textit{Construct.} ``State of the art'' depends on the
+metric. We compared on actionability and faithfulness for
+explanations (following Amirali et al.~\cite{amirali}); on
+solution quality under fixed budgets for optimization
+(following Ganguly~\cite{kashin}); on recall and false alarm
+for relevance filtering. Different metrics could give
+different results. We chose metrics that were standard in the
+prior work, or, in the relevance case, more complete than the
+prior work.
+
+\textit{Internal.} Active learning is stochastic. We report
+medians over 20 repeats with IQR shading throughout. Larger
+repeat counts might reveal smaller effects. The 100{,}000-trial
+heatmap in \cref{sec:valid} is one defense against this.
+
+\textit{External.} Our comparisons rest on MOOT (124 SE tasks)
+and Yu's four SLR corpora. Generalization beyond these data
+sets is an open question. SE is itself a limited domain;
+results may not transfer to other application areas.
+
+\textit{Conclusion.} The headline claim that \IT ``matches
+state of the art'' uses Cliff's-delta plus
+Kolmogorov--Smirnov tests for statistical sameness. Like any
+tied-or-better claim, this allows that another study could
+report a clear win for the heavier method. We have not seen
+such a study. We cannot rule it out.
+
+\subsection{Conclusion}
+
+We started with the question {\em is simple also stupid?}
+Across MOOT, across Yu's SLR corpora, and across the
+explanation comparisons of Amirali et al., the answer was no.
+
+The simplification was not in the algorithms. The algorithms
+in \IT are textbook. The simplification was in noticing that
+five textbook algorithms shared one data structure, and
+writing the data structure once.
+
+That noticing took years of reading and rewriting code. It
+cannot happen in a workflow that treats the code as something
+the AI emits and the human consumes. It happens when the human
+sits with the code, deletes things, and watches what survives.
+The 500 lines of \IT are what survived.
+
+If the field continues toward methods that are large and
+opaque, this paper is a vote in the other direction. The
+simple thing is worth trying first. It often works. When it
+does, the code fits on the page.
+ 
+
+ 
+\bibliography{bib3,main}
+
+
+
+
+\appendix
+\section*{Building and Displaying Trees}
+ 
+
+EZR's regression trees are built {\em after} active learning is done.
+The {\em best}/{\em rest} machinery in \textsf{acquire} (line~\ref{s1})
+collected a small set of labeled rows; \textsf{treeGrow} now distills
+those rows into a readable rule set that predicts \textsf{disty}.
+
+A \cls{Tree} node holds the rows that fell to it (in a child \cls{Data}
+called \textsf{d}), a summary \cls{Num} of their \textsf{disty} values
+(\textsf{ynum}), and---if the node has split---the chosen column,
+cut value, and two children:
+\begin{minted}{python}
+class Tree: 
+  def __init__(i, data, rows):
+    i.d = clone(data, rows)
+    i.ynum=adds((disty(data,row) for row in rows),Num())
+    i.col,i.cut = None,0
+    i.left=i.right=None
+\end{minted}
+\textsf{treeCuts} proposes split points for one column. For symbols,
+all distinct values are candidates; for numbers, just the median (a
+deliberate simplification that keeps trees small and fast):
+\begin{minted}{python}
+def treeCuts(col, rows): 
+  vs=[row[col.at] for row in rows if row[col.at]!="?"]
+  if not vs: return []
+  return (set(vs) if Sym == type(col)
+          else [sorted(vs)[len(vs)//2]])
+\end{minted}
+
+\textsf{treeSplit} evaluates one (column, cut) pair by partitioning
+the rows and scoring the result by weighted \textsf{spread} of
+\textsf{disty}---the same \textsf{spread} function defined earlier
+(standard deviation for \cls{Num}s, entropy for \cls{Sym}s). Lower
+scores mean tighter, more predictable leaves:
+\begin{minted}{python}
+def treeSplit(data, col, cut, rows): 
+  l_rows,r_rows,l_num,r_num=[],[],Num(),Num()
+  for row in rows:
+    v = row[col.at]
+    go=v=="?" or (v==cut if Sym==type(col) else v<=cut)
+    (l_rows if go else r_rows).append(row)
+    add(l_num if go else r_num,disty(data,row))
+  s=l_num.n*spread(l_num)+r_num.n*spread(r_num)
+  return s,col,cut,l_rows,r_rows
+\end{minted}
+
+\textsf{treeGrow} ties it together: enumerate every (column, cut)
+pair from the $x$ columns, keep splits where both sides have at
+least \textsf{the.learn.leaf} rows, take the lowest-spread split,
+and recurse. The recursion stops when too few rows remain to split
+further:
+\begin{minted}{python}
+def treeGrow(data, rows): 
+  tree = Tree(data, rows)
+  if len(rows) >= 2 * the.learn.leaf:
+    splits = (treeSplit(data, col, cut, rows)
+              for col in tree.d.cols.xs
+              for cut in treeCuts(col, rows))
+    if valid := [s for s in splits
+        if min(len(s[3]),len(s[4]))
+           >= the.learn.leaf]:
+      _, tree.col, tree.cut, left, right = min(
+        valid, key=lambda x: x[0])
+      tree.left  = treeGrow(data, left)
+      tree.right = treeGrow(data, right)
+  return tree
+\end{minted}
+
+That is the entire builder. Note what is {\em not} here: no entropy
+gain, no Gini, no pruning pass, no surrogate splits, no bagging.
+\textsf{spread} already handles both numeric and symbolic targets
+(by polymorphism on \textsf{col} type), so one routine covers what
+CART and C4.5 split into many. The deliberate restriction to the
+median cut for numeric columns means \textsf{treeGrow} considers
+$O(|\textit{xs}|)$ splits per node rather than $O(|\textit{xs}| \cdot
+|\textit{rows}|)$; on the small label sets EZR works with, this is
+both fast and surprisingly effective.
+
+\smallskip
+
+Once the tree exists, three small functions use it.
+\textsf{treeLeaf} routes a row to its leaf by walking the splits
+(missing values fall right, by convention):
+\begin{minted}{python}
+def treeLeaf(tree, row): 
+  if not tree.left: return tree
+  v = row[tree.col.at]
+  go = v!="?" and (v<=tree.cut
+    if Num==type(tree.col) else v==tree.cut)
+  return treeLeaf(tree.left if go else tree.right,row)
+\end{minted}
+
+\textsf{treeNodes} is a depth-first generator that yields every node
+along with its level, the column/op/cut that led to it, and---when a
+node has children---visits them sorted by \textsf{mid(ynum)} so that
+the most promising branch (lowest \textsf{disty}) is shown first. This
+sort is what makes printed trees like Figure~\ref{htree} read
+top-to-bottom from best to worst:
+\begin{minted}{python}
+def treeNodes(tree,lvl=0,col=None,op="",cut=None): 
+  yield tree, lvl, col, op, cut
+  if tree.col:
+    ops=("<=",">") if Num==type(
+      tree.col) else ("==","!=")
+    kids=sorted([(tree.left,ops[0]),
+      (tree.right,ops[1])],
+      key=lambda z:mid(z[0].ynum))
+    for k, txt in kids:
+      if k: yield from treeNodes(k,lvl+1,
+        tree.col,txt,tree.cut)
+\end{minted}
+
+\textsf{treeShow} consumes that generator to print the tree. Each
+line carries the indented split, the leaf's mean \textsf{disty}, the
+row count, and the per-goal \textsf{mid} values---which is exactly
+the format of Figure~\ref{htree}, where the gap between rows
+\rc{1} and \rc{2} revealed the 43\% productivity win:
+\begin{minted}{python}
+def treeShow(tree): 
+  for t1,lvl,col,op,cut in treeNodes(tree):
+    p=f"{col.txt} {op} {o(cut)}" if col else ""
+    if lvl > 0: p = "|   "*(lvl-1) + p
+    g={col.txt:mid(col) for col in t1.d.cols.ys}
+    print(f"{p:<{the.show.show}}"
+          f",{o(mid(t1.ynum)):>4}"
+          f" ,({t1.ynum.n:3}), {o(g)}")
+\end{minted}
+% Finally, \textsf{treePlan} turns the tree into {\em counterfactual
+% advice}. Given the leaf where a row currently sits (\textsf{here}),
+% it walks every other leaf and yields those with meaningfully lower
+% \textsf{disty}---``meaningfully'' meaning beyond a small-effect
+% threshold (Sawilowsky's $0.35\sigma$, the same threshold used in
+% \textsf{wins} at line~\ref{wins}). For each such leaf, it reports
+% which $x$ columns would need to change and to what:
+% \begin{minted}{python}
+% def treePlan(tree, here): 
+%   eps = the.stats.eps * spread(tree.ynum)
+%   for there,_,_,_,_ in treeNodes(tree):
+%     if there.col is None and \
+%       (dy:=mid(here.ynum)-mid(there.ynum))>eps:
+%       diff=[f"{col.txt}={o(mid(col))}"
+%         for col,h in zip(there.d.cols.xs,here.d.cols.xs)
+%         if mid(col) != mid(h)]
+%       if diff:
+%         yield dy, mid(there.ynum), diff
+% \end{minted}
+
+% This is what makes EZR's trees more than predictors. They are
+% {\em advisors}: they not only score a configuration but tell the
+% engineer what to change to reach a better one---and silently
+% report which $x$ variables never appeared in any split, which is
+% how Figure~\ref{used} could conclude that fewer than ten variables
+% matter even on 1000-variable data.
+\bibliography{bib3,main}
+\end{document}
+
+
+
+
+ 
+% Why do so few labels suffice? We formalize this through the
+% probability of locating a target solution in a finite search space.
+
+% \paragraph{Basic sampling bound.}
+% Let $C \in (0,1)$ be the desired confidence of success, $p$ be the
+% probability that a single evaluation lands in the ``good'' region,
+% and $n$ be the number of independent evaluations. Then:
+
+% \begin{equation}
+%   C = 1 - (1-p)^{n}
+%   \label{eq:conf}
+% \end{equation}
+
+% \noindent Solving Equation~\ref{eq:conf} for $n$:
+
+% \begin{equation}
+%   n = \frac{\log(1-C)}{\log(1-p)}
+%   \label{eq:n}
+% \end{equation}
+
+% \paragraph{Estimating $p$ from noise.}
+% In practice, neighboring solutions in an SE configuration space are
+% often indistinguishable due to measurement noise. Cohen's $d$
+% heuristic \cite{cohen1988} holds that differences smaller than
+% $0.35\sigma$ constitute a negligible (small) effect. Assuming a
+% Gaussian output distribution spanning $\pm 3\sigma$ (total range
+% $6\sigma$), the width of the indistinguishable optimal zone is
+% $0.35\sigma$, giving:
+
+% \begin{equation}
+%   p \;=\; \frac{0.35}{6} \;\approx\; 0.058
+%   \label{eq:p}
+% \end{equation}
+
+% \noindent
+% Substituting $p \approx 0.05$ and $C = 0.99$ into
+% Equation~\ref{eq:n}:
+
+% \begin{equation}
+%   n \;=\; \frac{\log(0.01)}{\log(0.95)} \;\approx\; 88
+%   \label{eq:n88}
+% \end{equation}
+
+% \noindent
+% To be 99\,\% confident of locating a solution within the
+% noise-equivalent optimal zone, only \textbf{88 random evaluations}
+% are required.
+
+% \paragraph{Heuristic ordering halves the budget again.}
+% If a heuristic ranking---such as EZR's two-class Bayesian
+% sorter---allows us to bias sampling toward promising candidates
+% rather than sampling uniformly at random, the effective search
+% space collapses from $n$ to its $\log_2$:
+
+% \begin{equation}
+%   m = \log_2(n)
+%   \label{eq:m}
+% \end{equation}
+
+% \noindent
+% For $n = 88$, $m \approx 6.5$: a handful of well-chosen evaluations
+% can, in principle, be sufficient. In practice EZR uses budgets of
+% $B \approx 30$--$100$ to build its internal model robustly, but the
+% theoretical floor is remarkably low.
+
+% \begin{figure}[h]
+%   \centering
+%   % \includegraphics[width=\linewidth]{figures/neo_math.pdf}
+%   \vspace{3.5cm}
+%   \caption{Required sample size $n$ (Eq.~\ref{eq:n}) as a function
+%     of confidence $C$ and target probability $p$. The ``SE operating
+%     point'' ($p \approx 0.05$, $C = 0.99$) sits comfortably below
+%     100 samples; RFRL's coverage requirement pushes $n > 10^{15}$.}
+%   \label{fig:neomath}
+% \end{figure}
+
+% \noindent
+% These are not aspirational bounds. They follow directly from the
+% statistics of noise in real SE measurement processes. The key
+% insight is that in many engineered systems, \emph{the noise floor
+% itself limits what optimization can usefully achieve}, and that
+% floor is reachable with far fewer evaluations than the field
+% conventionally assumes. When data is scarce---and in SE it
+% frequently is---Near-Enough Optimization via EZR is not a
+% compromise: it is the statistically justified choice.
+
+
+% % ---- The EZR Algorithm ---------------------------------------
+ 
+
+
+% % ---- Discussion: The Other Side of Complexity ----------------
+
+% \section{Discussion: The Other Side of Complexity}
+% \label{sec:discussion}
+
+% Oliver Wendell Holmes wrote: ``For the simplicity that lies this
+% side of complexity, I would not give a fig, but for the simplicity
+% that lies on the other side of complexity, I would give my life.''
+
+% Sutton warns against the simplicity on \emph{this} side: the naive,
+% pre-experimental assumptions we encode as inductive bias before
+% looking at any data. We agree completely. EZR does not assume a
+% simple world. It dives into complex, high-dimensional spaces and uses
+% fast, data-lite exploration to \emph{discover} which simplicities
+% are structurally real.
+
+% \paragraph{The loopholes are real and general.}
+% The tiny trees produced by EZR are not wishful thinking. They
+% summarise actually observed behaviour, and they replicate across
+% hundreds of diverse SE datasets \cite{menziesganguly2026}. The
+% pattern---a 1\,000-variable space controlled by fewer than
+% ten---is not an artefact of one domain. It appears in compiler
+% configuration, cloud resource tuning, ML hyperparameter
+% optimisation, test selection, and more.
+
+% \paragraph{When EZR is not enough.}
+% We close with an important caveat. EZR's data-lite approach is
+% calibrated for the NEO regime (Section~\ref{sec:neomath}).
+% Tasks that genuinely require universal coverage of a vast
+% state-action space---such as RFRL for safety-critical Markov
+% Decision Processes---lie outside this regime and demand the
+% compute-intensive methods Sutton advocates. EZR does not claim to
+% replace every optimizer; it claims to \emph{obsolete} the
+% heavy-compute approach for the large class of SE tasks where data is
+% scarce and the noise floor limits what optimization can usefully
+% achieve. In those domains, the simplest correct model is not a
+% compromise: it is the state of the art.
+
+
+
+
+% When evaluating   design options, software engineers explore a large space of alternatives,
+% many with competing   goals such as
+%  deliver the {\em most} features 
+%   in the {\em least} time  at the {\em lowest} cost  with the {\em fewest} defects.
+% Other examples of multi-objective problems in SE include:
+% \begin{itemize}
+% \item
+% {\em Green engineering} i.e. faster responses using less energy;
+% \item
+%   {\em Hyperparameter optimization} finds learner parameters that minimize false alarms and maximize recall;
+% \item
+% Any 
+% {\em Configuration task}
+% such as  selecting
+% magic control variables within a Makefile.
+% \end{itemize}
+% Modern software urgently
+% needs better tools for automatic configuration. Industrial optimization faces major obstacles.
+% The configuration space can explode exponentially (e.g. \textsc{7z} has  14 parameters with  one million configurations).
+%  Performance landscapes are rugged and sparse~\cite{DBLP:journals/tosem/GongC25,lustosa2024learning,chen2026promisetune}, creating local optimal traps.
+%      Consequently, all to often, software is deployed with suboptimal configurations~\cite{Krishna:2016}. 
+    
+    
+% At its core, optimization explores a   vector
+% of configuration knobs $\mathbf{x}$ and a set of performance
+% objectives \[\mathbf{y} = f(\mathbf{x})\]
+% e.g. latency,
+% memory footprint, and defect rate---some of which must be
+% minimized and some maximized. Users seek  the $\mathbf{x}$
+% that best trades these objectives off. This problem has been studied for decades and many alternative approaches have been proposed.  
+% For much of that work,
+% a implicit assumption is   that $f$ is cheap.
+% Genetic Algorithms \cite{ga} call $f$ thousands of times.
+% SMAC \cite{smac} builds an ensemble of dozens of regression
+% trees on hundreds of labelled rows. TPE \cite{tpe} fits a
+% Gaussian mixture over the history of evaluations. But in Software Engineering, running $f$ can be very expensive; e.g. \textsc{x264}'s 11 parameters need $1,536$ hours to explore~\cite{DBLP:conf/wosp/ValovPGFC17}, limiting budgets to dozens of evaluations~\cite{DBLP:journals/tse/Nair0MSA20,DBLP:conf/icse/0003XC021}.
+
+% When we cannot execute $f$, sometimes
+% we look for alternative sources that can label
+% the $y$ values. But even them, there are limits to how much labelled data is available.  Asking \textbf{ humans to label} data can be   slow and error-prone (especially if the labeling process is 
+%     rushed \cite{rushed22}), often requiring hours per case for
+%     tasks such as security auditing or technical-debt
+%     classification \cite{hours39,hours43,hours62}.
+% \textbf{Historical logs} appear to offer free labels,
+%     but are frequently unreliable: up to 90\,\% of technical-debt
+%     ``false positives'' in one major study were simply wrong
+%     \cite{td71}; analogous noise pervades security \cite{sec65},
+%     static analysis \cite{static38}, and defect \cite{defect59}
+%     datasets.
+%  \textbf{Automated oracles} can label data, but these face their own limits.
+%     Regex heuristics are crude \cite{regex37}; LLMs are
+%     assistive but not authoritative. Even \emph{natural}
+%     oracles---compiling with a given \texttt{Makefile} target,
+%     running a full integration suite, timing a video-encoder
+%     configuration (x264 \cite{x264ref})---can each take minutes
+%     to hours, making thousands of calls physically impossible.
+% Menzies and Ganguly \cite{menziesganguly2026} catalog dozens
+% of SE optimization tasks---configuration tuning, test-suite
+% minimization, cloud-resource allocation, ML hyperparameter
+% search, defect triage---where obtaining even \emph{1\,000}
+% reliable labels is highly problematic.
+
+% Accordingly, this paper explores  methods that can explore design alternatives, using 
+%   very few labels, say 100 examples or less.
+% We present \textbf{EZR.py} codebase: a data-lite, model-lite optimizer
+% for multi-objective SE problems. EZR's design rests on three
+% ideas: (a)~{\bf active learning with a 2-class Bayes sorter}, (b)~{\bf tiny trees} and 
+% (c)~{\bf very limited budgets}
+ 
+% {\bf Active learning} algorithms use the model
+% built so far to guess what should be labeled next. For example, SMAC builds a forest of, say, ten decision trees that can report what examples have the most variability in their possible labelling.
+% But SMAC can be slow when new labels require  the forest to be regrown. EZR, on the other hand,  maintains a
+%     minimal two-class Naive Bayes classifier that separates
+%     the {\em best} $\sqrt{N}$ labelled rows  from
+%     the {\em rest} of the  $N-\sqrt{N}$ examples. 
+%     In EZR, new examples are labelled if they are more likely
+%     to belong to {\em best} than {\em rest}.  When
+%     {\em best} grows beyond $\sqrt{N}$, the worst {\em best} is moved to {\em rest}. Using the algorithms shown below, such model updates cost $O(1)$ per label,
+%     orders of magnitude faster than refitting SMAC's 
+%     forest.
+ 
+% \textbf{Tiny regression trees as explanations.}
+%     After a \underline{B}udget of $B$ labels, EZR
+%     summarizes the labelled data in a human-readable
+%     regression tree (fewer than two dozen lines). This tree
+%     predicts scores for new configurations, identifies
+%     which variable thresholds to cross to move from a poor
+%     outcome to a good one, and---crucially---shows which
+%     variables are entirely irrelevant. In practice the trees
+%     use 10 or fewer variables even on 1\,000-variable
+%     datasets \cite{rayegan2026minimal}.
+ 
+%   \textbf{A checking budget.}
+%     The tree's predictions sort a hold-out pool. EZR
+%     evaluates only the top $C$ rows via the true oracle and
+%     returns the best. Total cost: $B + C$ oracle calls.
+ 
+
+%  paradoxically in argeuemnt with Sutton, in some areas. When
+%  10/1000 variables matter than means that in $998/1000> 99\%$ of the time we wre modeling and collecting data on rrevalances. The trick, we argue, is not to send too much time on enumrateiting details about the background space, but isntead to take what is known aboutthe world, then quickly prine it mach to jsut what matters. In keeping with Sutton, we argue that that pruning will cut away so much to reveal just a few insighting surpises on what matters most.  Hence menzies 2nd lae:
+
+%  the ebst thing to do with data is throw most of it away. 
+
+ 
+% \noindent
+% We ground this approach in a mathematical analysis
+% (\S\ref{sec:neomath}) showing that, given the noise floor of
+% real SE measurement (Cohen's $d < 0.35\sigma$ is negligible
+% \cite{cohen1988}), fewer than 100 random evaluations are
+% provably sufficient to locate a near-optimal solution with
+% 99\,\% confidence---and that heuristic ordering reduces this
+% further to $\log_2(n)$.
+ 
+% \subsection*{Contributions}
+ 
+% \begin{itemize}
+ 
+%   \item A mathematical characterization of \emph{Near-Enough
+%     Optimization} (NEO): the regime in which data-lite methods
+%     are both sufficient and statistically justified
+%     (\S\ref{sec:neomath}).
+ 
+%   \item The EZR algorithm: a four-phase active-learning loop
+%     with $O(1)$ model updates, a tiny interpretable output
+%     tree, and a total oracle cost of $B + C$
+%     (\S\ref{sec:algo}).
+ 
+%   \item Empirical evidence across hundreds of SE datasets that
+%     EZR with $B = 100$, $C = 3$ reaches 90\,\% of the
+%     performance of exhaustive search, and matches or exceeds
+%     SMAC and TPE at a fraction of their cost
+%     \cite{menziesganguly2026,rayegan2026minimal}.
+ 
+%   \item A discussion of where EZR \emph{does not} apply:
+%     tasks requiring universal state-space coverage (e.g.,
+%     Reward-Free Reinforcement Learning with $>10^{15}$
+%     samples) lie outside the NEO regime (\S\ref{sec:discussion}).
+ 
+% \end{itemize}
+ 

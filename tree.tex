@@ -1,0 +1,154 @@
+# Tree Growth and Use
+
+EZR's regression trees are built {\em after} active learning is done.
+The {\em best}/{\em rest} machinery in \textsf{acquire} (line~\ref{s1})
+collected a small set of labeled rows; \textsf{treeGrow} now distills
+those rows into a readable rule set that predicts \textsf{disty}.
+
+A \cls{Tree} node holds the rows that fell to it (in a child \cls{Data}
+called \textsf{d}), a summary \cls{Num} of their \textsf{disty} values
+(\textsf{ynum}), and---if the node has split---the chosen column,
+cut value, and two children:
+\begin{minted}{python}
+class Tree: 
+  def __init__(i, data, rows):
+    i.d = clone(data, rows)
+    i.ynum=adds((disty(data,row) for row in rows),Num())
+    i.col,i.cut = None,0
+    i.left=i.right=None
+\end{minted}
+\textsf{treeCuts} proposes split points for one column. For symbols,
+all distinct values are candidates; for numbers, just the median (a
+deliberate simplification that keeps trees small and fast):
+\begin{minted}{python}
+def treeCuts(col, rows): 
+  vs=[row[col.at] for row in rows if row[col.at]!="?"]
+  if not vs: return []
+  return (set(vs) if Sym == type(col)
+          else [sorted(vs)[len(vs)//2]])
+\end{minted}
+
+\textsf{treeSplit} evaluates one (column, cut) pair by partitioning
+the rows and scoring the result by weighted \textsf{spread} of
+\textsf{disty}---the same \textsf{spread} function defined earlier
+(standard deviation for \cls{Num}s, entropy for \cls{Sym}s). Lower
+scores mean tighter, more predictable leaves:
+\begin{minted}{python}
+def treeSplit(data, col, cut, rows): 
+  l_rows,r_rows,l_num,r_num=[],[],Num(),Num()
+  for row in rows:
+    v = row[col.at]
+    go=v=="?" or (v==cut if Sym==type(col) else v<=cut)
+    (l_rows if go else r_rows).append(row)
+    add(l_num if go else r_num,disty(data,row))
+  s=l_num.n*spread(l_num)+r_num.n*spread(r_num)
+  return s,col,cut,l_rows,r_rows
+\end{minted}
+
+\textsf{treeGrow} ties it together: enumerate every (column, cut)
+pair from the $x$ columns, keep splits where both sides have at
+least \textsf{the.learn.leaf} rows, take the lowest-spread split,
+and recurse. The recursion stops when too few rows remain to split
+further:
+\begin{minted}{python}
+def treeGrow(data, rows): 
+  tree = Tree(data, rows)
+  if len(rows) >= 2 * the.learn.leaf:
+    splits = (treeSplit(data, col, cut, rows)
+              for col in tree.d.cols.xs
+              for cut in treeCuts(col, rows))
+    if valid := [s for s in splits
+        if min(len(s[3]),len(s[4]))
+           >= the.learn.leaf]:
+      _, tree.col, tree.cut, left, right = min(
+        valid, key=lambda x: x[0])
+      tree.left  = treeGrow(data, left)
+      tree.right = treeGrow(data, right)
+  return tree
+\end{minted}
+
+That is the entire builder. Note what is {\em not} here: no entropy
+gain, no Gini, no pruning pass, no surrogate splits, no bagging.
+\textsf{spread} already handles both numeric and symbolic targets
+(by polymorphism on \textsf{col} type), so one routine covers what
+CART and C4.5 split into many. The deliberate restriction to the
+median cut for numeric columns means \textsf{treeGrow} considers
+$O(|\textit{xs}|)$ splits per node rather than $O(|\textit{xs}| \cdot
+|\textit{rows}|)$; on the small label sets EZR works with, this is
+both fast and surprisingly effective.
+
+\smallskip
+
+Once the tree exists, three small functions use it.
+\textsf{treeLeaf} routes a row to its leaf by walking the splits
+(missing values fall right, by convention):
+\begin{minted}{python}
+def treeLeaf(tree, row): 
+  if not tree.left: return tree
+  v = row[tree.col.at]
+  go = v!="?" and (v<=tree.cut
+    if Num==type(tree.col) else v==tree.cut)
+  return treeLeaf(tree.left if go else tree.right,row)
+\end{minted}
+
+\textsf{treeNodes} is a depth-first generator that yields every node
+along with its level, the column/op/cut that led to it, and---when a
+node has children---visits them sorted by \textsf{mid(ynum)} so that
+the most promising branch (lowest \textsf{disty}) is shown first. This
+sort is what makes printed trees like Figure~\ref{htree} read
+top-to-bottom from best to worst:
+\begin{minted}{python}
+def treeNodes(tree,lvl=0,col=None,op="",cut=None): 
+  yield tree, lvl, col, op, cut
+  if tree.col:
+    ops=("<=",">") if Num==type(
+      tree.col) else ("==","!=")
+    kids=sorted([(tree.left,ops[0]),
+      (tree.right,ops[1])],
+      key=lambda z:mid(z[0].ynum))
+    for k, txt in kids:
+      if k: yield from treeNodes(k,lvl+1,
+        tree.col,txt,tree.cut)
+\end{minted}
+
+\textsf{treeShow} consumes that generator to print the tree. Each
+line carries the indented split, the leaf's mean \textsf{disty}, the
+row count, and the per-goal \textsf{mid} values---which is exactly
+the format of Figure~\ref{htree}, where the gap between rows
+\rc{1} and \rc{2} revealed the 43\% productivity win:
+\begin{minted}{python}
+def treeShow(tree): 
+  for t1,lvl,col,op,cut in treeNodes(tree):
+    p=f"{col.txt} {op} {o(cut)}" if col else ""
+    if lvl > 0: p = "|   "*(lvl-1) + p
+    g={col.txt:mid(col) for col in t1.d.cols.ys}
+    print(f"{p:<{the.show.show}}"
+          f",{o(mid(t1.ynum)):>4}"
+          f" ,({t1.ynum.n:3}), {o(g)}")
+\end{minted}
+% Finally, \textsf{treePlan} turns the tree into {\em counterfactual
+% advice}. Given the leaf where a row currently sits (\textsf{here}),
+% it walks every other leaf and yields those with meaningfully lower
+% \textsf{disty}---``meaningfully'' meaning beyond a small-effect
+% threshold (Sawilowsky's $0.35\sigma$, the same threshold used in
+% \textsf{wins} at line~\ref{wins}). For each such leaf, it reports
+% which $x$ columns would need to change and to what:
+% \begin{minted}{python}
+% def treePlan(tree, here): 
+%   eps = the.stats.eps * spread(tree.ynum)
+%   for there,_,_,_,_ in treeNodes(tree):
+%     if there.col is None and \
+%       (dy:=mid(here.ynum)-mid(there.ynum))>eps:
+%       diff=[f"{col.txt}={o(mid(col))}"
+%         for col,h in zip(there.d.cols.xs,here.d.cols.xs)
+%         if mid(col) != mid(h)]
+%       if diff:
+%         yield dy, mid(there.ynum), diff
+% \end{minted}
+
+% This is what makes EZR's trees more than predictors. They are
+% {\em advisors}: they not only score a configuration but tell the
+% engineer what to change to reach a better one---and silently
+% report which $x$ variables never appeared in any split, which is
+% how Figure~\ref{used} could conclude that fewer than ten variables
+% matter even on 1000-variable data.

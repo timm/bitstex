@@ -1,0 +1,45 @@
+
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\begin{table*}[!t]
+\fontsize{5pt}{6pt}\selectfont
+\renewcommand{\baselinestretch}{0.7}
+\caption{ MOOT's  127 SE optimization tasks. “x/y’’ denotes inputs/outputs (independent/dependent attributes).}
+\label{combinedtable}
+\begingroup
+\scriptsize
+\renewcommand{\arraystretch}{0.55}  % <<< SHRINK ROW HEIGHT
+
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}C{1.4cm}@{~}p{2.5cm}p{3.9cm}p{4.0cm}p{1.1cm}p{1.4cm}c@{}}
+
+\# Datasets & Dataset Type                     & File Names                                                               & Primary Objective                                                     & x/y          & \# Rows & Cited By       \\ \midrule
+\rowcolor{blue!10} 25          & \begin{tabular}[c]{@{}l@{}}Specific Software\\Configurations\end{tabular} & SS-A to SS-X, billing10k                                                 & Optimize software system settings                                     & 3-88/2-3   & 197–86,059 & \cite{Amiraliminimaldata, menzies2025the, lustossa2024isneak, senthilkumar2024can, lusstosa2025less, nairMSR18, peng2023veer,nair2017using}   \\ 
+\rowcolor{blue!10} 12          & \begin{tabular}[c]{@{}l@{}}PromiseTune Software\\Configurations\end{tabular} & \begin{tabular}[c]{@{}l@{}} 7
+z, BDBC, HSQLDB, LLVM, \\ PostgreSQL, dconvert, deeparch,\\  exastencils, javagc,   redis, storm, x264
+\end{tabular}                                                 & Software performance optimization                                     &  9-35/1  &  864-166,975 &  \cite{chen2026promisetune, chen2025accuracy, DBLP:conf/icse/XiangChen26, DBLP:journals/pacmse/Gong024, gong2024dividable} \\  
+1           & Cloud                            & HSMGP num                                                                & Hazardous Software, Management Program data                           & 14/1         & 3,457 &  \cite{Amiraliminimaldata, menzies2025the, chen2025accuracy, senthilkumar2024can}     \\
+1           & Cloud                            & Apache AllMeasurements                                                   & Apache server performance optimization                                & 9/1          & 192  &    \cite{Amiraliminimaldata, menzies2025the, chen2025accuracy, senthilkumar2024can}     \\
+1           & Cloud                            & SQL AllMeasurements                                                      & SQL database tuning                                                   & 39/1         & 4,654 &    \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can}    \\
+1           & Cloud                            & X264 AllMeasurements                                                     & Video encoding optimization                                           & 16/1         & 1,153  &   \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can}   \\
+7           & Cloud                            & (rs—sol—wc)*                                                             & misc configuration tasks                                              & 3-6/1      & 196–3,840 &  \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can, lusstosa2025less, nairMSR18}  \\ 
+\rowcolor{blue!10} 35          & Software Project Health          & Health-ClosedIssues, -PRs, -Commits                                      & Predict project health and developer activity                         & 5/2-3      & 10,001    &   \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can, lusstosa2025less,lustosa2024learning} \\ 
+3           & Scrum                            & Scrum1k, Scrum10k, Scrum100k                                             & Configurations of the scrum feature model                             & 124/3      & 1,001–100,001 & \cite{Amiraliminimaldata, menzies2025the, lusstosa2025less, lustossa2024isneak} \\  
+\rowcolor{blue!10} 8           & Feature Models                   & FFM-*, FM-*                                                              & Optimize number of variables, constraints and Clause/Constraint ratio & 128-1,044/3 & 10,001  &  \cite{Amiraliminimaldata, menzies2025the, lusstosa2025less, lustossa2024isneak}    \\  
+1 &	Software Process Model &	nasa93dem &	Optimize effort, defects, time and LOC	& 24/3 &	93  & \cite{menzies2025the, senthilkumar2024can, lusstosa2025less, lustosa2024learning}\\
+1           & Software Process Model           & COC1000                                                                  & Optimize risk, effort, analyst experience, etc                        & 20/5         & 1,001    &  \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can, lustosa2024learning,chen2018beyond}   \\
+4           & Software Process Model           & POM3 (A–D)                                                               & Balancing idle rates, completion rates and cost                       & 9/3          & 501–20,001   & \cite{menzies2025the, senthilkumar2024can, lusstosa2025less, lustosa2024learning, lustossa2024isneak}\\
+4           & Software Process Model    & XOMO (Flight, Ground, OSP)                                               & Optimizing risk, effort, defects, and time                            & 27/4         & 10,001    &  \cite{menzies2025the, senthilkumar2024can, lusstosa2025less, lustosa2024learning, lustossa2024isneak,chen2018beyond}  \\  
+\rowcolor{blue!10} 3           & Miscellaneous                             & auto93, Car\_price, Wine\_quality                                        & Miscellaneous                                                         & 5-38/2-5   & 205–1,600  &  \cite{Amiraliminimaldata, menzies2025the, senthilkumar2024can, lusstosa2025less, lustosa2024learning} \\ 
+4           & Behavioral                       & all\_players, student\_dropout,\newline HR-employeeAttrition, player\_statistics & Analyze and predict behavioral patterns                              & 26-55/1-3  & 82–17,738   &    \cite{nyagami_fc25_kaggle_2025, abdullah0a_student_dropout_analysis_prediction_2025, die9origephit_fifa_wc_2022_complete_2025, pavansubhasht_ibm_hr_analytics_attrition_2025}\\  
+\rowcolor{blue!10} 4           & Financial                        & BankChurners, home\_data, Loan, \newline Telco-Churn                              & Financial analysis and prediction                                     & 19-77/2-5  & 1,460–20,000 &    \cite{blastchar_telco_customer_churn_2025, lorenzozoppelletto_financial_risk_for_loan_approval_2025, dansbecker_home_data_for_ml_course_2025, sakshigoyal7_credit_card_customers_2020} \\  
+3           & Human Health Data                & COVID19, Life\_Expectancy, \newline hospital\_Readmissions                        & Health-related analysis and prediction                                & 20-64/1-3  & 2,938–25,000 &     \cite{dansbecker_hospital_readmissions_2025, kumarajarshi_life_expectancy_who_2025, hendratno_2022}  \\  
+\rowcolor{blue!10} 2           & Reinforcement Learning           & A2C\_Acrobot, A2C\_CartPole                                              & Reinforcement learning tasks                                          & 9-11/3-4   & 224–318  &     \\ 
+5           & Sales                            & accessories, dress-up, Marketing\_Analytics, socks, wallpaper            & Sales analysis and prediction                                         & 14-31/1-8  & 247–2,206 &     \cite{jessicali9530_animal_crossing_new_horizons_nookplaza_dataset_2021, jackdaoud_marketing_data_2022, syedfaizanalii_car_price_dataset_cleaned_2025}  \\  
+\rowcolor{blue!10} 2	& Software testing	& test120, test600	& Optimize the class	& 9/1	& 5,161 &\\ \midrule
+% 8           & Text Mining                      & Hall, Kitchenham, Radjenovic, Wahono                                     & Text mining for primary study selection                               & 5-50 / 1     & 1,710–8,912   \\ \midrule
+
+127         & \textbf{Total}                            &                                                                          &                                                                       &              &        &      
+\end{tabular}
+\end{adjustbox}
+\endgroup
+\end{table*}

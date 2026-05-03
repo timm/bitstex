@@ -1,0 +1,135 @@
+
+\section{ Motivation and Background}
+We   argue here that  for ecosystems where verification is a primary bottleneck and data is scarce (like software engineering), the minimalist path of EZR.py is not a compromise, but a statistically and economically justified choice.
+
+
+\subsection{Why not ``data-heavy''?} \label{dataheavy}
+``Data-heavy'' models are often build in AI; e.g.
+the large language models
+built from terabytes of data.   But
+EZR.py's data-lite approach reaches state-of-the-art results with
+fewer than 100 labels (see below). This is
+ useful since,  in SE: 
+ \begin{itemize}
+ \item
+ {\bf  Labeling by experts} is sluggish and fatigue-prone \cite{easterby1980design}, taking hours per case for security or technical debt tasks.  
+ \item Taking
+ labels from {\bf historical logs} can be   unreliable; e..g   90\% of technical debt entries are false positives \cite{yu2020identifying}.  
+ \item
+{\bf Automated labeling oracles} can be wrong or slow to scale due to        approximate and   incorrect heuristics \cite{kamei2012large,DBLP:conf/wosp/ValovPGFC17}. 
+ \end{itemize}
+Aside: asking an LLM to label data does not resolve the labelling problem. Recent studies show human-model agreement is not a proxy for ground truth \cite{ahmed2024can}, meaning LLMs remain conditional collaborators rather than replacements.
+
+
+\begin{table}[!t]
+\caption{Examples from  SE. For $y=f(x)$,  acquiring $x$ inputs can be  
+easier than finding the associated $y$ labels.}
+\label{slow}
+\begin{center}
+{\footnotesize
+\begin{tabular}{p{.44\columnwidth}|p{.44\columnwidth}}
+\rowcolor{gray!20} Cheap feature Acquisition ($x$)  & Expensive label Determination ($y$)\\\hline
+At scale, GitHub metadata (code size, dependency counts, etc.). & 
+Estimate market valuation or total development man-hours.\\
+\rowcolor{gray!10} Count system classes. & 
+Secure permissions to audit actual maintenance effort.\\
+List design option permutations. & 
+Validate configurations via human stakeholder consensus.\\
+\rowcolor{gray!10} Enumerate software parameters. & 
+Execute full test suites for every unique build.\\
+Identify hyper-parameters for data miners. & 
+Perform exhaustive grid searches for local optima.\\
+\rowcolor{gray!10} Generate fuzzing inputs. & 
+Execute tests and audit outputs.\\
+\end{tabular}}
+\end{center}
+\end{table}
+
+\subsection{Why not ``code-heavy''?}
+In this era of ``vibe coding,'' AI coding tools tempt us to build ``code-heavy'' applications hastily assembled from many packages . EZR.py instead uses extensive refactoring to minimize dependencies and total lines of code.
+
+Such code minimization is good science. 
+In his textbook on {\em Empirical AI}  \cite{cohen1995}, Cohen recommends baselining sophisticated methods against simpler straw-man implementations via {\em ablation studies}\footnote{Try removing or simplifying   parts of your system.}. EZR.py is the product of many  such ablations. We discarded multi-generational genetic algorithms by over-sampling in generation one \cite{nair2016accidental,chen18}. We found simple greedy search matches complex adaptive active learning sampling \cite{ganguly2025lowgodatalightse}. We replaced heavyweight packages like \texttto{argparse,pandas} with native Python (e.g.  our CSV and CLI readers are only 5 and 12 lines long, respectively).
+
+Code minimization is good engineering. Vibe-coding works only if developers never look at the details—but that's exactly how you miss structural similarities across distant parts of a codebase. EZR.py (below) shows AI systems are full of such similarities. Spotting them lets us refactor and simplify, which cuts the downstream cost of review, maintenance, and porting. Developers who only vibe never get close enough to notice.
+
+Another reason to minimize the code is to decrease  dependencies 
+on third-party packages.   Modern software is   assembled from pre-made parts where 85--97\% of code is reused from external sources \cite{martinez2021}. While libraries like \texttt{pandas} are battle-tested, they introduce very large  ``attack surface'' for hackers
+where a single poisoned update 
+can silently compromise tens of thousands of other
+software packages   without the 
+primary developer's knowledge\cite{martinez2021}.
+For this reason, EZR avoids packages like \texttt{pandas} in favor
+of much smaller homer grown functions like \textsf{csv} (see line~\ref{csv} of the code).
+
+\begin{table}[!b]
+\caption{AI-Related Challenges in Software Engineering. }\label{problems}
+\centering
+\begin{tabular}{lp{6cm}}
+\rowcolor{gray!20}\textbf{Issue} & \textbf{Evidence} \\\hline  
+Cognitive debt & Generative AI acceleration can lead to teams
+losing shared understanding of system design \cite{CognitiveDebt} \\
+\rowcolor{gray!10}Hallucinations & 52\% of ChatGPT answers are incorrect (in part)\cite{S12} \\
+Human error & Humans overlook AI's errors 39\% of the
+time \cite{S12} \\
+\rowcolor{gray!10}Code quality & 70\% of generated code is faulty: 29\% correct,
+51\% partial, 20\% incorrect \cite{S15} \\
+Expert caution & Developers exhibit skepticism, often accepting 
+only a fraction of AI-suggested code \cite{S10} \\
+\rowcolor{gray!10}Training bias & LLMs frequently regenerate simple, "stupid" bugs
+present in their training data \cite{S13} \\
+``AI Slop'' &   Individual productivity 
+leads to technical debt\cite{S14} 
+where costs are  externalize costs as  reviewers, maintainers, and the broader community
+struggle to handle the ``AI slop''
+generated from vibe coding~\cite{baltes2026anendlessstreamai}.
+\end{tabular}
+
+\end{table}\input{data}
+
+
+``Backpacking'' is the process of cutting back the code to only what is most useful\cite{hipp2021}.
+Minimizing dependencies, with backpacking  helps software remain functional, secure, and independent. For example,
+backpacking meant that SQLite author Richard Hipp avoided external vendors by building his own editor, servers, and storage engine. By shunning Berkeley DB
+(which Oracle later acquired and then demanded license fees)
+he ensured SQLite remained free. Consequently, SQLite now ships on all Android/iOS devices, major browsers (Chrome, Firefox, Safari), most Linux distributions, and even Mars rovers.  As Hipp puts it:
+{\em ``If you want to be free, that means doing things yourself''}\cite{hipp2021}.
+
+
+\subsection{Why not ``model-heavy''?}
+EZR.py runs in milliseconds to generate. An alternate ``model-heavy'' approach, advocated in Sutton’s famous {\em Bitter Lesson} essay\footnote{\url{http://www.incompleteideas.net/IncIdeas/BitterLesson.html}}, is to always
+ leverage computation at scale since, as Sutton  says  ``general methods that leverage computation are
+ultimately the most effective''.
+
+For several reasons, we take issue with  Sutton's   approach.
+{\bf First}, mega-scale compute may be
+unavailable or inappropriate. Many edge devices operate under power constraints where algorithmic efficiency is a necessity, not a distraction. Also, when there is very little domain data (as seen in SE), mega-computation is superfluous.
+
+
+{\bf Second}, It may be unwise to assume  compute budgets can grow without limit. Analysts warn of an \$800 billion gap between AI revenue and data-center costs through 2030. Training data is running out \cite{villalobosposition}, and training on the resulting synthetic substitutes risks "model collapse" \cite{shumailov2024}. Clearly, the era of  "more is better"   is hitting a wall.
+
+ 
+
+
+{\bf Third}, Sutton’s arguments for mega-computation used
+examples with clear objective functions like vision or gaming. In SE,
+initial success  with LLMs often has subsequent hidden costs like security flaws
+\cite{S15} and cognitive debt \cite{CognitiveDebt} (see
+Table~\ref{problems}). While next-generation models might resolve these
+issues, scaling AI accelerates the production of ``AI slop''
+\cite{baltes2026anendlessstreamai}, shifting effort to a grueling
+verification bottleneck \cite{S10}. This creates a paradox: as AI
+output grows, so does the human burden of checking it.
+
+
+{\bf Fourth}, safety-critical domains require auditable, repairable models. 
+Krikorian~\cite{krikorian2026tesla} warns  that   humans
+tend  to switch off their critical
+faculties when a system, like AI, usually performs satisfactorily. This means,  when AI inevitably falters, humans either do not notice or cannot react in a timely manner.
+As Rudin \cite{rudin2019stop} argues, we should use interpretable models (like those generated by EZR.py) instead of struggling (or overlooking) with the need  to explain black boxes.
+
+
+{\bf Fifth}, the complexities and nuances explored by a data-heavy
+ In such domains, below an epsilon (e.g. Cohen's \mbox{$d < 0.35\sigma$}), further “improvements” are actually spurious. 
+
+

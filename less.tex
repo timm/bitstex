@@ -1,0 +1,175 @@
+\section{Lessons Learned: Famous Algorithms, Tiny Code}
+Our main point is that if we take the time to read and refactor
+AI code, we find ways to dramatically simplify it. Under the hood,
+the \cls{Data}, \cls{Num}, and \cls{Sym} classes turned out to be
+so reusable that by the time we had built our active learner, we
+already had all the primitives needed for many other inference
+tasks---classifiers, clusterers, and more. AI courses typically
+devote a lecture each to Na\"ive Bayes, $k$-means, and $k$-means++,
+yet once the \cls{Num}/\cls{Sym}/\cls{Data} machinery was in place,
+all three collapsed to 30-odd lines between them.
+
+\subsection*{Na\"ive Bayes (in under  30 lines) 
+The core of Na\"ive Bayes is one question: how much does a column
+{\em like} a value? \textsf{like} answers that. For a \cls{Sym}, it
+is a smoothed frequency count from \textsf{has} (the same dictionary
+\textsf{add} updates at line~\ref{symaddsub}). For a \cls{Num}, it
+is a Gaussian PDF using the running \textsf{mu} and \textsf{sd} that
+\textsf{add} maintains via Welford (line~\ref{welford}):
+\begin{minted}{python}
+the.k=1   # config
+def like(col, v, prior):
+  """How much a column likes a value."""
+  if type(col) == Sym:
+    return (col.has.get(v,0) +
+      the.bayes.k*prior)/(col.n+the.bayes.k)
+  sd=col.sd+1e-32; z=2*sd*sd
+  return exp(-(v-col.mu)**2/z)/sqrt(pi*z)
+\end{minted}
+Note what is {\em not} here: no fitting pass, no separate training
+phase. The \cls{Num}/\cls{Sym} columns inside a \cls{Data} are
+{\em already} a fitted Bayes model, because \textsf{add} kept them
+fitted incrementally as rows arrived. \textsf{like} just reads them.
+
+\textsf{likes} aggregates one row's worth of evidence. It multiplies
+per-column likelihoods (in log space, for numerical stability) with
+an $m$-estimate prior on class size:
+\begin{minted}{python}
+the.m = 2 # config
+
+def likes(data, row, n_rows, n_klasses):
+  """Log likelihood of row given data."""
+  prior = (len(data.rows)+the.bayes.m
+           ) / (n_rows+the.bayes.m*n_klasses)
+  ls = [like(col,v,prior) for col in data.cols.xs
+        if (v:=row[col.at])!="?"]
+  return log(prior)+sum(log(v) for v in ls if v>0)
+\end{minted}
+That is a complete Na\"ive Bayes classifier with Laplace/$m$
+smoothing, Gaussian numeric attributes, and missing-value
+handling---in two functions. The textbook treatment is a chapter.
+
+To put \textsf{like}/\textsf{likes} to work, \textsf{classify}
+implements the standard incremental {\em test-then-train} protocol.
+Each row is first classified using the model so far (the row is
+assigned to the \cls{Data} with the highest \textsf{likes} score),
+then added to its true class's \cls{Data}. Because \textsf{add} is
+incremental, this is genuinely streaming---no retraining ever
+happens, no batch passes are made:
+\begin{minted}{python}
+def classify(src, wait=10):
+  """Test then train: classify before update."""
+  src = iter(src)
+  h,cf,all = {}, None, Data([next(src)])
+  for n, row in enumerate(src):
+    want = row[all.cols.klass.at]
+    if n >= wait:
+      cf=dinc(want,max(h,key=lambda kl:likes(
+        h[kl],row,len(all.rows),len(h))),cf)
+    if want not in h: h[want] = clone(all)
+    add(all, add(h[want], row))
+  return cf
+\end{minted}
+The \textsf{wait=10} parameter holds off scoring until the model
+has seen enough rows to be worth consulting. \textsf{dinc}
+accumulates a confusion matrix; \textsf{h} is a dictionary mapping
+each class label to its own \cls{Data}; \textsf{all} is the union.
+On standard MOOT classification benchmarks (soybean, diabetes,
+etc.), \textsf{classify} is competitive with sklearn's batch Na\"ive
+Bayes---using two functions of inference logic and one of
+bookkeeping.
+
+\subsection*{$k$-means in thirteen lines}
+
+\textsf{kmeans} cycles assignment and update. Assignment uses the
+same \textsf{distx} that \textsf{acquireWithCentroid} used. Update
+uses the same \textsf{mids} that caches centroids for
+\textsf{acquire}. Cluster membership is just a list of \cls{Data}s,
+each populated by \textsf{add}:
+\begin{minted}{python}
+def kmeans(d, rs=None, k=10, n=10, cents=None):
+  """Cluster rows into k groups."""
+  rs, out = rs or d.rows, []
+  cents = cents or choices(rs, k=k)
+  for _ in range(n):
+    out = [clone(d) for _ in cents]
+    for r in rs:
+      add(out[min(range(len(cents)),
+        key=lambda j:distx(d,cents[j],r))],r)
+    cents = [mids(kid) for kid in out if kid.rows]
+  return out
+\end{minted}
+Every primitive in this loop---\textsf{clone}, \textsf{add},
+\textsf{distx}, \textsf{mids}---was built for active learning.
+$k$-means rides on it, free.
+
+\subsection*{$k$-means++ in eleven lines}
+
+The standard $k$-means++ initialization rule says: pick one centroid
+at random, then pick each subsequent centroid with probability
+proportional to its squared distance from the nearest existing
+centroid. The phrase ``with probability proportional to'' is the
+work; everything else is bookkeeping.
+
+EZR already had that work done. \textsf{pick} samples from a
+weighted distribution---a \cls{Sym}'s \textsf{has} dictionary, a
+\cls{Num}'s Gaussian, or a plain dict of weights---using the same
+polymorphism-by-type that \textsf{mid} and \textsf{spread} use:
+\begin{minted}{python}
+def pick(it, v=None):
+  """Sample from distribution."""
+  if Sym == type(it): return pick(it.has)
+  if Num == type(it):
+    tmp=v if v is not None and v!="?" else it.mu
+    lo,hi=it.mu-3*it.sd,it.mu+3*it.sd
+    new=tmp+it.sd*2*(rand()+rand()+rand()-1.5)
+    return lo + (new-lo) % (hi-lo + 1e-32)
+  if dict == type(it):
+    n = sum(it.values()) * rand()
+    for k, v in it.items():
+      n -= v
+      if n <= 0: return k
+\end{minted}
+The dict branch is the classic roulette-wheel sampler: accumulate
+random mass, return the key where it runs out. \textsf{pick} was
+written to support synthetic-data generation in mutation operators,
+but the dict branch is exactly what $k$-means++ needs.
+
+So $k$-means++ is just: build the weight dict, sample, repeat:
+\begin{minted}{python}
+def kpp(d, rs=None, k=10, few=256):
+  """k-means++ centroid selection."""
+  rs = rs or d.rows
+  out = [choice(rs)]
+  while len(out) < k:
+    t = sample(rs, min(few, len(rs)))
+    ws = {i: min(distx(d,t[i],c)**2
+                 for c in out)
+          for i in range(len(t))}
+    out.append(t[pick(ws)])
+  return out
+\end{minted}
+The \textsf{few=256} subsample is a pragmatic shortcut: on large
+data sets, scanning all rows for each new centroid is wasteful when
+256 random ones give an adequate distribution. The same instinct
+that made \textsf{the.few}=128 enough for active learning makes
+\textsf{few}=256 enough here. {\em Reading the code} surfaces this
+kind of cross-algorithm symmetry; vibe-coding misses it.
+
+\subsection*{The lesson}
+
+A $\sim$30-line section of EZR contains Na\"ive Bayes, $k$-means,
+and $k$-means++---three algorithms that fill three textbook chapters
+and three weeks of an AI course. They are this short because they
+are not really three algorithms. They are three uses of the same
+substrate: incrementally maintained \cls{Num}/\cls{Sym}
+distributions, summarized via \textsf{mid}/\textsf{spread}, queried
+via \textsf{like}/\textsf{distx}, sampled via \textsf{pick}.
+
+This is the kind of structural similarity Dahl, Huang, and Musk
+say humans no longer need to see. Without seeing it, you write the
+three algorithms three times, in three styles, with three sets of
+bugs. With it, you write one substrate and reuse it. The
+30-line outcome is not a clever compression. It is what is left
+when you read the code carefully enough to notice that the
+chapters were the same chapter all along.
