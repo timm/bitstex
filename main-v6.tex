@@ -192,20 +192,27 @@ emits.
  
 
 
-We disagree. Reading code is useful. Refactoring code is more
-useful. Important low-level information  ``on the ground'' (as it were)  gets missed when developers always use LLMs to  ``fly over'' the details.
+We disagree. Reading code is very useful. Important low-level information  ``on the ground'' (as it were)  gets missed when developers always use LLMs to  ``fly over'' the details.
 
 As evidence of that claim, this paper reports on \IT{}, a Python toolkit
 of about 500 lines for AI in software engineering. \IT{} grew
 across several years of repeatedly reading and rewriting and refactoring (we read   
   the code, looking for  similarities across distant parts of the
-system, and deleting what those similarities made redundant). The
-result was a small, very fast, dependency-light tool. On 120-plus
+system, and deleting what those similarities made redundant). 
+The result was a small, very fast, dependency-light tool. 
+
+  EZR has been tested 
+on 120+
 multi-objective tasks  shown in
 Figure~\ref{mootdata} from the MOOT
-repository~\cite{menzies2025moot}, \IT{} builds effective models
+repository~\cite{menzies2025moot} (these tasks are from recent papers in the software engineering literature
+published in
+ICSE, FSE, TSE,
+IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkumar2024can,chen2025accuracy,lustosa2024learning,lustossa2024isneak,chen2018beyond,nyagami_fc25_kaggle_2025,blastchar_telco_customer_churn_2025,kumarajarshi_life_expectancy_who_2025,jackdaoud_marketing_data_2022}).
+As shown later in ths paper, for these tasks,
+\IT{} builds effective models
 from fewer than 100 labels. It produces effective regression  trees that use
-fewer than ten variables, even when thousands are available. It
+fewer than ten variables, even when thousands were available. It
 runs in milliseconds. Model updates are 10{,}000 times faster
 than state-of the art optimizers (SMAC~\cite{lindauer2022smac3}).
 
@@ -216,7 +223,7 @@ than state-of the art optimizers (SMAC~\cite{lindauer2022smac3}).
 
 
 \begin{table*}[!t]
-{\fontsize{7}{8}\selectfont
+{\fontsize{7}{7.5}\selectfont
 \setlength{\tabcolsep}{3pt}
 \renewcommand{\arraystretch}{1.15}
  
@@ -290,97 +297,87 @@ IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkum
 % removing the redundancy leaves something surprisingly small.
  
 
-From this work, we draw  five lessons.
-After some preliminaries, this paper
-is structured around these   lessons.
+From this work, we draw  five lessons,
+which we use to structure this paper
+as follows:
 
 
-\begin{itemize}
+\begin{enumerate}
 \item In \S\ref{sec:peek}, \S\ref{sec:famous}, and
-\S\ref{sec:active}, we show that a handful of data structures
-suffices to code a wide range of AI tools. Classification,
+  \S\ref{sec:active} shows that {\em a handful of data structures
+    suffices for a wide range of AI tools}. Classification,
 clustering, optimization, regression, active learning, and text
-mining all ride on the same incremental
+mining all can use the same incremental
 \cls{Num}/\cls{Sym}/\cls{Data} substrate.
 
 \item In \S\ref{sec:famous} and \S\ref{sec:opt}, we show that
-optimization, classification, and regression are nearly the same
-algorithm. What looks in the textbook like separate fields is, in
+  {\em optimization, classification, and regression are nearly the same
+    algorithm}. What looks in the textbook like separate fields is, in
 code, repeated use of one substrate.
 
-\item In \S\ref{sec:opt}, we show that random search works better
-than expected. Three classical optimizers (simulated annealing,
+\item In \S\ref{sec:opt}, we show that {\em random search works better
+  than might be expected}. Three classical optimizers (simulated annealing,
 local search, (1+1)-EA) are statistically indistinguishable on
-MOOT. They differ only in a one-line accept rule.
+MOOT. 
 
-\item In \S\ref{sec:active}, we show that the same substrate
+\item In \S\ref{sec:active}, we show that
+  {\em the same substrate
 yields an active learner that runs 10{,}000$\times$ faster than
-SMAC while matching its solution quality, using O(1) incremental
+    the state-of-the-art} while matching its solution quality, using O(1) incremental
 updates instead of tree-ensemble refits.
+In prior work, \IT{} matched state-of-the-art
+explanation tools (SHAP, LIME, Anchors)~\cite{Amiraliminimaldata} and
+multi-objective optimizers (SMAC, TPE,
+HyperOpt)~\cite{ganguly2026lowgodatalightse}, while using 10 to 10{,}000
+times less code, less data, and less compute.
 
-\item In \S\ref{sec:tiny} and \S\ref{sec:valid}, we show that
-many models can be tiny. Across 120-plus MOOT tasks, fewer than
+\item \S\ref{sec:tiny} and \S\ref{sec:valid}, shows that
+  {\em many models can be tiny}. Across 120-plus MOOT tasks, fewer than
 ten variables suffice even when thousands are available---and
-held-out validation shows these small trees travel: a few
-oracle calls at deployment time reach 85--95\% of the reference
+held-out validation shows these small trees perform very well and
+    can
+   reach 85--95\% of the reference
 optimum.
 
-\item In \S\ref{sec:textmine}, we show that 30 lines of TWCNB on
-the same substrate matches FASTREAD's relevance-filtering
-results on three of four SLR corpora, using one-seventh the
-labels---and exposes a measurement gap (false alarm) the
-original study did not report.
-
-\item Overall, we show that small codebases work. EZR is
-500 lines, runs in milliseconds, and has no heavy dependencies,
+\item In \S\ref{sec:textmine}, we show that {\em 30 lines of TWCNB on
+the same substrate matches state-of-the-art text mining
+    for relevancy filtering},
+reanalyzing Yu et al.~\cite{yu2018finding} on relevance filtering
+for systematic literature reviews.
+Thirty lines of TWCNB, riding on the same substrate,
+matched Yu's results with roughly one-seventh of the labels
+and exposed a measurement gap (false alarm) the original study
+could not have found because it did not measure that metric.
+\end{enumerate}
+Overall, we show that {\em small codebases can work very well}.
+Three independent comparisons, three domains, the same
+pattern: simple, when carefully built, is not stupid.
+EZR is 500 lines, runs in milliseconds, and has no heavy dependencies,
 which means less supply-chain risk, easier review, faster
 porting, and more visible structure for the next round of
 refactoring.
-\end{itemize}
 
- Each of these claims invites the same objection: that simple is
-stupid. High-dimensional problems should need many features.
-SMAC's tree ensemble should beat random. Different fields have
-different textbooks for a reason. Real work needs pandas and
-scikit-learn. The body of this paper offers evidence to the
-contrary, lesson by lesson, with code in front of you so the
-claims can be audited.
+Of the above, we have publshed (4) previsouly. The rest is new work for this paper.
 
-\subsection*{The empirical record}
+\subsection{Caveat}
 
-Across two prior studies, \IT{} has matched state-of-the-art
-explanation tools (SHAP, LIME, Anchors)~\cite{amirali} and
-multi-objective optimizers (SMAC, TPE,
-HyperOpt)~\cite{kashin}. \IT{} did so while using 10 to 10{,}000
-times less code, less data, and less compute. This paper extends
-that record. We applied \IT{} to reanalyze a prior text-mining
-study from Yu et al.~\cite{yu2018finding} on relevance filtering
-for systematic literature reviews. The simplification went
-further. Thirty lines of TWCNB, riding on the same substrate,
-matched Yu's results with roughly one-seventh of the labels. The
-analysis also surfaced a finding the original study could not
-have made because it did not measure false alarm.
-
-So: three independent comparisons, three domains, the same
-pattern. Simple, when carefully built, is not stupid. The rest
-of this paper documents how the substrate makes that pattern
-possible, and what habits of attention we had to develop to find
-it.
-
-\subsection*{Caveat}
+Before beginning, we digress to make an important caveat.
 
 Not all AI tasks can be simplified this way. Generative tasks
 including translation, summarization, and natural-language
-interfaces need LLMs and the data scales that come with them.
-We do not argue that LLMs are unnecessary. We argue that many
+interfaces do need LLMs and the data scaling that come with them.
+So this paper is \underline{\bf not} saying that LLMs are unnecessary. 
+
+What we do say is that many
 SE tasks (configuration, tuning, defect prediction, testing,
-cost estimation, relevance filtering) admit much simpler
-solutions. These are often, more often than the field
-acknowledges, already sufficient. The right move is to try the
-simple thing first. Even when it is later outperformed, the
-simple thing sets a strict performance floor (so you can
-measure exactly what the complex model adds) and provides
-transparency a black-box model cannot.
+cost estimation, relevance filtering) admit very simple
+solutions. Hence we recommend a ``simplicity first'' approach:
+try the simplest possible implementation before anything else.
+Even when that first step is later outperformed, it establishes
+a strict performance floor (so you can measure exactly what the
+complex model adds), provides transparency a black-box model
+cannot, and shifts the burden of proof onto the more expensive
+alternative.
 
 \section{A Peek at the Code}\label{sec:peek}
 
