@@ -1,0 +1,27 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.synctex
+*.synctex.gz
+*.pag
+*.pyg
+*.w18
+*.aex
+
+# Minted cache
+_minted-*/
+
+# Output PDF (rebuild from source)
+main-v6.pdf
+
+# OS junk
+.DS_Store
+
+# Stashed files not needed for build
+ignore/
