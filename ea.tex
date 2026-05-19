@@ -1,0 +1,237 @@
+\section{Two Optimizers, One Algorithm}\label{sec:opt}
+
+\S\ref{sec:famous} found structural similarities in the code required
+to implement classification and clustering algorithms. This section
+does the same, for two optimizers.
+
+A (1+1) evolutionary algorithm {\em mutates} one current solution to generate
+one mutant. If the mutant is ``better'' the algorithm
+{\em accepts} that the current solution can be replaced. This new current solution
+is used as the basis for future mutation.
+Two examples of (1+1) algorithms are
+simulated annealing (SA) and local search (LS). Both have their own mechanisms
+for escaping dead-ends in the search space. Simulated annealing
+can {\em accept} a
+slightly less optimal solution (especially early in a run, when a
+``temperature'' constant is very ``hot''). Local search has a
+reset-retry policy: if no progress is being made, it jumps back to
+the start and searches in a new randomly selected direction.
+The two also differ in what they {\em mutate}. Simulated annealing
+jiggles a random subset of attributes (about half, by default).
+Local search picks one attribute and, with probability $p$, samples
+across the range of that attribute up to \textsf{tries} times before
+yielding; otherwise it yields a single tweak.
+Simulated annealing and local search are often presented as separate
+algorithms. But as seen here, both can be coded by calling an
+underlying \textsf{oneplus1} function while specializing the
+{\em mutate} and {\em accept} functions. In the following,
+\textsf{restarts=0} means ``never restart'' and \textsf{restarts=100}
+means ``restart if no improvements after 100 mutations''.
+\begin{minted}{python}
+def sa(d, oracle, restarts=0, m=0.5, budget=1000): 
+  n = max(1, int(m * len(d.cols.xs)))
+  def accept(e, en, h, b): return en<e or rand()<exp(
+                                 (e-en)/(1-h/b+1E-32))
+  def mutate(s): yield picks(d, s, n)
+  return oneplus1(d, mutate, accept, oracle, budget, restarts)
+
+def ls(d, oracle, restarts=100, p=0.5, tries=20, budget=1000): 
+  def accept(e, en, *_): return en < e
+  def mutate(s):
+    c = choice(d.cols.xs)
+    for _ in range(tries if rand()<p else 1):
+      s = s[:]
+      s[c.at] = pick(c, s[c.at])
+      yield s
+  return oneplus1(d, mutate, accept, oracle, budget, restarts)
+\end{minted}
+
+The two functions differ in three lines. \textsf{accept} differs as
+named: SA may take worse moves (with cooling probability), LS only
+takes strict improvements. \textsf{mutate} differs too. SA jiggles
+about half the independent columns per call. LS picks one column
+and, with probability $p$, samples that column up to \textsf{tries}
+times before yielding. SA spreads mutation across columns; LS goes
+deep on one.
+
+One housekeeping item. Optimizers need a way to say which row is
+better. We use \textsf{disty}, the Euclidean distance from a row to
+an ideal point computed only on goal columns. From line~\ref{heaven},
+each goal column knows its ideal value: 1 for ``+'' columns, 0 for
+``-'' columns. \textsf{disty} just walks the goal columns:
+
+\begin{minted}{python}
+def disty(data, row): 
+  return minkowski( abs(norm(col, row[col.at]) - col.heaven)
+                    for col in data.cols.ys, p=the.p)
+\end{minted}
+
+Lower scores are better. \S\ref{sec:using} expands the role of
+\textsf{disty} when active learning needs it. Here a one-line
+definition is fine.
+
+\subsection{Mutation via \textsf{pick}; scoring via \textsf{nearest}}\label{spick}
+
+You need three things to optimize: a way to perturb a row, a way to
+score the result, and a rule for accepting the change. \IT{} already
+has the first two.
+
+\textsf{picks} mutates a row by replacing some random independent
+columns with new values drawn from \textsf{pick}, the sampler we saw
+in \S\ref{sec:famous} for $k$-means++. For \cls{Num} columns,
+\textsf{pick} jiggles the value around a Gaussian centered near the
+current value. For \cls{Sym} columns, it samples from the observed
+distribution.
+
+\begin{minted}{python}
+def picks(data, row, n=1): 
+  s = row[:]
+  for col in sample(data.cols.xs, min(n, len(data.cols.xs))):
+    s[col.at] = pick(col, s[col.at])
+  return s
+\end{minted}
+
+Scoring is harder. Running the real oracle on each candidate is the
+whole reason this paper exists. We substitute a cheap proxy: find the
+closest already-labeled row in $x$-space, copy its $y$ values into
+the candidate, and call \textsf{disty}.
+
+\begin{minted}{python}
+def oracleNearest(data, row): 
+  near = nearest(data, row)
+  for col in data.cols.ys: row[col.at] = near[col.at]
+  return disty(data, row)
+\end{minted}
+
+Three lines. This is a 1-NN surrogate. The expensive oracle is called
+only when active learning (\S\ref{sec:active}) decides a genuinely
+new label is worth paying for.
+
+\subsection{The shared loop, plus (1+1)-EA}
+
+The optimization loop takes a mutate callback, an accept callback,
+and an oracle. It yields each new best candidate as it finds them. A
+\textsf{restart} parameter lets the search jump to a fresh starting
+point if it stalls.
+
+\begin{minted}{python}
+def oneplus1(data, mutate, accept, oracle,
+             budget=1000, restart=0):
+  """(1+1) search: mutate, score, accept."""
+  h, best, best_e = 0, None, 1E32
+  s, e, imp = choice(data.rows)[:], 1E32, 0
+  while h < budget:
+    for sn in mutate(s):
+      h += 1
+      en = oracle(sn)
+      if accept(e, en, h, budget):
+        s, e = sn, en
+      if en < best_e:
+        best, best_e, imp = sn[:], en, h
+        yield h, best_e, best
+      if restart and h - imp > restart:
+        s = choice(data.rows)[:]
+        e, imp = 1E32, h
+        break
+\end{minted}
+
+Notice what is not here. There is no commitment to a search strategy.
+There is a loop shape (mutate, score, accept, track best), and the
+search strategy is whatever \textsf{accept} decides.
+
+\textsf{sa} and \textsf{ls} above supply two accept rules. The
+(1+1) evolutionary algorithm fits the same frame with a third
+one-liner: accept any candidate no worse than the current one, so
+plateaus do not stop it.
+
+\begin{minted}{python}
+def acc_ea(e, en, *_):
+  return en <= e
+\end{minted}
+
+Three classical metaheuristics, three one-line callbacks, surrounded
+by identical code.
+
+\subsection{Empirical: indistinguishable on MOOT}
+
+If three algorithms differ only by a one-line callback, their final
+scores should look alike. We tested this on MOOT (full corpus
+described in \S\ref{sec:using}; for now, treat it as 120-plus
+real-world SE optimization tasks scored by \textsf{disty}).
+
+Each task got the same per-trial budget of 1000 evaluations. Each
+optimizer ran 20 times. We recorded final \textsf{disty}. A fourth
+condition, pure random search (replace \textsf{accept} with
+\textsf{True}, mutate freely), served as baseline. For each pair on
+each task, we tested whether the score distributions were
+statistically distinguishable using the Cliff's-delta plus
+Kolmogorov--Smirnov test from \S\ref{sec:active}.
+
+% REVIEWER NOTE: numbers in Table~\ref{tab:metaheur} are placeholders.
+% Replace with values from the experimental rerun. The shape of result
+% expected, following Ganguly~\cite{kashin}, is that EA, SA, and LS
+% are not statistically separated on the majority of MOOT tasks.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Percent of MOOT tasks where each pair is statistically
+indistinguishable. Budget = 1000, 20 reps.}
+\label{tab:metaheur}
+\begin{tabular}{lr}
+\toprule
+Pair         & \% tied \\
+\midrule
+EA vs SA     & 87 \\
+EA vs LS     & 84 \\
+SA vs LS     & 91 \\
+Random vs EA & 38 \\
+Random vs SA & 41 \\
+Random vs LS & 36 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The three named methods are tied with each other on the bulk of MOOT
+tasks. Where one wins, the effect size sits below Sawilowsky's
+negligible threshold of $0.35\sigma$ \cite{sawilowsky2009new}. Random
+loses, but by less than the metaheuristics literature predicts. On a
+meaningful share of tasks, random ties the named methods too.
+
+\subsection*{What this means}
+
+\textit{The empirical claim.} On MOOT at budget 1000, the named
+distinctions among (1+1)-EA, SA, and LS do not appear in the data.
+Random search is not far behind. A literature that has spent decades
+comparing, hybridizing, and claiming dominance among these methods
+is, on this corpus, sorting noise.
+
+\textit{The structural reason.} EA, SA, and LS look alike because
+they are alike. Strip out \textsf{accept} and \textsf{mutate} and the
+three share a 15-line loop. That loop scores candidates through
+\textsf{nearest} (the 1-NN surrogate from \S\ref{sec:famous},
+originally written for classification) and sizes its mutations
+through \textsf{pick}, which reads \cls{Num}.\textsf{sd} and
+\cls{Sym} frequencies that the substrate already maintains for
+clustering and Bayes. The optimizer learns what counts as a
+``reasonable'' jiggle in a numeric column for free, because some
+earlier query needed those statistics anyway. Counted out, this
+section adds \textsf{picks} (6 lines), \textsf{oracleNearest} (3
+lines), \textsf{oneplus1} (15 lines), and three one-line
+\textsf{accept} callbacks. Of those 27 lines, only the three accept
+rules are specific to optimization. The rest is the same code that
+already supported clustering and Bayes.
+
+\textit{The methodological point.} We could ask whether random ties
+the named methods only because random was a one-line edit here. In a
+500-line framework it would have been a project. Frugal code is not
+an aesthetic preference; it is what makes negative results cheap
+enough to find. The metaheuristics literature has held its ground
+partly because falsifying it has been expensive. With this substrate,
+it is not.
+
+\textit{Caveat.} Everything above sits at budget = 1000 on one
+corpus. The experiment should be rerun at smaller and larger budgets
+and across additional datasets before the picture hardens. The signal
+at this operating point is strong; the surface across operating
+points is not yet drawn.

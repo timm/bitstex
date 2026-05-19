@@ -452,10 +452,9 @@ FUNCTION {format.chapter.pages}
 FUNCTION {format.in.ed.booktitle}
 { booktitle empty$
     { "In: " }
-    { "In: " 
-      editor empty$
-    'skip$
-    { " " * format.editors * " " * booktitle emphasize * "" * }
+    { editor empty$
+        { "In: " booktitle emphasize * }
+        { "In: " format.editors * " " * booktitle emphasize * }
       if$
     }
   if$
