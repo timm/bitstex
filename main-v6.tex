@@ -1,3 +1,8 @@
+% looks like distx does not define minkoshi
+% looks like distx defiend twice.
+% better bewone irwin hall in pick
+
+
 \PassOptionsToPackage{table}{xcolor}
 \documentclass[AMA,STIX2COL]{WileyNJDv5}
 
@@ -6,9 +11,10 @@
 \usepackage{geometry}
 \usepackage{enumitem}
 \usepackage{alltt}
+\usepackage{array}
 \usepackage{fontspec}
 \usepackage{tabularx}
-\usepackage{booktabs}
+\usepackage{booktabs} 
 \usepackage{ragged2e}
 \usepackage{makecell}
 \usepackage{xcolor}                          % <-- ADD THIS
@@ -16,7 +22,10 @@
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 \usepackage[font=small]{caption}
 \usepackage{tikz}
-\usepackage{float}
+\usepackage{float} 
+%\floatplacement{listing}{t}
+
+
 \usepackage[most]{tcolorbox}
 \usepackage{minted}
 \usepackage{hyperref}
@@ -81,7 +90,7 @@
 \captionsetup[listing]{skip=0pt,position=top}
 \setminted{
   fontsize=\fontsize{6.5}{7.5}\selectfont,
-  bgcolor=codebg,
+  bgcolor=codebg, 
   frame=none,
   framerule=0.5pt,
   rulecolor=\color{gray},
@@ -96,7 +105,7 @@
   autogobble=true,
   escapeinside=||,
 }
-\setminted[python]{style=bw}
+\setminted[python]{style=trac}
 \renewcommand{\theFancyVerbLine}{%
   \color{gray}\fontsize{4}{4}\selectfont\arabic{FancyVerbLine}}
 \newminted[repl]{python}{linenos=false,firstnumber=last}
@@ -123,7 +132,7 @@
 \author[2]{Srinath Srinivasan}
 
 \authormark{MENZIES \textsc{et al.}}
-\titlemark{Is Simple Also Stupid? Lessons from EZR}
+\titlemark{{Can AI be Easy? }
 
 \address[1]{\orgdiv{Department of Computer Science},
             \orgname{North Carolina State University},
@@ -136,32 +145,39 @@
 
 \abstract[Abstract]{
 \renewcommand{\baselinestretch}{0.9}
-Much recent press claims that humans need not read code. We disagree and argue that there is much to learn by humans who  read code.
-For example, EZR is a 500-line Python toolkit (no heavy dependencies) for active
-learning, classification, multi-objective optimization, regression-tree
-explanation, and text mining
-(EZR installs via \texttt{pip install ezr}, with example data at
-\texttt{github.com/timm/moot}).
-EZR was built by repeatedly
-reading and refactoring some AI tools in order to simplify and unify them. 
+Much recent press claims that 
+developers no
+longer need to  read code. We disagree.
+There is much to learn by humans who read code. 
 
- EZR teaches us  that    many seemingly different learning algorithms are
-nearly the same once stripped back to their  core: the incremental maintenance of distributions stored in
-numeric and symbolic columns. Once that is coded, Na\"ive
-Bayes takes two functions; k-means is thirteen lines long;  k-means++, is eleven lines; (1+1)-EAs,
-need fifteen lines; the TWCNB complementary learner (for low-frequency data) is 30 lines long; and a
-state-of-the-art active learner can be code in  just 35 lines.  Despite their small size, these tools performs as
-good or better than state-of-the-art explanation tools (SHAP/LIME),
-optimizers (SMAC/TPE), and text-mining tools (FASTREAD)---while running
-10{,}000$\times$ faster and requiring orders of magnitude less labelled
-data.
+As evidence, we present 400  lines
+of EZR.py, a   Python toolkit (with no heavy dependencies) 
+that implements for active learning,
+classification, explanation of multi-objective optimization, regression-tree  
+and text mining. EZR was built by repeatedly reading and refactoring
+AI tools in order to simplify and unify them.
+EZR teaches us that many seemingly different learning algorithms are nearly
+the same once stripped back to their core. For example, in EZR, classical algorithms collapse to a few lines each,
+and a state-of-the-art active learner fits in 35 lines.
 
-Based on the EZR expeience, we suggest that  (a)~AI's next step might not be larger systems but smaller, unified
-ones---toolkits compact enough to be configured, critiqued, taught, and
-maintained by the humans who use them;
-and (b)~the way to find that next generation
-of AI tools is read, very closely, the code base of our current
-systems.
+Tested on the 120+ SE
+optimization tasks in the MOOT repository, these tiny tools perform as well
+as or better than state-of-the-art explanation tools (SHAP/LIME),
+optimizers (SMAC/TPE), and text-mining tools- while running
+500× faster, using orders of magnitude less labelled data, and building
+trees from fewer than ten variables even when thousands are available.
+ 
+
+We conclude that (a) AI's next step might not be larger systems but
+smaller, unified ones, compact enough to be configured, critiqued, taught,
+and maintained by their users; and (b) finding them means reading, very
+closely, the code base of our current systems.
+
+ EZR is available under an open source license, It can
+ be installed via \textsf{pip install ezr}, which processes
+ the example
+ data at  \textsf{ 
+github.com/timm/moot}.
 }
 
 \keywords{Active learning; explanation; multi-objective
@@ -171,7 +187,7 @@ minimalism; reproducibility; literate programming}
 \jnlcitation{\cname{%
 \author{Menzies T.},
 \author{Srinath Srinivasan}},
-\ctitle{Easier AI: Lessons learned from the EZR.py    Toolkit}.
+\ctitle{Small AI: Lessons from Reading the EZR.py Toolkit}.
 \cjournal{\it Software: Practice and Experience.}
 \cvol{2026;00(00):1--20}.}
 
@@ -179,53 +195,56 @@ minimalism; reproducibility; literate programming}
 \section{Introduction}
 \label{sec:intro}
 
-Recently it has been argued that humans no longer need
-to read code. Ryan Dahl (creator of  Node.js) suggests  that the era
-of human-written code is ending~\cite{dahl2024}. Jensen Huang (Nvidia CEO) advises against
-learning to code~\cite{huang2024}. Elon Musk said traditional coding ends in 2026~\cite{musk2026}.
+Recently it has been argued that humans no longer need to read
+code. Ryan Dahl (creator of Node.js) suggests that the era of
+human-written code is ending~\cite{dahl2024}. Jensen Huang
+(Nvidia CEO) advises against learning to code~\cite{huang2024}.
+Elon Musk said traditional coding ends in 2026~\cite{musk2026}.
 Replit's CEO told students to focus on how to talk to machines,
-not how to program~\cite{masad2025}. 
-While the phrasing varies,
-the argument is the same:
-AI is the new compiler, and we do not read what a compiler
-emits.
- 
+not how to program~\cite{masad2025}. While the phrasing varies,
+the argument is the same: AI is the new compiler, and we need not
+read what that compiler generates.
+
+We disagree. Reading code is very useful. Important low-level
+information ``on the ground'' (as it were) gets missed when
+developers always use LLMs to ``fly over'' the details. This
+paper is an extended argument that careful reading of small code
+bases can offer important insights
+for   widely held assumptions about
+what AI and software engineering.
+
+Here, we present 400 lines of \IT{}, a Python toolkit for
+AI in software engineering. \IT{} grew across several years of
+repeatedly reading and rewriting and refactoring (we read the
+code, looking for similarities across distant parts of the
+system, and deleting what those similarities made redundant).
+The result was a small, very fast, dependency-light tool, in
+which classification, clustering,  regression, explanation, multi-objective
+optimization,
+active learning, and text mining all sit on one shared substrate
+based on three classes (\cls{Num}, \cls{Sym}, \cls{Data}) and one
+update primitive (\textsf{add}).
+
+\IT{} has been tested on the 120+ multi-objective tasks shown in
+Table~\ref{mootdata} from the MOOT
+repository~\cite{menzies2025moot}. For examples of these tasks
+see \S\ref{details}. These
+tasks are from recent papers in the software engineering
+literature published, by many authors, in leading venues such as
+ICSE, FSE, TSE, IST, EMSE, TOSEM, and ASE. These tasks cover a
+wide range of SE problems including software configuration,
+performance tuning, product line engineering, project health
+forecasting, defect prediction, software testing, software
+process and cost estimation, cross-domain generalization, and
+text mining. To the best of our knowledge, MOOT is the largest
+collection of real multi-objective SE optimization tasks yet
+collected.
 
 
-We disagree. Reading code is very useful. Important low-level information  ``on the ground'' (as it were)  gets missed when developers always use LLMs to  ``fly over'' the details.
-
-As evidence of that claim, this paper reports on \IT{}, a Python toolkit
-of about 500 lines for AI in software engineering. \IT{} grew
-across several years of repeatedly reading and rewriting and refactoring (we read   
-  the code, looking for  similarities across distant parts of the
-system, and deleting what those similarities made redundant). 
-The result was a small, very fast, dependency-light tool. 
-
-  EZR has been tested 
-on 120+
-multi-objective tasks  shown in
-Figure~\ref{mootdata} from the MOOT
-repository~\cite{menzies2025moot} (these tasks are from recent papers in the software engineering literature
-published in
-ICSE, FSE, TSE,
-IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkumar2024can,chen2025accuracy,lustosa2024learning,lustossa2024isneak,chen2018beyond,nyagami_fc25_kaggle_2025,blastchar_telco_customer_churn_2025,kumarajarshi_life_expectancy_who_2025,jackdaoud_marketing_data_2022}).
-As shown later in ths paper, for these tasks,
-\IT{} builds effective models
-from fewer than 100 labels. It produces effective regression  trees that use
-fewer than ten variables, even when thousands were available. It
-runs in milliseconds. Model updates are 10{,}000 times faster
-than state-of the art optimizers (SMAC~\cite{lindauer2022smac3}).
-
-
-
-
-
-
-
-\begin{table*}[!t]
+\begin{table*}
 {\fontsize{7}{7.5}\selectfont
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{5pt}
+%\renewcommand{\arraystretch}{1.15}
  
 
 \caption{The 124 multi-objective tasks in the MOOT
@@ -239,7 +258,7 @@ IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkum
 
 \label{mootdata}
 \begin{center}
-\begin{tabularx}{.8\textwidth}{@{} r l l l Y c c r l @{}} 
+\begin{tabularx}{\textwidth}{@{} r l l l Y c c r l @{}} 
 \textbf{\#}
   & \textbf{Category}
   & \textbf{Focus}
@@ -264,11 +283,11 @@ IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkum
 \multicolumn{9}{@{}l}{%
   \cellcolor{gray!25}\textbf{Project management and process modeling}} \\
 35 & Proj.\ health  & Health  & Health-Closed    & Optimize PR rates and minimize developer churn       & 2--3 & 5       &     10{,}001  & \cite{lustosa2024learning} \\
- 3 & Scrum          & Agile   & Scrum[1k--100k]  & Maximize velocity within sprint constraints          & 3    & 124     &      1k--100k & \cite{lustosa2024isneak} \\
+ 3 & Scrum          & Agile   & Scrum[1k--100k]  & Maximize velocity within sprint constraints          & 3    & 124     &      1k--100k & \cite{lustossa2024isneak} \\
  8 & Feature mod.   & Config  & FFM, FM-*        & Optimize clause/constraint ratio in large spaces     & 3    & 128--1k &     10{,}001  & \cite{Amiraliminimaldata} \\
  1 & nasa93dem      & Cost    & nasa93dem        & Minimize effort (person-months) vs.\ quality         & 3    & 26      &            93 & \cite{lustosa2024learning} \\
  1 & COC1000        & Risk    & coc1000          & Minimize risks vs.\ analyst expertise                & 5    & 20      &      1{,}001  & \cite{chen2018beyond} \\
- 4 & POM3           & Process & pom3[a-d]        & Balance project idle rates vs.\ completion costs     & 3    & 9       &      501--20k & \cite{lustosa2024isneak} \\
+ 4 & POM3           & Process & pom3[a-d]        & Balance project idle rates vs.\ completion costs     & 3    & 9       &      501--20k & \cite{lustossa2024isneak} \\
  4 & XOMO           & Defects & xomo\_[flt,grd]  & Minimize defect density vs.\ total project effort    & 4    & 27      &     10{,}001  & \cite{chen2018beyond} \\
 
 \addlinespace[3pt]
@@ -287,145 +306,167 @@ IST, EMSE, TOSEM, and ASE\cite{Amiraliminimaldata,chen2026promisetune,senthilkum
 \end{center}
 }
 \end{table*}
+\begin{table*}
+\caption{This paper comments
+on six common assumptions about AI for software
+engineering.}
+\label{truisms}
+{\fontsize{8}{8.5}\selectfont
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} l Y Y @{}}
+\toprule
+Section & \textbf{Common assumption} & \textbf{What this paper finds} \\
+\midrule
+\S\ref{sec:peek} &
+AI infrastructure must be large and dependency-heavy:
+real systems sit on top of \texttt{pandas}, \texttt{sklearn},
+\texttt{numpy}, and a stack of supporting libraries~\cite{martinez2021}. &
+Four classes (\cls{Num}, \cls{Sym}, \cls{Data}, \cls{Cols}) and
+one update primitive (\textsf{add}) carry every algorithm in this
+paper. A 14-line CSV reader replaces \texttt{pandas}. \\
+\midrule
+\S\ref{sec:famous} &
+Classification, clustering, and seeded clustering are three
+different algorithms that should be taught in three different lectures and
+implemented as three separate code bases. &
+Classification and clustering
+requires  30 lines of new code on top the 
+\S\ref{sec:peek} substrate. \\
+\midrule
+\S\ref{trees} &
+Classification trees and regression trees require different
+splitting code, different leaf scoring, and different
+implementations. &
+43 lines of code can implement build both algorithms. And switching between them  a one-line change. \\
+\midrule
+\S\ref{sec:opt} &
+ The 1990s metaheuristics
+literature~\cite{gsat,walksat,grasp,ils} argues local search
+(with restart, retry, adaptive schedules)
+and
+its variants dominate older methods
+ &
+Across 20 MOOT benchmarks, simulated annealing in its 1983
+default configuration~\cite{kirkpatrick1983optimization} matches
+or beats  the local-search variants we tested. Restart is a
+patch for local search, not an upgrade over SA. \\
+\midrule
+\S\ref{sec:active} &
+More labels and more features yield better models; model updates
+necessitates  the complete  
+retraining of  all models~\cite{hutter2011sequential,lindauer2022smac3}. &
+\IT{}'s active learner reaches 85--95\% of the reference optimum
+with fewer than 100 labels, uses fewer than 10 features even when
+thousands are available.
+The model update step of this algorithm runs  500$\times$ faster than state
+of the art methods like
+SMAC3~\cite{ganguly2026lowgodatalightse}. \\
+\midrule
+\S\ref{sec:textmine} &
+Relevance filtering for retrieval-augmented generation needs
+elaborate classifiers (e.g. support
+vector machines) or 
+LLM-grade embeddings~\cite{yu2018total,yu18}. &
+30 lines of complementary Bayes~\cite{rennie2003tackling},
+running on the
+\S\ref{sec:peek} substrate,
+performs as well as prior studies
+and need   roughly
+one-third of the labels.\\
+\bottomrule
+\end{tabularx}
+\end{center}}
+\end{table*}
 
+We argue that lightweight tools
+like EZR, that can be quickly built and deployed,  can find important new insights.
+For example,
+the rest of this paper presents the six insights listed in Table~\ref{truisms}.
+This table is six examples
+ of the same pattern.   Our field tends to
+solve problems by adding more data, more algorithms, more
+parameters, and more complexity. EZR was built the other way:
+by reading the existing code and removing what
+turned out to be redundant.
 
-% These properties are useful. The methodological claim is
-% different. We found these properties by reading the code. The
-% smallness of the data, the smallness of the models, and the
-% smallness of the code are facets of one finding: AI systems for
-% SE contain more redundancy than is generally assumed, and
-% removing the redundancy leaves something surprisingly small.
+The methodological precedent for this approach is much older than this paper.
+In his 1995 book {\em
+Empirical Methods for Artificial Intelligence},
+Cohen~\cite{cohen1995empirical} argued that supposedly
+sophisticated methods should always be benchmarked against
+seemingly stupider ones, the ``straw man'' approach to
+scientific verification. We can attest that whenever we have
+checked a supposedly sophisticated method against a simpler one,
+there has been something useful in the simpler. More often than
+not, a year later, we have switched to the simpler
+approach~\cite{Nair17a,agrawal2019dodge,tantithamthavorn2016automated,
+fu2016tuning}. So EZR is the latest case, but not the first.
  
-
-From this work, we draw  five lessons,
-which we use to structure this paper
-as follows:
-
-
-\begin{enumerate}
-\item In \S\ref{sec:peek}, \S\ref{sec:famous}, and
-  \S\ref{sec:active} shows that {\em a handful of data structures
-    suffices for a wide range of AI tools}. Classification,
-clustering, optimization, regression, active learning, and text
-mining all can use the same incremental
-\cls{Num}/\cls{Sym}/\cls{Data} substrate.
-
-\item In \S\ref{sec:famous} and \S\ref{sec:opt}, we show that
-  {\em optimization, classification, and regression are nearly the same
-    algorithm}. What looks in the textbook like separate fields is, in
-code, repeated use of one substrate.
-
-\item In \S\ref{sec:opt}, we show that {\em random search works better
-  than might be expected}. Three classical optimizers (simulated annealing,
-local search, (1+1)-EA) are statistically indistinguishable on
-MOOT. 
-
-\item In \S\ref{sec:active}, we show that
-  {\em the same substrate
-yields an active learner that runs 10{,}000$\times$ faster than
-    the state-of-the-art} while matching its solution quality, using O(1) incremental
-updates instead of tree-ensemble refits.
-In prior work, \IT{} matched state-of-the-art
-explanation tools (SHAP, LIME, Anchors)~\cite{Amiraliminimaldata} and
-multi-objective optimizers (SMAC, TPE,
-HyperOpt)~\cite{ganguly2026lowgodatalightse}, while using 10 to 10{,}000
-times less code, less data, and less compute.
-
-\item \S\ref{sec:tiny} and \S\ref{sec:valid}, shows that
-  {\em many models can be tiny}. Across 120-plus MOOT tasks, fewer than
-ten variables suffice even when thousands are available---and
-held-out validation shows these small trees perform very well and
-    can
-   reach 85--95\% of the reference
-optimum.
-
-\item In \S\ref{sec:textmine}, we show that {\em 30 lines of TWCNB on
-the same substrate matches state-of-the-art text mining
-    for relevancy filtering},
-reanalyzing Yu et al.~\cite{yu2018finding} on relevance filtering
-for systematic literature reviews.
-Thirty lines of TWCNB, riding on the same substrate,
-matched Yu's results with roughly one-seventh of the labels
-and exposed a measurement gap (false alarm) the original study
-could not have found because it did not measure that metric.
-\end{enumerate}
-Overall, we show that {\em small codebases can work very well}.
-Three independent comparisons, three domains, the same
-pattern: simple, when carefully built, is not stupid.
-EZR is 500 lines, runs in milliseconds, and has no heavy dependencies,
-which means less supply-chain risk, easier review, faster
-porting, and more visible structure for the next round of
-refactoring.
-
-Of the above, we have publshed (4) previsouly. The rest is new work for this paper.
-
-\subsection{Caveat}
-
-Before beginning, we digress to make an important caveat.
-
-Not all AI tasks can be simplified this way. Generative tasks
-including translation, summarization, and natural-language
-interfaces do need LLMs and the data scaling that come with them.
-So this paper is \underline{\bf not} saying that LLMs are unnecessary. 
-
-What we do say is that many
-SE tasks (configuration, tuning, defect prediction, testing,
-cost estimation, relevance filtering) admit very simple
-solutions. Hence we recommend a ``simplicity first'' approach:
-try the simplest possible implementation before anything else.
-Even when that first step is later outperformed, it establishes
-a strict performance floor (so you can measure exactly what the
-complex model adds), provides transparency a black-box model
-cannot, and shifts the burden of proof onto the more expensive
-alternative.
-
+The rest of this paper presents each row of
+Table~\ref{truisms} in turn:
+\begin{itemize}
+\item
+\S\ref{sec:peek} introduces the four-class substrate that is used, extensively, by the rest of the paper;
+\item
+\S\ref{sec:famous} implements Naïve Bayes, $k$-means, and
+$k$-means++ on top of that substrate;
+\item
+\S\ref{trees} adds classification and regression trees;
+\item 
+\S\ref{sec:opt} implements and then compares simulated annealing against
+local-search   on some MOOT benchmarks;
+\item
+\S\ref{sec:active} uses the substrate to build an active learner that runs
+500$\times$ faster than   state of the art optimizers;
+\item
+ \S\ref{sec:textmine} discusses applications of EZR to text mining.
+ \end{itemize}
+ After that, the end of the paper comments on the external validity of
+ our conclusions.   
 \section{A Peek at the Code}\label{sec:peek}
 
-This section introduces the substrate that the rest of the
-paper relies on. Four classes carry almost everything. \cls{Num}
-and \cls{Sym} summarize columns of numbers and symbols.
-\cls{Data} holds rows summarized by those columns. \cls{Cols}
-is a small factory that builds the columns from a CSV header.
-One function, \textsf{add}, walks all four polymorphically and
-is the only way data ever enters the system. The substrate is
-small enough to hold in your head. That smallness is what later
-sections exploit.
-
-A few stylistic points before the code. Per Martin's clean-code
-rules~\cite{martin2009clean} (write functions small, then
-smaller still), \texttt{ezr.py}'s 44 functions average $5\pm4$
-lines. Each line is under 60 characters wide so it can be
-included in documents like this one without reformatting.
-Following Hatton~\cite{Hatton:1998}, \IT{} avoids inheritance
-because inheritance complicates functional
-composition~\cite{GoF:1995} and debugging~\cite{hatton1998oo}.
-Polymorphism is implemented by casing on type inside functions.
-\IT{} prefers functions over methods. Methods scatter related
-code across classes; functions let related code group together.
-The \textsf{mid} and \textsf{spread} pair below is one example.
-
-To dodge supply-chain risk, \IT{} uses few imported packages.
-Modern Python software is often assembled from pre-made parts,
-with 85 to 97 percent of code reused from external
-sources~\cite{martinez2021}. Libraries like \texttt{pandas} are
-battle-tested but introduce a large attack surface. A single
-poisoned update can compromise tens of thousands of downstream
-packages without the primary developer's
-knowledge~\cite{martinez2021}. \IT{} ships with one CSV reader
-of 14 lines:
-
+What is the smallest set of primitives that supports
+classification, clustering, optimization, regression, active
+learning, and text mining? Common wisdom assumes the answer
+involves \texttt{pandas}, \texttt{scikit-learn}, \texttt{numpy},
+and a stack of supporting libraries~\cite{martinez2021}. This
+section shows that many important parts
+of those large packages can be implemented in 
+80 lines of code, four classes, and one update
+primitive:
+\begin{itemize}
+\item \cls{Num} and \cls{Sym} summarize columns of numbers and
+symbols.
+\item \cls{Data} holds rows together with the columns that
+summarize them.
+\item \cls{Cols} is a small factory that builds the columns
+from a CSV header.
+\item \textsf{add} is one polymorphic operation that updates any
+of the above as new data arrives.
+\end{itemize}
+The rest of this paper builds five different AI tools on top of
+those four classes. One interesting
+aspect of EZR is that it is built without relying on
+large third-party packages like
+ \texttt{pandas} or  \texttt{sklearn}.   Modern Python software
+is often assembled from pre-made parts, with 85 to 97 percent
+of code reused from external sources~\cite{martinez2021}.
+Libraries like \texttt{pandas} are battle-tested but introduce
+a large attack surface; a single poisoned update can compromise
+tens of thousands of downstream packages without the primary
+developer's knowledge~\cite{martinez2021}. To sidestep that
+risk, \IT{} shuns \texttt{pandas} and instead ships with the
+following CSV reader of 14 lines:\newpage
 \begin{minted}{python}
-def csv(f, clean=lambda txt:
-          txt.partition("#")[0].split(",")):
-  """Yield typed rows from a CSV file."""
+def csv(f, ok=lambda txt: txt.partition("#")[0].split(",")):
   with open(f, encoding="utf-8") as file:
     for txt in file: |\label{csv}|
-      row = clean(txt)
+      row = ok(txt)
       if any(x.strip() for x in row):
         yield [thing(x) for x in row]
 
 def thing(txt):
-  """Coerce string to number or bool."""
   txt = txt.strip()
   b = lambda s: {"true":1,"false":0}.get(
                   s.lower(), s)
@@ -433,35 +474,97 @@ def thing(txt):
     try: return f(txt)
     except ValueError: pass
 \end{minted}
+This reader skips comments after \texttt{\#}, splits on commas,
+and yields typed rows. \textsf{Thing} coerces each cell to int,
+float, bool, or string in turn. 
+Other packages, like \textsf{pandas} , offer the same functionality
+ but at the cost
+of over 400,000 lines of dependency. The 14 lines
+above do just what \IT{} needs, and no more. This is the first
+concrete instance of a pattern that repeats throughout the paper:
+by carefully reading code, we can refactor it down to a tiny core.
 
-The reader skips comments after \texttt{\#}, splits on commas,
-yields typed rows. \textsf{thing} coerces each cell to int,
-float, bool, or string in turn. Pandas does more, at the cost
-of around half a million lines of dependency. The 14 lines
-above do exactly what \IT{} needs.
+\subsection{Columns: \cls{Num} and \cls{Sym}}
 
-\subsection{An example CSV}
+\IT{} distinguishes numeric and symbolic columns. Both know
+their text name (\textsf{txt}), their position in the row
+(\textsf{at}), and how many items they have seen (\textsf{n}).
 
-\IT{} reads tabular data with a small set of column-name
-conventions. Names ending in ``X'' are ignored (e.g.\ row IDs
-or timestamps). Names ending in ``!'' mark a symbolic class
-column. Names ending in ``+'' or ``-'' mark goal columns to be
-maximized or minimized. Everything else is an independent
-attribute. Numeric columns start with an upper-case letter;
-symbolic columns do not.
+\cls{Num}eric columns track a running mean (\textsf{mu}), a
+second moment (\textsf{m2}), a standard deviation (\textsf{sd},
+derived from \textsf{m2}), and a \textsf{heaven} value
+indicating goal direction. By convention, columns whose names
+end in ``+'' are to be maximized and columns whose names end in
+``-'' are to be minimized. \textsf{heaven} is set to 1 or 0
+respectively. Smaller distance to \textsf{heaven} is always
+better.
+\begin{minted}{python}
+class Num:
+  def __init__(i, txt="", at=0):
+    i.txt, i.at, i.n = txt, at, 0
+    i.mu = i.m2 = i.sd = 0
+    i.heaven = txt[-1:] != "-" |\label{heaven}|
+\end{minted}
+\cls{Sym}bolic columns hold frequency counts in a \textsf{has}
+dictionary:
+\begin{minted}{python}
+class Sym:
+  def __init__(i, txt="", at=0):
+    i.txt, i.at, i.n, i.has = txt, at, 0, {}
+\end{minted}
+The \textsf{mid} of a column is its mean (for \cls{Num}) or
+mode (for \cls{Sym}):
+\begin{minted}{python}
+def mid(col): |\label{mid0}|
+  return (col.mu if Num==type(col) else mode(col.has))
+
+def mode(dct): return max(dct, key=dct.get)
+\end{minted}
+The \textsf{spread} is its standard deviation (for \cls{Num})
+or entropy (for \cls{Sym}):
+\begin{minted}{python}
+def spread(col): |\label{spread0}|
+  return (col.sd if Num==type(col) else entropy(col.has))
+
+def entropy(dct):
+  n = sum(dct.values())
+  return -sum(v/n*log2(v/n) for v in dct.values())
+\end{minted}
+Numeric values can also be normalized to $[0,1]$ via a logistic
+sigmoid clamped to $\pm3$ standard deviations. Missing values
+(``?'') pass through:
+\begin{minted}{python}
+def norm(num, v): |\label{norml}|
+  if v == "?": return v
+  z = (v - num.mu) / (num.sd + 1e-32)
+  return 1 / (1 + exp(-1.7 * max(-3, min(3, z))))
+\end{minted}
+\textsf{norm} makes rows from different scales comparable for
+the distance calculations later in the paper.
+
+\subsection{An example data file}\label{details}
+
+With \cls{Num} and \cls{Sym} defined, the column-name
+conventions \IT{} uses for tabular data become easy to state.
+Names ending in ``X'' are ignored (e.g.\ row IDs or timestamps).
+Names ending in ``!'' mark a symbolic class column. Names
+ending in ``+'' or ``-'' mark goal columns to be maximized or
+minimized. Everything else is an independent attribute. Numeric
+columns start with an upper-case letter; symbolic columns do
+not.
 
 Table~\ref{moot} shows a typical example. The data come from a
 configuration-tuning task in the MOOT
-repository~\cite{menzies2025moot}, which is the benchmark used
+repository~\cite{menzies2025moot}, one of the benchmarks used
 later in this paper. The header tells \IT{} everything it
-needs. \texttt{Spout\_wait} starts with an upper-case letter,
-so it is a \cls{Num}. \texttt{Spliters} and \texttt{Cntr} also
+needs. \texttt{Spout\_wait} starts with an upper-case letter, so
+it becomes a \cls{Num}. \texttt{Spliters} and \texttt{Cntr} also
 start uppercase, so they are \cls{Num}s as well.
 \texttt{Throughput+} ends in ``+'', so \texttt{Throughput} is to
 be maximized. \texttt{Latency-} ends in ``-'', so
 \texttt{Latency} is to be minimized.
 
-\begin{table}[!t]
+\begin{table}[!b]
 \caption{An example MOOT data set: configuration tuning for a
 distributed stream-processing system. Numeric column names
 start with an upper-case letter. Goal column names end with
@@ -472,7 +575,6 @@ independent attribute.}
 \begin{minipage}{3in}
 \normalsize{(a) Configuration tuning:}
 {\fontsize{6pt}{7.2pt}\selectfont
-
 \begin{verbatim}
 x = independent values      | y = dependent values
 ----------------------------|-----------------------
@@ -486,22 +588,7 @@ Spout_wait, Spliters, Cntr. | Throughput+, Latency-
  10000,        1,        1  |    310.06,    9421
 -------------------------------------------------------
 \end{verbatim}}
-\normalsize{(b) Defect prediction}
-{\fontsize{6pt}{7.2pt}\selectfont
-\begin{verbatim}
-x = independent values    | y = dependent values
---------------------------|---------------------
-Numobs, Length, ..., Churn| Class+
- 3317,   2990, ...,  0.2  |   1
- 5873,   1923, ...,  0.4  |   2
- 2357,   1333, ...,  0.0  |   2
-[Skipped],     ...,  ...  |   ...
- 1104,    891, ...,  0.4  |   3
-  204,     38, ...,  0.4  |   3
- 1939,   1236, ...,  0.1  |   3
--------------------------------------------------------
-\end{verbatim}}
-\normalsize{(c) Hyperparameters for Software Health Prediction}
+\normalsize{(b) Hyperparameters for Software Health Prediction}
 {\fontsize{6pt}{7.2pt}\selectfont
 \begin{verbatim}
 x = independent values          | y = dependent values
@@ -519,85 +606,6 @@ N_est, Min_leaf, ..., Min_imp. | MRE-, ACC+, PRED40+
 \end{center}
 \end{table}
 
-\subsection{Columns: \cls{Num} and \cls{Sym}}
-
-\IT{} distinguishes numeric and symbolic columns. Both know
-their text name (\textsf{txt}), their position in the row
-(\textsf{at}), and how many items they have seen (\textsf{n}).
-
-\cls{Num}eric columns track a running mean (\textsf{mu}), a
-second moment (\textsf{m2}), a standard deviation (\textsf{sd},
-derived from \textsf{m2}), and a \textsf{heaven} value
-indicating goal direction. By convention, columns whose names
-end in ``+'' are to be maximized and columns whose names end in
-``-'' are to be minimized. \textsf{heaven} is set to 1 or 0
-respectively. Smaller distance to \textsf{heaven} is always
-better.
-
-\begin{minted}{python}
-class Num:
-  """Summarizes a stream of numbers."""
-  def __init__(i, txt="", at=0):
-    i.txt, i.at, i.n = txt, at, 0
-    i.mu = i.m2 = i.sd = 0
-    i.heaven = txt[-1:] != "-" |\label{heaven}|
-\end{minted}
-
-\cls{Sym}bolic columns hold frequency counts in a \textsf{has}
-dictionary:
-
-\begin{minted}{python}
-class Sym:
-  """Summarizes a stream of symbols."""
-  def __init__(i, txt="", at=0):
-    i.txt, i.at, i.n, i.has = txt, at, 0, {}
-\end{minted}
-
-This pair is small. It is enough to support central-tendency,
-variability, and normalization queries by polymorphism on type.
-The \textsf{mid} of a column is its mean for numbers and its
-mode for symbols:
-
-\begin{minted}{python}
-def mid(col):
-  return (col.mu if Num==type(col)
-          else mode(col.has))
-
-def mode(dct): return max(dct, key=dct.get)
-\end{minted}
-
-The \textsf{spread} is its standard deviation for numbers and
-its entropy for symbols:
-
-\begin{minted}{python}
-def spread(col):
-  return (col.sd if Num==type(col)
-          else entropy(col.has))
-
-def entropy(dct):
-  n = sum(dct.values())
-  return -sum(v/n*log2(v/n)
-              for v in dct.values())
-\end{minted}
-
-The textbook treats this as four formulas. \IT{} treats it as
-one question (``summarize this column'') asked of two types.
-
-Numeric values can also be normalized to $[0,1]$ via a logistic
-sigmoid clamped to $\pm3$ standard deviations. Missing values
-(``?'') pass through:
-
-\begin{minted}{python}
-def norm(num, v):
-  if v == "?": return v
-  z = (v - num.mu) / (num.sd + 1e-32)
-  z = max(-3, min(3, z))
-  return 1 / (1 + exp(-1.7*z))
-\end{minted}
-
-\textsf{norm} makes rows from different scales comparable for
-distance calculations later in the paper.
-
 \subsection{Rows and tables: \cls{Data} and \cls{Cols}}
 
 \cls{Data} holds rows together with summarized columns. Its
@@ -605,104 +613,89 @@ constructor accepts an iterator (e.g.\ from \textsf{csv}) or a
 list of rows. The first row becomes the header and is handed
 to \cls{Cols} to build the column objects. The rest are added
 in turn:
-
 \begin{minted}{python}
 class Data:
-  """Rows + summarized columns."""
   def __init__(i, src=None):
     src = iter(src or {})
     i.rows, i._centroid = [], None
     i.cols = Cols(next(src))
     adds(src, i)
+
+def adds(src, it=None):
+  it = it or Num(); [add(it,x) for x in src]
+  return it
 \end{minted}
-
 Two usage patterns appear throughout:
-
 \begin{repl}
 >>> data1 = Data(csv(fileName))           # from disk
 >>> data2 = Data([data1.cols.names])      # empty clone
 \end{repl}
-
 The second pattern (an empty \cls{Data} that mimics another's
 column structure) is wrapped in a helper:
-
 \begin{minted}{python}
-def clone(data, rows=None):
-  """Clone column structure; optionally fill with rows."""
+def clone(data, rows=None): |\label{cloning}|
   return adds(rows or [], Data([data.cols.names]))
 \end{minted}
-
 \textsf{clone} appears nine times in the rest of
 \texttt{ezr.py}. Each appearance spawns a fresh \cls{Data} that
-shares its parent's schema. Once \textsf{clone} exists, you
-stop thinking about column types. You ask \cls{Data} for an
-empty copy and start filling it.
+shares its parent's schema.
 
 \cls{Cols} is the factory that reads the header. Recall the
-column-name conventions: names ending in ``X'' are ignored,
-``!'' marks a symbolic class column, ``+'' or ``-'' mark goal
-columns (\textsf{ys}), everything else is an independent
-attribute (\textsf{xs}). Names starting with an upper-case
-letter become \cls{Num}; everything else becomes \cls{Sym}.
-
+column-name conventions: names ending in ``X'' are ignored, ``!''
+marks a symbolic class column, ``+'' or ``-'' mark goal columns
+(\textsf{ys}), everything else is an independent attribute
+(\textsf{xs}). Names starting with an upper-case letter become
+\cls{Num}; everything else becomes \cls{Sym}.
 \begin{minted}{python}
-def Col(txt="", a=0):
-  return (Num if txt[:1].isupper()
-          else Sym)(txt, a)
+def Col(txt="", at=0):
+  return (Num if txt[:1].isupper() else Sym)(txt, at)
 
 class Cols:
-  """Organize Num/Sym columns from headers."""
   def __init__(i, names):
     i.names = names
     i.klass, i.xs, i.ys, i.all = None, [], [], []
     for j, txt in enumerate(names):
       i.all.append(col := Col(txt, j))
       if txt[-1] != "X":
-        if txt[-1] == "!": i.klass = col
-        role = (i.ys if txt[-1] in "+-!"
-                else i.xs)
+        if txt[-1] == "!": i.klass = col |\label{klass}|
+        role = (i.ys if txt[-1] in "+-!" else i.xs)
         role.append(col)
 \end{minted}
-
 After \cls{Cols} runs, every \cls{Data} carries three views of
 its columns: \textsf{xs} (independent), \textsf{ys} (dependent
 goals), and \textsf{klass} (the optional symbolic target). The
 rest of \texttt{ezr.py} consults these views without re-parsing
-names. Decisions made once at the header propagate everywhere.
+names: decisions made once at header creation time propagate
+everywhere.
 
 \subsection{The \textsf{add} primitive}
 
-There is one way to put a value into the substrate: \textsf{add}.
-The function dispatches on the type of its first argument and
-walks recursively.
-
+To update a distribution, the \textsf{add} function dispatches
+on the type of its first argument:
 \begin{itemize}
-\item Given a \cls{Data}, it invalidates the cached centroid,
-recursively updates the columns, and either appends or removes
-the row.
-\item Given a \cls{Cols}, it walks each column and recursively
+\item For \cls{Data}, the cached centroid is zapped, the
+columns are updated recursively, and the row is either
+appended or removed.
+\item For \cls{Cols}, it walks each column and recursively
 calls \textsf{add} with the appropriate cell.
-\item Given a \cls{Sym}, it adds (or subtracts) one from the
-\textsf{has} dictionary.
-\item Given a \cls{Num}, it updates \textsf{mu}, \textsf{m2}, and
-\textsf{sd} via Welford's algorithm~\cite{Knuth1998TAOCP2},
-which is exact and incremental.
+\item For \cls{Sym}, it adds (or subtracts) one from
+\textsf{Sym.has}.
+\item For \cls{Num}, it updates \textsf{mu}, \textsf{m2}, and
+\textsf{sd} via Welford's algorithm~\cite{Welford01081962}, an
+exact and incremental method for updating mean and standard
+deviation.
 \end{itemize}
-
 \begin{minted}{python}
-def add(it, v, w=1):
-  """Add (w=+1) or remove (w=-1) value/row."""
+def add(it, v, w=1): |\label{add}|
   if Data is type(it):
     it._centroid = None |\label{zap}|
     add(it.cols, v, w) |\label{addrec1}|
-    if w>0: it.rows.append(v)
-    else  : it.rows.remove(v)
+    (it.rows.append if w>0 else it.rows.remove)(v)
   elif Cols is type(it):
     [add(col, v[col.at], w)
      for col in it.all] |\label{addrec2}|
   elif v != "?": # skip "don't know" values
-    if Sym == type(it):
-      it.has[v] = w + it.has.get(v, 0) |\label{symaddsub}|
+    if Sym == type(it): it.has[v] = w + it.has.get(v, 0) |\label{symaddsub}|
     elif w < 0 and it.n <= 2:
       it.n = it.mu = it.m2 = it.sd = 0
     else: # Welford's algorithm |\label{welford}|
@@ -710,69 +703,111 @@ def add(it, v, w=1):
       delta  = v - it.mu
       it.mu += w * delta / it.n
       it.m2 += w * delta * (v - it.mu)
-      it.sd  = (sqrt(max(0,it.m2)/(it.n-1))
-                if it.n>1 else 0)
+      it.sd = (sqrt(max(0,it.m2)/(it.n-1)) if it.n>1 else 0)
   return v
 \end{minted}
+Three details inside \textsf{add} are worth flagging.
 
-A few details worth flagging. The \textsf{w} parameter handles
-both addition (\textsf{w=1}) and subtraction (\textsf{w=-1}).
-A one-line companion exposes the latter:
-
+\textit{First, the symmetry that makes data movement cheap.}
+The \textsf{w} parameter handles both addition (\textsf{w=1})
+and subtraction \mbox{(\textsf{w=-1})}, via:
 \begin{minted}{python}
 def sub(it, v): return add(it, v, w=-1)
 \end{minted}
+This symmetry matters because it lets us move a row from one
+\cls{Data} to another in two constant-time operations: $\pm 1$
+to a counter for symbols, or a single Welford update for
+numbers. There is no retraining step, no sorting, no large-scale
+data recollection. The active learner of \S\ref{sec:active}
+rests on this property.
 
-This symmetry matters because it makes data movement cheap. A
-row can be removed from one \cls{Data} and added to another
-with two constant-time operations: $\pm 1$ to a counter for
-symbols, or a single Welford update for numbers. There is no
-retraining step. There is no resorting of large collections.
-\textsf{add} and \textsf{sub} are inverses of the same
-incremental update.
-
-The cached centroid is the other detail. Centroids are
-expensive when called repeatedly but cheap if cached. Every
-\cls{Data} carries a \textsf{\_centroid} field that
-\textsf{add} invalidates on any change (line~\ref{zap}). The
-\textsf{mids} accessor lazily rebuilds it:
-
+\textit{Second, the lazy centroid cache.} Every \cls{Data}
+carries a \textsf{\_centroid} field that \textsf{add}
+invalidates on any change (line~\ref{zap}). The \textsf{mids}
+accessor lazily rebuilds it:
 \begin{minted}{python}
-def mids(data):
+def mids(data): |\label{mids}|
   data._centroid = data._centroid or [
-    mid(col) for col in data.cols.all]
+                       mid(col) for col in data.cols.all]
   return data._centroid
 \end{minted}
-
 Without the cache, each \textsf{mids} call would walk every
 column. With it, the call is one dictionary lookup until the
-next \textsf{add}.
+next \textsf{add}. This detail will become important when we
+discuss active learning in \S\ref{sec:active}.
 
-\textsf{add} returns the value it stored. A small idiom uses
-this: a value can be inserted into multiple \cls{Data}s in a
-single chained call, with the inner \textsf{add} producing the
-value the outer \textsf{add} consumes. The idiom appears
-several times later.
+\textit{Third, \textsf{add} returns the value it stored.} That
+return value enables a nested-call idiom used several times in
+\IT{}, where the same value is removed from one distribution
+and added to another in one expression; e.g.
+\begin{repl}
+add(rest.cols, sub(best.cols, best.rows.pop()))
+\end{repl}
 
-\medskip
+\subsection{Design notes}
 
-That is the substrate. Four classes, one accessor, one
-mutator. The rest of the paper builds on it.
+A few stylistic points about how \texttt{ezr.py} is written
+that explain the shape of the code above:
+\begin{itemize}
+\item Per Martin's clean-code rules\footnote{Rule 1: functions
+should be small. Rule 2: they should be smaller than
+that~\cite{martin2009clean}.}, \texttt{ezr.py}'s 44 functions
+average $5\pm4$ lines. Each line is under 60 characters wide
+so it can be included in documents like this one without
+reformatting.
+\item Following Hatton~\cite{Hatton:1998}, \IT{} avoids
+inheritance because inheritance complicates functional
+composition~\cite{GoF:1995} and debugging~\cite{Hatton:1998}.
+\item Polymorphism is implemented by dispatching on type
+inside functions, as seen in \textsf{add}, \textsf{mid},
+\textsf{spread}, and (later) \textsf{pick}.
+\item \IT{} prefers functions over methods. Methods scatter
+related code across classes; functions let related code group
+together. The \textsf{mid} and \textsf{spread} functions on
+lines~\ref{mid0} and \ref{spread0} are examples of functions
+that group functionality across different classes.
+\end{itemize}
+
+That is the entire substrate: four classes, one update
+primitive, and a handful of supporting functions
+(\textsf{mid}, \textsf{spread}, \textsf{norm}, \textsf{mids},
+\textsf{clone}). From here on, every algorithm in this paper
+is a way of asking these objects a different question. Note
+that all this is achieved without including vast libraries
+of other people's code.
 
 
-\section{Three Famous Algorithms in 30 Lines}\label{sec:famous}
 
-\S\ref{sec:peek} promised that the rest of the paper builds on
-the substrate. This section is the first instance. We show
-three textbook algorithms, each given its own lecture in a
-standard AI course, falling out of the substrate in well under
-a hundred lines between them. Naïve Bayes takes two functions.
-$k$-means takes thirteen lines. $k$-means++ takes eleven. The
-algorithms are not new. The point is that once \cls{Num},
-\cls{Sym}, \cls{Data}, and \textsf{add} are in place, none of
-the three needs new machinery.
 
-\subsection{Naïve Bayes in two functions}
+\section{Three Classic Algorithms in 70 Lines}\label{sec:famous}
+
+Common wisdom in AI for SE holds that classification,
+clustering, and seeded clustering are three different
+algorithms taught in three different lectures and implemented
+as three separate code bases. As evidence of this, the reader
+is invited to read the chapter headers of standard data mining textbooks
+such as {\em Data Mining} by Witten et al.~\cite{Witten:2005}.
+
+Standard ML libraries reflect
+this view: scikit-learn ships each algorithm in its own
+module with its own API. This section asks if that separation is necessary.
+ This section shows that, on top of the
+substrate from \S\ref{sec:peek}, they are nearly the same
+algorithm asking slightly different questions. Naïve Bayes takes two
+functions. $k$-means takes thirteen lines. $k$-means++ takes
+eleven. Between them, they add 30 lines of new code and one new
+primitive (\textsf{pick}, which earns its place by also serving
+as the mutation operator in \S\ref{sec:opt}).
+
+The deep reason these three algorithms collapse together is
+simple: each one reduces to the same underlying question. Given
+some columns that summarize what we have seen, how does a new
+row score against them? Naïve Bayes scores by likelihood;
+$k$-means scores by distance; $k$-means++ scores by squared
+distance weighted into a probability. The scoring rule changes;
+the substrate that holds the summaries does not.
+
+\subsection{Naïve Bayes}
 
 The core of Naïve Bayes is one question: how much does a column
 {\em like} a value? \textsf{like} answers that question. For a
@@ -786,21 +821,19 @@ PDF using the running \textsf{mu} and \textsf{sd} that
 the.bayes.k = 1   # smoothing config
 
 def like(col, v, prior):
-  """How much a column likes a value."""
   if type(col) == Sym:
-    return (col.has.get(v,0) +
-            the.bayes.k*prior
+    return (col.has.get(v,0) + the.bayes.k*prior
            ) / (col.n + the.bayes.k)
   sd = col.sd + 1e-32
   z  = 2*sd*sd
   return exp(-(v-col.mu)**2 / z) / sqrt(pi*z)
 \end{minted}
-
 Note what is not here: no fitting pass, no separate training
 phase. The \cls{Num} and \cls{Sym} columns inside a \cls{Data}
-are already a fitted Bayes model, because \textsf{add} kept
-them fitted incrementally as rows arrived. \textsf{like} just
-reads them.
+are already a fitted Bayes model, because \textsf{add} kept them
+fitted incrementally as rows arrived. \textsf{like} just reads
+them. That is a non-trivial property: the substrate has erased
+the distinction between fitting and using.
 
 \textsf{likes} aggregates one row's worth of evidence. It
 multiplies per-column likelihoods (in log space, for numerical
@@ -810,274 +843,484 @@ stability) with an $m$-estimate prior on class size:
 the.bayes.m = 2   # prior config
 
 def likes(data, row, n_rows, n_klasses):
-  """Log likelihood of row given data."""
   prior = (len(data.rows) + the.bayes.m
           ) / (n_rows + the.bayes.m*n_klasses)
   ls = [like(col, v, prior)
         for col in data.cols.xs
         if (v := row[col.at]) != "?"]
-  return log(prior) + sum(log(v)
-                          for v in ls if v > 0)
+  return log(prior) + sum(log(v)  for v in ls if v > 0)
 \end{minted}
+Two functions, complete with Laplace and $m$-estimate smoothing,
+Gaussian numeric attributes, and missing-value handling. The
+streaming test-then-train protocol that ordinarily accompanies
+Naïve Bayes (classify each row with the model so far, then add
+it to its true class's \cls{Data}) is a thin loop on top of
+these two functions; we omit it here to keep the focus on the
+algorithm itself.\footnote{The full \textsf{classify} loop is
+available in \texttt{ezr.py}; it adds about a dozen lines for
+streaming bookkeeping (incremental confusion matrix, a warm-up
+threshold before scoring begins, and per-class \cls{Data}
+maintenance).}
 
-That is a complete Naïve Bayes classifier with Laplace and
-$m$-estimate smoothing, Gaussian numeric attributes, and
-missing-value handling. Two functions. The textbook treatment
-is a chapter.
+\subsection{$k$-means}\label{kluster}
 
-To put \textsf{like} and \textsf{likes} to work, \textsf{classify}
-implements the standard incremental {\em test-then-train}
-protocol. Each row is first classified using the model so far
-(it is assigned to the \cls{Data} with the highest
-\textsf{likes} score), then added to its true class's
-\cls{Data}. Because \textsf{add} is incremental, this is
-genuinely streaming. No retraining. No batch passes.
+The $k$-means clustering algorithm finds clusters by repeatedly
+{\em guessing} the centroids, then {\em updating} them.  When
+{\em guessing}, it labels each row with its nearest centroid
+(initially, the centroids are just $k$ randomly selected rows).
+{\em Update} moves centroids to the middle of the rows assigned
+to them.
+
+To talk about ``nearest centroid'' we need a distance measure. Rows in
+\IT{} have mixed numeric and symbolic columns, so we need a
+per-column distance that handles both, and a way to combine them
+across columns. The per-column distance is \textsf{aha} (after
+Aha's 1991 instance-based reasoning algorithm~\cite{aha91}); the
+combiner is the Minkowski $p$-norm:\newpage
 
 \begin{minted}{python}
-def classify(src, wait=10):
-  """Test then train: classify before update."""
-  src = iter(src)
-  h, cf, all = {}, None, Data([next(src)])
-  for n, row in enumerate(src):
-    want = row[all.cols.klass.at]
-    if n >= wait:
-      cf = dinc(want, max(h,
-        key=lambda kl: likes(
-          h[kl], row, len(all.rows), len(h))), cf)
-    if want not in h: h[want] = clone(all)
-    add(all, add(h[want], row))
-  return cf
-\end{minted}
+the.p = 2 # config
 
-A few things about this loop. \textsf{wait=10} holds off scoring
-until the model has seen enough rows to be worth consulting.
-\textsf{dinc} accumulates a confusion matrix. \textsf{h} is a
-dictionary mapping each class label to its own \cls{Data}.
-\textsf{all} is the union of every class. The nested
-\textsf{add(all, add(h[want], row))} uses the return-value
-idiom from \S\ref{sec:peek}: the inner \textsf{add} stores
-\textsf{row} into \textsf{h[want]} and returns it; the outer
-\textsf{add} then stores the same row into \textsf{all}. One
-row, two destinations, two function calls.
-
-On standard MOOT classification benchmarks (soybean, diabetes,
-and others), \textsf{classify} is competitive with sklearn's
-batch Naïve Bayes. The substrate did most of the work.
-
-\subsection{$k$-means in thirteen lines}
-
-$k$-means cycles assignment and update. Assignment puts each
-row into the cluster whose centroid is closest. Update recomputes
-the centroid from the rows in each cluster. Both halves use
-machinery that already exists. \textsf{distx} is a Minkowski
-distance over independent columns:
-
-\begin{minted}{python}
 def distx(data, r1, r2):
-  return minkowski(
-    aha(col, r1[col.at], r2[col.at])
-    for col in data.cols.xs)
-\end{minted}
+  return minkowski((aha(col, r1[col.at], r2[col.at])
+                   for col in data.cols.xs), p=the.p)
 
-\textsf{mids} returns the per-column \textsf{mid} of a
-\cls{Data} (line numbers below refer back to \S\ref{sec:peek}).
-A cluster is just a \cls{Data} populated by \textsf{add}. So
-$k$-means is:
+def aha(col, u, v):
+  if u == v == "?": return 1
+  if Sym == type(col): return u != v
+  u, v = norm(col, u), norm(col, v)
+  u = u if u!="?" else (0 if v>0.5 else 1)
+  v = v if v!="?" else (0 if u>0.5 else 1)
+  return abs(u - v)
+
+def minkowski(items, p=2): # p=2 means "Euclidean"  |\label{minkowski}|
+  tot, n = 0, 1e-32
+  for item in items:  tot, n = tot + item**p, n + 1
+  return (tot/n) ** (1/p)
+\end{minted}
+The \textsf{aha} rules encode three   policies. If both
+values are missing, their distance is maximal (Aha's
+heuristic). For symbolic columns, distance is whether the two
+values differ. For numeric columns, values are normalized to
+$[0,1]$; if one value is missing, it is placed at the opposite
+end of the known value, making the comparison deliberately
+pessimistic.
+
+With \textsf{distx} in hand, $k$-means itself is short. EZR uses
+the \cls{Data} class to store each cluster: a ``cluster'' in
+\IT{} is just a \cls{Data} populated by \textsf{add}:
 
 \begin{minted}{python}
 def kmeans(d, rs=None, k=10, n=10, cents=None):
-  """Cluster rows into k groups."""
   rs = rs or d.rows
   cents = cents or choices(rs, k=k)
   out = []
   for _ in range(n):
-    out = [clone(d) for _ in cents]
+    out = [clone(d) for _ in cents] |\label{centroids}|
     for r in rs:
       add(out[min(range(len(cents)),
-        key=lambda j: distx(d, cents[j], r))], r)
-    cents = [mids(kid)
+                  key=lambda j: distx(d, cents[j], r))], r)
+    cents = [mids(kid)  # for "mids" see line |\ref{mids}|
              for kid in out if kid.rows]
   return out
 \end{minted}
+What is worth noting about \textsf{kmeans} is what it does
+\emph{not} introduce. Every function it calls already existed
+before \textsf{kmeans} was written. \textsf{clone}
+(\S\ref{sec:peek}) makes the empty cluster shells. \textsf{add}
+fills them. \textsf{distx} measures membership. \textsf{mids}
+produces the new centroids. The clustering loop is a
+fifteen-line gluing-together of pre-existing parts.
 
-Every primitive in this loop already existed before $k$-means
-was written. \textsf{clone} (\S\ref{sec:peek}) makes the empty
-cluster shells. \textsf{add} fills them. \textsf{distx}
-measures membership. \textsf{mids} produces the new centroids.
-$k$-means rides on the substrate without needing anything new.
+This is the substrate-reuse pattern at work. The cost of
+adding a new algorithm is not the cost of building the
+algorithm from scratch; it is only the cost of writing the
+loop that calls the substrate.
 
-\subsection{$k$-means++ in eleven lines}
+\subsection{$k$-means++}
 
-The standard $k$-means++ rule says: pick one centroid at
-random, then pick each subsequent centroid with probability
-proportional to its squared distance from the nearest existing
-centroid. The phrase ``with probability proportional to'' is
-the work. Everything else is bookkeeping.
+$k$-means++~\cite{arthur2007kmeanspp} is a heuristic for picking
+the initial clusters given to $k$-means. The heuristic picks one
+centroid at random, then picks each subsequent centroid with
+probability proportional to its squared distance from the
+nearest existing centroid. ``With probability proportional to''
+is the part that needs new machinery: nothing in the substrate
+so far samples from a weighted distribution.
 
-\IT{} already had that work done. \textsf{pick} samples from a
-weighted distribution, and the dispatch is the same
-polymorphism-by-type that \textsf{mid} and \textsf{spread} use:
+To sample from a weighted distribution, we use the  
+\textsf{pick} sampler. This is a very useful function: we use 
+it here as well as when we explore
+mutation-based optimization in \S\ref{sec:opt}.
+That is  the same code that seeds $k$-means++ and can 
+generate mutants for simulated annealing and local search. 
 
+ To pick from \cls{Syms}, we use a 
+roulette-wheel sampler: successively subtract from a probability mass,
+stopping when we run out of values
+ (lines~\ref{wheel0} to \ref{wheel1}).
 \begin{minted}{python}
-def pick(it, v=None):
-  """Sample from distribution."""
+def pick(it, v=None): |\label{pick}|
   if Sym == type(it): return pick(it.has)
   if Num == type(it):
-    tmp = (v if v is not None and v != "?"
-           else it.mu)
+    mu = (v if v is not None and v != "?"  else it.mu) | \label{mupick} |
     lo = it.mu - 3*it.sd
     hi = it.mu + 3*it.sd
-    new = tmp + it.sd*2*(
-            rand() + rand() + rand() - 1.5)
+    new = mu + it.sd*2*(rand() + rand() + rand() - 1.5)
     return lo + (new - lo) % (hi - lo + 1e-32)
   if dict == type(it):
-    n = sum(it.values()) * rand()
+    n = sum(it.values()) * rand() | \label{wheel0} |
     for k, v in it.items():
-      if (n := n - v) <= 0: return k
+      if (n := n - v) <= 0: break
+    return k | \label{wheel1} |
 \end{minted}
+To pick from \cls{Num}s, we draw from a distribution centered on a supplied $\mu$ (defaulting to
+the column mean) using the Irwin-Hall
+sampler~\cite{johnson1995continuous}. 
+To understand Irwin-Hall, we first note that a Gaussian's effective range is
+$\pm 6\sigma$. The sum of $n$ uniformly distributed random numbers is approximately
+normally distributed. So the sum of three uniforms, centered and
+scaled, is a fast way to generate a Gaussian approximation : $2(\textsf{rand}() + \textsf{rand}() + \textsf{rand}() -
+1.5)$. Mutation uses the first form (perturb around
+a specific row's value); $k$-means++ uses the dict branch.
 
-The dict branch is a roulette-wheel sampler: accumulate random
-mass, return the key where it runs out. \textsf{pick} was first
-written to support synthetic-data generation in mutation
-operators (used later in \S\ref{sec:opt}). The dict branch is
-exactly what $k$-means++ needs.
-
-So $k$-means++ is just: build the weight dict, sample, repeat:
+ 
+Once \textsf{pick} is available, $k$-means++ is just (a)~build
+the weighted dict, (b)~pick from it, (c)~repeat:
 
 \begin{minted}{python}
-def kpp(d, rs=None, k=10, few=256):
-  """k-means++ centroid selection."""
+def kpp(d, rs=None, k=10, few=256): |\label{kpp}|
   rs = rs or d.rows
   out = [choice(rs)]
   while len(out) < k:
     t = sample(rs, min(few, len(rs)))
-    ws = {i: min(distx(d, t[i], c)**2
-                 for c in out)
+    ws = {i: min(distx(d, t[i], c)**2 for c in out)
           for i in range(len(t))}
     out.append(t[pick(ws)])
   return out
 \end{minted}
+The \textsf{few=256} parameter  (on line \ref{kpp}) is a pragmatic shortcut. On large
+data sets, scanning every row to score each new centroid is
+expensive; 256 random candidates give an interesting weighted
+spread without the cost.
 
-\textsf{few=256} is a pragmatic shortcut. On large data sets,
-scanning every row for each new centroid is wasteful when 256
-random ones give an adequate weight distribution. The same
-instinct that makes \textsf{the.few=128} sufficient for active
-learning makes \textsf{few=256} sufficient here. Reading the
-code surfaces this kind of cross-algorithm symmetry.
-
-\subsection*{The lesson: one substrate, three textbooks}
-
-Three sections of the standard AI curriculum, around 30 lines
-of new code between them. None of the three needed a new data
-structure. None needed a new training phase. Each is a way of
-asking the substrate a different question:
+\subsection*{The lesson: one substrate, three algorithms}
+The above 70 lines present in a unified manner three algorithms that
+usually separate sections in a standard AI curriculum.
+With the exception of \textsf{pick},
+none of the three algorithms needed a new data structure or a
+new support function. None needed a new training phase. Each was
+a way of asking the substrate a different question:
 
 \begin{itemize}
-\item Naïve Bayes asks: how much does this column like this
-value?
+\item Naïve Bayes asks: how much does a column like a value?
 \item $k$-means asks: which centroid is this row closest to?
 \item $k$-means++ asks: which row should be the next centroid,
 weighted by squared distance?
 \end{itemize}
+While the questions differ; the machinery underneath does not. Every
+\cls{Num} and \cls{Sym} inside a \cls{Data} was already a fitted
+summary. Every clustering call already had \textsf{clone},
+\textsf{add}, and \textsf{mids} available do this code draws heavily on
+pre-existing functionality.
 
-The questions are different. The machinery underneath is the
-same.
+This is the kind of structural similarity that becomes invisible
+when humans no longer read the code. An LLM asked separately for
+``Naïve Bayes,'' ``$k$-means,'' and ``$k$-means++'' will
+generate three independent implementations, with three separate
+data structures and three separate maintenance burdens. The
+code emitted by such generators is not wrong;
+but it does  misses the observation that the same substrate would
+have served all three. And if the substrate is ignored and the above
+is implemented three times, that  means
+triple the code, triple the bugs,  and triple the maintenance. 
 
-This is the structural similarity that recent commentary about
-not reading AI code says humans no longer need to see. Without
-seeing it, you write the three algorithms three times, in three
-styles, with three sets of bugs. With it, you write one
-substrate and reuse it. The 30-line outcome is not clever
-compression. It is what is left when you read the code
-carefully enough to notice that the chapters were the same
-chapter all along.
 
-\section{Three Optimizers, One Algorithm}\label{sec:opt}
+  \section{ Classification and Regression in 43 Lines}\label{trees}
 
-\S\ref{sec:famous} did three classifiers and clusterers. We do
-three optimizers here. The (1+1) evolutionary algorithm,
-simulated annealing, and local search appear in textbooks as
-separate methods. In \texttt{ezr.py} they are the same loop
-with different one-line accept rules.
+ 
 
-This buys us two of the lessons from \S\ref{sec:intro}. Lesson 4
-says optimization, classification, and regression are nearly the
-same algorithm. Lesson 2 says random search is more competitive
-than the metaheuristics literature suggests. Both come out of
-the same code.
-
-One housekeeping item. Optimizers need a way to say which row is
-better. We use \textsf{disty}, which is the Euclidean distance
-from a row to an ideal point computed only on goal columns. From
-line~\ref{heaven}, each goal column knows its ideal value: 1 for
-``+'' columns, 0 for ``-'' columns. \textsf{disty} just walks the
-goal columns:
-
+ Our general theme is that with the right underlying
+ architecture, building any number of AI tools becomes
+ easy.
+For example, in this section, we use the above code to build
+classification 
+ regression trees that predict the   values in any leaf of those tree.
+ 
+ Classification trees and regression trees are nearly the same
+but differ  in how they score  their leaves:
+ \begin{itemize}
+ \item Classification trees return symbolic   scores
+ for each leaf;
+ \item Regression trees return numeric scores such as \textsf{disty}.
+ \end{itemize}
 \begin{minted}{python}
-def disty(data, row):
-  """Distance to heaven on Y vars."""
-  return minkowski(
-    abs(norm(col, row[col.at]) - col.heaven)
-    for col in data.cols.ys)
+def disty(data, row): |\label{disty}| 
+  return minkowski(  # for "minkowski", see line |\ref{minkowski}|
+          (abs(norm(col, row[col.at]) # for "norm", see line |\ref{norml}|
+           - col.heaven)  # for "heaven", see line |\ref{heaven}|
+           for col in data.cols.ys), p=the.p)
+\end{minted}       
+EZR's   trees are formed by recursively splitting the rows in order
+ to decrease conclusion uncertainty. 
+ For example,   for the following data about human beings,
+ we would be certain about who was alive or dead if we split
+ at   $\mathit{age}<80$
+ (since, after that split {\em alive} would all $y$
+ in the lower split and all $n$ in the upper split).
+ \begin{repl}
+ age:   [ 0, 0, 10, 11, 16, 21, 40, 80, 120, 200]
+ alive: [ y, y,  y,  y,  y,  y,  y,  n,   n,   n]
+\end{repl}
+The \textsf{spread} function defined above at line~\ref{spread0} lets us
+measure that uncertainty.
+If a split on column {\em col} (using at a value {\em cut}) generates two sets of rows of
+size $n_1,n_2$ with \textsf{spread} $s_1,s_2$, then the best split is
+the one that minimizes the expected value of the uncertainty after
+the split; i.e. $(n_1\, s_1 + n_2\, s_2)/(n_1 + n_2)$.
+
+To assess a {\em cut},
+we can the following information:
+\begin{minted}{python}
+def treeSplit(data, col, cut, rows,klass=disty,y=Num): 
+  l_rows,r_rows,l_num,r_num=[],[],y(),y()
+  for row in rows:
+    v = row[col.at]
+    go=v=="?" or (v==cut if Sym==type(col) else v<=cut) |\label{cutts}|
+    (l_rows if go else r_rows).append(row)
+    add(l_num if go else r_num,klass(data,row)) |\label{effects}|
+  s=(l_num.n*spread(l_num)+r_num.n*spread(r_num))/len(rows)
+  return s,col,cut,l_rows,r_rows
 \end{minted}
+Note how this code  uses  \textsf{spread} (from line \ref{spread0}). This is an abstract term
+that covers standard deviation (for \cls{Num}s) and entropy (for \cls{Sym}s.
 
-Lower scores are better. \S\ref{sec:using} expands the role of
-\textsf{disty} when active learning needs it. Here a one-line
-definition is fine.
+Line~\ref{cutts} needs a word of explanation.
+Cuts from symbolic and numeric columns get tested differently. Rows go left when the test is true, right when false. For symbolic columns, true means {\em equal} to the cut (false means 
+{\em not equal}). For numeric columns, true means {\em less that or equal} to  the cut (and false means {\em greater than}).
 
-\subsection{Mutation via \textsf{pick}; scoring via \textsf{nearest}}
+Note that, on  line \ref{effects}, \textsf{treeSplit}   uses \cls{Num} to  
+collect the numeric  \textsf{disty} statistics on what happens in the left or right cut. That is, by default, EZR builds regression trees.
+To ask EZR to build classification
+trees, all that is required is  
+\begin{repl}
+klass = Sym
+y = lambda row:row[data.cols.klass.at] # from line |\ref{klass}|
+\end{repl}
+One way to generate {\em cut}s is to try every unique value in the rows. Numeric columns can have many such values, so we instead slice the rows into equal-sized 
+{\em bins} and take one 
+{\em cut} per bin. After trying  various bin sizes,
+ {\em bins=2} tends to work best.
+(i.e. splitting numerics on the median).
+\begin{minted}{python}
+def treeCuts(col, rows, bins=2):
+  vs = [row[col.at] for row in rows if row[col.at]!="?"]
+  if not vs: return []
+  if Sym == type(col): return set(vs)
+  vs = sorted(vs)
+  return [vs[bin*len(vs)//bins] for bin in range(1, bins)]
+\end{minted}
+Once we can generate and score the {\em cut}s, then the rest of tree learning is just
+a recursive descent that tries to add \textsf{tree.left} and \textsf{tree.right} to the
+current \textsf{tree} node.  In EZR, this recursion stops when
+we can no longer cut rows into two splits of size 3 (see line \ref{stop}):
+\begin{minted}{python}
+the.leaf = 3 # config
 
-You need three things to optimize: a way to perturb a row, a way
-to score the result, and a rule for accepting the change. \IT{}
-already has the first two.
+def treeGrow(data, rows, klass=disty, y=Num): 
+  tree = Tree(data, rows) |\label{newTree}|
+  if len(rows) >= 2 * the.leaf: |\label{stop}|
+    splits = (treeSplit(data, col, cut, rows, disty,y)
+              for col in tree.d.cols.xs
+              for cut in treeCuts(col, rows))
+    if valid := [s for s in splits
+        if min(len(s[3]),len(s[4])) >= the.leaf]:
+      _, tree.col, tree.cut, left, right = min(
+        valid, key=lambda x: x[0])
+      tree.left  = treeGrow(data, left)
+      tree.right = treeGrow(data, right)
+  return tree
+\end{minted}
+ Once a tree is generated,
+ to make a prediction, a new row has to be pushed down its appropriate
+branch. 
+\begin{minted}{python}
+def treeLeaf(tree, row): 
+  if not tree.left: return tree
+  v = row[tree.col.at]
+  go = v!="?" and (v<=tree.cut if Num==type(tree.col) 
+                               else v==tree.cut)
+  return treeLeaf(tree.left if go else tree.right,row)
+\end{minted}
+At the end that branch is a leaf containing a \cls{Data}
+which can be used to make predictions.
+To facilitate that, as a side-effect of making a new tree node on line~\ref{newTree}
+we compute \textsf{ynum} (which is the distribution of 
+the \textsf{disty}s seen in that node).
+\begin{minted}{python}
+class Tree: 
+  def __init__(i, data, rows):
+    i.d = clone(data, rows)
+    i.ynum = adds((disty(data,row) for row in rows),Num())
+    i.col,i.cut = None,0
+    i.left=i.right=None
+\end{minted}
+ Later in this paper, when we discuss active learning, we will show
+ that the trees learned in this manner are very effective.
+ 
+  In support of the thesis of this paper
+  (that AI is very simple
+  when implemented with the right primitives) we note that EZR's
+  combined classification/regression tree  generator
+  requires just 43 lines of code.
+One reason for this is that it makes extensive use of 
+\cls{Data}, \cls{Num}, \cls{Sym}.
+  
+\section{Two Optimizers, One Code base, in 56 Lines}\label{sec:opt}
 
-\textsf{picks} mutates a row by replacing some random independent
-columns with new values drawn from \textsf{pick}, the sampler we
-saw in \S\ref{sec:famous} for $k$-means++. For \cls{Num} columns,
-\textsf{pick} jiggles the value around a Gaussian centered near
-the current value. For \cls{Sym} columns, it samples from the
-observed distribution.
+This section tests two truism:
+\begin{itemize}
+\item The first is structural: that
+optimization is a different kind of problem from classification,
+clustering, and regression, and that it needs its own algorithms
+and its own code base. 
+\item The second is empirical: that modern
+optimizers (with restart, retry, adaptive schedules) outperform
+older, simpler methods. The 1990s metaheuristics literature
+(GSAT~\cite{gsat}, WalkSAT~\cite{walksat}, GRASP~\cite{grasp},
+Iterated LS~\cite{ils}) argued the second truism explicitly, with
+a steady drumbeat of papers claiming clear advantage over older
+methods like simulated annealing. 
+\end{itemize}
+The two subsections below take
+these truisms in turn:
+\begin{itemize}
+\item
+\S\ref{sec:opt}.1 shows that two optimizers (simulated
+annealing and local search) share most of their code.
+\item
+\S\ref{sec:opt-results} then shows that simulated annealing in
+its 1983 default configuration~\cite{kirkpatrick1983optimization}
+matches or beats every local-search variant we tested across 20
+MOOT benchmarks.
+\end{itemize}
+In the following implementation,  we will see  that  not only are our optimizers similar, but
+they also share much of
+with the same code used for classification and optimization. 
+We unaware of any prior work that has shown such similarities
+between optimization and classification and regression.
+
+\subsection{(1+1) algorithms}
+A (1+1) evolutionary algorithm {\em mutates} one current solution
+to generate one mutant. If the mutant is ``better'' the algorithm
+{\em accepts} that the current solution can be replaced. This new
+current solution is used as the basis for future mutation.
+
+Two examples of (1+1) algorithms are simulated annealing (SA) and
+local search (LS). Both have their own mechanisms for escaping
+dead-ends in the search space. 
+Local search uses  a reset-retry policy~\cite{Crawford:1994}.
+If no progress is being made, it jumps back to a fresh start with a  new random seed.
+
+Simulated annealing~\cite{kirkpatrick1983optimization}, on the other hand, can {\em accept}
+a slightly less optimal solution with a probability that drops as
+the run progresses. Early on, when its ``temperature'' is high, 
+SA jumps around up and down to better/worse solutions.
+Later in its run, the algorithm
+becomes much more discerning and will only move to better solutions.  
+In the code below,
+at line \ref{saxxx}, the $(1-h/b)$ term in the
+denominator of the exponential is what does the cooling: as the
+history count $h$ approaches the budget $b$, the denominator
+shrinks, the exponential collapses, and SA stops accepting bad
+moves.
+
+
+The two algorithms also differ in what they {\em mutate}. Simulated
+annealing mutates a random subset of attributes. Local search, on the other hand,
+(a)~usually mutates any one attribute at a time; (b)~then at
+probability $p$, freezes all attributes except one, then sweeps over the range
+of that single attribute.
 
 \begin{minted}{python}
-def picks(data, row, n=1):
-  """Mutate n random x-columns."""
+def ls(d, oracle, restart=100, p=0.5, tries=20, budget=1000): 
+  def accept(e, en, *_): return en < e
+  def mutate(s):
+    c = choice(d.cols.xs)
+    for _ in range(tries if rand()<p else 1):
+      s = s[:]
+      s[c.at] = pick(c, s[c.at]) # for "pick" see line |\ref{pick}|
+      yield s
+  return oneplus1(d, # for "oneplus1", see |\ref{oneplus1}|
+                  mutate, accept, oracle, budget, restart)
+ 
+def sa(d, oracle, restart=0, m=0.5, budget=1000): 
+  n = max(1, int(m * len(d.cols.xs)))
+  def accept(e, en, h, b): return en<e or rand()<exp(
+                                 (e-en)/(1-h/b+1E-32)) |\label{saxxx}|
+  def mutate(s): 
+     yield picks(d, s, n) # for "picks" see next function
+  return oneplus1(d, # for "oneplus1", see |\ref{oneplus1}|
+                  mutate, accept, oracle, budget, restart)
+
+def picks(data, row, n=1): 
   s = row[:]
-  for col in sample(data.cols.xs,
-                    min(n, len(data.cols.xs))):
-    s[col.at] = pick(col, s[col.at])
+  for col in sample(data.cols.xs, min(n, len(data.cols.xs))):
+    s[col.at] = pick(col,s[col.at]) # for "pick" see line |\ref{pick}|
   return s
 \end{minted}
+Simulated annealing and local search are often presented as separate
+algorithms. But as seen here, both can be coded by calling an
+underlying \textsf{oneplus1} function while specializing the
+{\em mutate} and {\em accept} functions.
 
-Scoring is harder. Running the real oracle on each candidate is
-the whole reason this paper exists. We substitute a cheap
-proxy: find the closest already-labeled row in $x$-space, copy
-its $y$ values into the candidate, and call \textsf{disty}.
-
+Before implementing our evolutionary algorithm, we first need to
+define some way to rank mutants (in order to select the better
+ones). EZR builds a surrogate {\em oracle} from a hold-out set,
+then uses that surrogate to score new mutants. In the literature,
+the standard way to build this {\em oracle} is a procedure followed
+by (e.g.) Pfisterer~\cite{pfisterer2022yahpo} and Zela et
+al.~\cite{zela2020surrogate} where:
+\begin{itemize}
+\item The mutators adjust the $x$ values;
+\item The $y$ values of a new mutant are copied from their nearest
+neighbor in 50 rows set aside at the start of the run;
+\item Those $y$ values are summarized as {\em distance to heaven};
+i.e. the distance of those values to the \textsf{heaven} values
+for each goal calculated at line~\ref{heaven}\footnote{Some
+consideration was given to building a predictive model (e.g., a
+decision tree) for labeling   unseen examples. But the
+only way to validate that  model would be via the Pfisterer
+and Zela procedure, since our tabular data holds all   ground
+truth. Since some form of nearest-neighbor testing is unavoidable,
+EZR adopts it from the outset.}.
+\end{itemize}
 \begin{minted}{python}
-def oracleNearest(data, row):
-  """Score: copy y-vals from nearest labeled."""
+d0 = Data(csv(file))   
+shuffle(d0.rows)
+known  = Data([d0.cols.names] + d0.rows[:50])
+search = Data([d0.cols.names] + d0.rows[50:])
+oracle = lambda r: oracleNearest(known, r)
+
+def oracleNearest(data, row): 
   near = nearest(data, row)
-  for col in data.cols.ys:
-    row[col.at] = near[col.at]
+  for col in data.cols.ys: row[col.at] = near[col.at]
   return disty(data, row)
+  
+
+def nearest(data, row): 
+  return min(data.rows, 
+             key=lambda r: distx(data, row, r))
 \end{minted}
-
-Three lines. This is a 1-NN surrogate. The expensive oracle is
-called only when active learning (\S\ref{sec:active}) decides a
-genuinely new label is worth paying for.
-
-\subsection{(1+1)-EA, simulated annealing, and local search:
-three accept rules}
-
-The optimization loop takes a mutate callback, an accept
-callback, and an oracle. It yields each new best candidate as it
-finds them. A \textsf{restart} parameter lets the search jump to
-a fresh starting point if it stalls.
-
+Finally, we can present \textsf{oneplus1}.   It runs the (1+1) loop
+(mutate, score, accept, track the best) and nothing else. The
+tactics used by \textsf{mutate} and \textsf{accept} are passed in
+from \textsf{sa} and \textsf{ls}.
+In the following code,
+\textsf{restart=0} means ``never restart'' and \textsf{restart=100}
+means ``restart if no improvements after 100 mutations'':
 \begin{minted}{python}
-def oneplus1(data, mutate, accept, oracle,
-             budget=1000, restart=0):
-  """(1+1) search: mutate, score, accept."""
+def oneplus1(data, mutate, accept, oracle, |\label{oneplus1}|
+             budget=1000, restart=0): 
   h, best, best_e = 0, None, 1E32
   s, e, imp = choice(data.rows)[:], 1E32, 0
   while h < budget:
@@ -1089,187 +1332,374 @@ def oneplus1(data, mutate, accept, oracle,
       if en < best_e:
         best, best_e, imp = sn[:], en, h
         yield h, best_e, best
-      if restart and h - imp > restart:
+      if restart and h - imp > restart: |\label{restart}|
         s = choice(data.rows)[:]
         e, imp = 1E32, h
         break
 \end{minted}
+\begin{table*}[t]
+\centering\scriptsize
+\caption{Four treatments across 20 randomly selected MOOT benchmarks. Cells show
+mean (sd) scores (from Equation~\ref{eq:wins}) over 20 repeats; budget = 1000 oracle calls. +r/-r denotes restart/retry enabled/disabled (respectively).}
+\label{tab:opt}
+\begin{tabular}{rrrrrrrrl}
+wins & ls-r & ls+r & sa-r & sa+r & \#rows & \#x & \#y & file \\
+\midrule
+2 &  30 (75) &  89 (17) &  98 (9)  &  98 (9)  & 86058 & 11 & 2 & SS-X \\
+2 &  45 (62) &  97 (9)  & 100 (0)  & 100 (0)  &  4653 & 38 & 1 & SQL\_AllMeasurements \\
+2 &  50 (47) &  91 (18) & 100 (0)  & 100 (0)  &  4608 & 21 & 2 & SS-U \\
+3 &  54 (84) & 100 (0)  & 100 (0)  & 100 (0)  &   864 & 17 & 3 & SS-M \\
+2 &  62 (16) &  80 (11) &  92 (11) &  92 (11) & 53662 & 17 & 2 & SS-N \\
+2 &  63 (43) &  96 (12) & 100 (0)  & 100 (0)  &  1023 & 11 & 2 & SS-P \\
+1 &  74 (20) &  93 (12) &  88 (13) &  92 (13) &   196 &  3 & 2 & SS-G \\
+1 &  76 (19) &  96 (11) &  94 (13) &  97 (8)  &   196 &  3 & 2 & SS-F \\
+3 &  77 (40) & 100 (0)  & 100 (0)  & 100 (0)  &  1152 & 16 & 1 & X264\_AllMeasurements \\
+3 &  81 (49) & 100 (0)  & 100 (0)  & 100 (0)  &  3840 &  6 & 2 & SS-S \\
+1 &  83 (21) &  98 (9)  &  96 (11) &  95 (13) &   196 &  3 & 2 & SS-D \\
+3 &  92 (25) & 100 (0)  & 100 (0)  & 100 (0)  &   196 &  3 & 1 & wc+wc-3d-c4-obj1 \\
+3 &  92 (34) & 100 (0)  & 100 (0)  & 100 (0)  &  5184 & 12 & 2 & SS-T \\
+3 &  93 (23) & 100 (0)  & 100 (0)  & 100 (0)  &   192 &  9 & 1 & Apache\_AllMeasurements \\
+2 &  94 (13) &  99 (5)  & 100 (0)  & 100 (0)  &   259 &  4 & 2 & SS-H \\
+3 &  95 (23) & 100 (0)  & 100 (0)  & 100 (0)  &   196 &  3 & 1 & wc+sol-3d-c4-obj1 \\
+3 &  98 (11) & 100 (0)  & 100 (0)  & 100 (0)  &  3840 &  6 & 2 & SS-J \\
+4 & 100 (0)  & 100 (0)  & 100 (0)  & 100 (0)  &   196 &  3 & 1 & wc+rs-3d-c4-obj1 \\
+4 & 100 (0)  & 100 (0)  & 100 (0)  & 100 (0)  &  3840 &  6 & 1 & rs-6d-c3\_obj1 \\
+4 & 100 (0)  & 100 (0)  & 100 (0)  & 100 (0)  &  2866 &  6 & 1 & sol-6d-c2-obj1 \\
+\midrule
+  &  78      &  97      &  98      &  99      &       &    &   & mean 
+\end{tabular}
+\end{table*}
+Note that:
+\begin{itemize}
+\item The \textsf{restart} parameter jumps the search back to a
+fresh random starting row if no improvement has appeared in the
+last \textsf{restart} evaluations.  
+\item \textsf{sa} calls \textsf{oneplus1} with \textsf{restart=0}
+which, as can be seen on line~\ref{restart}, disables restarts for
+that algorithm.
+\end{itemize}
+Note also that, as promised at the start of this section, not only
+do these two optimizers share much of the same codebase, but this
+code also reuses large parts of the clustering code:
+\begin{itemize}
+\item Our optimizers needed a surrogate oracle to assess new
+mutants. We supplied this with a nearest neighbor algorithm based
+on the clustering code  described in \S\ref{kluster}.
+\item When mutating numerics, our optimizer uses distribution
+knowledge of the standard deviation to decide what counts as a
+reasonable mutation size. This information was already collected
+by the \cls{Num} class, which we were using for the surrogates.
+\end{itemize}
 
-Notice what is not here. There is no commitment to a search
-strategy. There is a loop shape (mutate, score, accept, track
-best), and the search strategy is whatever \textsf{accept}
-decides.
 
-The (1+1) evolutionary algorithm accepts any candidate no worse
-than the current one. Plateaus do not stop it.
 
+ 
+\subsection{Experiments with (1+1)}\label{sec:opt-results}
+
+ 
+
+Code similarities aside, another reason to use EZR is that it is
+very easy to reorganize such a small code base to conduct insightful
+experiments. For example, in this section we comment
+on the relative merits of restart/retry mechanisms.
+
+
+Why is it interesting to explore this issue?
+In the 1990s, LS with all its variants (GSAT~\cite{gsat},In the 1990s, LS with all its variants (GSAT~\cite{gsat}, WalkSAT~\cite{walksat}, GRASP~\cite{grasp}, Iterated LS~\cite{ils})
+represented a dominant paradigm in metaheuristics research, with
+a steady drumbeat of papers claiming clear advantage over older
+methods like SA A reader who
+read that literature would expect LS to dominate here.
+
+However, our results with EZR on the MOOT data
+(Table~\ref{mootdata}) tell a different story. This section
+details a recurring observation: many long-standing truisms
+in optimization dissolve when confronted with modern
+empirical benchmarks.
+
+To compare LS and SA,  we need data and some goal
+within that data
+For data, we selected 20 data sets at random from the MOOT data
+ (recall
+that examples of those tables were displayed in 
+Table~\ref{moot}). 
+
+
+Turning now to what goal to explore, within any MOOT table
+of data there is one row with
+the smallest \textsf{disty}. We call this the {\em reference
+optimum} $d^*$.\footnote{According to the
+empirical algorithms literature~\cite{McGeoch2012,cohen1995empirical},
+the 
+{\em reference optimum} is the best solution observed in the dataset. This is not necessarily the true global optimum
+since in most real engineering problems,
+the true optimum is unknown, so the reference optimum is the
+strongest available standard}.   A   baseline $d_0$ is set to
+the median \textsf{disty} of the rows in that table.
+In order to compare optimization results across multiple
+MOOT data sets, we can report the best row found as some
+ratio of $d_0 - D^*$: 
+\begin{equation}\label{eq:wins}
+  \text{score} = 100 \cdot \left( 1 - \frac{\text{disty(best)} - d^*}{d_0 - d^*} \right)
+\end{equation}
+Here, the {\em score}$=0$  means the optimizer did no better than a random pick and {\em score}$=50$
+means it closed half the gap, and 
+{\em score}$=100$ means it found the reference
+optimum.
+
+(Aside: for readers familiar with reinforcement learning,
+we note that Equation~\ref{eq:wins} is the
+complement of {\em regret}, normalized by the achievable
+improvement range.)
+
+
+For each of the 20 MOOT benchmarks used in this study, we shuffle the
+rows, set aside 50 as the surrogate's known set, and run 
+LS and SA with restart/retry enabled/disabled
+for a budget of 1000 oracle calls. We repeated
+this 20 times per (file, treatment) pair, recording the score of
+the best mutant found.
+
+ Table~\ref{tab:opt} reports mean and standard
+deviation across the 20 repeats. 
+In those results, two patterns are noteworthy:
+\begin{itemize}
+\item
+\textit{Restart is a patch for LS, not an upgrade over SA.}
+Removing restart from LS is catastrophic: the \textsf{ls-r} score mean
+drops to 78, and on the worst rows it lands at 30, 45, 50, with
+standard deviations of 75, 62, 47.   Adding restart back fixes
+LS (\textsf{ls+r} mean of 97), but does not push it past SA. SA
+without restart already averages 98, and adding restart to SA
+moves the mean by one point. 
+To say that another way,  
+SA's stochastic acceptance is doing
+the same job as restart.
+\item
+\textit{The variance is the story, not the mean.} The \textsf{ls-r}
+column has standard deviations of 75, 84, 62, 49 on its hardest
+rows. The other three columns sit at 0--13 sd on those same rows.
+For a practitioner, this means \textsf{ls-r} is not just worse on
+average, it is unpredictable in a way the others are not.  
+\end{itemize}
+The headline for a practitioner is as follows:
+ reset/retry should be not be used uncritically.
+Rather, in new domains, it would be useful to comparatively
+assess the merits of reset/retry against other approaches.
+If you are running local search,
+you need restart, and even with it you do not pull ahead of SA.
+If you are running SA, restart is a rounding error. The simplest
+working choice is \textsf{sa-r}: simulated annealing with the
+default \textsf{restart=0}, the same configuration the algorithm
+has had since 1983.
+
+These results come with the obvious caveat: it only holds
+for the data studied here. Further experimentation, on more data,
+is required.  Tools like EZR encourage such experimentation
+due to their simplicity.  
+
+In summary: (a)~optimization is not its own
+separate algorithmic kingdom (since it shares so much with regression and classification), 
+and (b)~1983 SA still holds its ground against
+the 1990s LS variants that claimed to surpass it.
+
+\section{Active Learning in 80 Lines }\label{sec:active}
+
+This section tests  truisms about learning
+from labeled data. 
+When learning some model $y=f(x)$ for examples of $(x,y)_1, (x_y)_2,$ etc,
+it is often assumed that:
+\begin{itemize}
+\item
+The  more labels for the $y$ attributes, the better the models;
+\item 
+Using 
+more  $x$ features yields better models;
+\item
+Retraining models is always  a slow process.
+\end{itemize}
+This section offers counter examples to all these points.
+% The active learner described
+% below pushes back on all three. The \textsf{rebalance} routine
+% below replaces ensemble retraining with an O(1) row swap,
+% running 500$\times$ faster than 
+% SMAC3~\cite{hutter2011sequential,ganguly2026lowgodatalightse}.
+% A parameter study across 100{,}000 trials shows fewer than 100
+% labels suffice to reach 85--95\% of the reference optimum. And
+% the regression trees grown from those labels use fewer than 10
+% features even when thousands of features are available.
+
+\subsection{Why Active Learning?}
+The prior results with (1+1) algorithms
+assumed  that  we could  obtain   $y$ labels of up to 1000 rows.  
+In SE, that assumption is unwise:
+\begin{itemize}
+\item
+{\bf Labeling by human experts}  is possible but slow and error-prone when rushed~\cite{easterby1980design}, often taking hours for just a few cases~\cite{KingtonAlison2009,lustosa2024learning,valerdi2010heuristics}.
+\item
+{\bf Historical logs} provide large label sets but can be unreliable; e.g., 90\% of technical debt “false positives” were incorrect~\cite{yu2020identifying}; similar issues occur in security~\cite{wu2021data}, static analysis~\cite{kang2022detecting}, and defect data~\cite{shepperd2013data}.
+\item
+{\bf Automated labeling} also faces limits: regex-based heuristics are crude~\cite{kamei2012large}; LLMs are only assistive (but not authoritative).
+Even in domains with naturally occurring oracles (e.g. compile with certain Makefile settings; run the full test suite), these can be extremely slow. For example, an exhaustive
+exploration of the 11 parameters of the \textsc{x264} video encoder took 1000+  hours to terminate~\cite{DBLP:conf/wosp/ValovPGFC17}. Such costs mean that, in practice, the number of evaluations is often limited to just a few dozen~\cite{DBLP:journals/tse/Nair0MSA20,DBLP:conf/icse/0003XC021}.
+\end{itemize}
+% Finding authoritative labels is a  problem
+% that has plagued much recent work~\cite{ahmed2025can,h2022,tu2019better,yu2020identifying,wu2021data,kamei2012large,herbold2022problems}.   Labels can be collected from domain experts but
+%  label quality degrades when those experts are rushed~\cite{easterby1980design}. Careful interviews are slow, requiring hours to label just a few examples~\cite{KingtonAlison2009, lustosa2024learning, valerdi2010heuristics}\footnote{Similar rates were seen  in manual knowledge acquisition research from the 1980s where `5-10 expert rules per day'' was the norm~\cite{menzies1992expert}.}.
+%  Historical logs  offer many  labels, but many of those are error-prone (e.g. 90\% of technical debt ``false positives'' were found to be incorrect\cite{yu2020identifying}; similar errors plague security\cite{wu2021data}, static analysis~\cite{kang2022detecting}, and defect datasets~\cite{shepperd2013data}).
+%  Automated labeling models can be applied, but these are  often problematic. Simplistic regex methods rely on dubious heuristics~\cite{kamei2012large}, while recent MSR'25 studies found that LLMs are only assistive, not authoritative~\cite{ahmed2025can}. Even widely-used tools like SZZ~\cite{Sliwerski05} have many known issues, with some doubting that they will ever be authoritative~\cite{herbold2022problems}. Ultimately, all automated methods require certification, making them dependent on experts or logs.
+ When we cannot trust many labels, we must do what we can with very few labels. Enter {\em active learning}~\cite{settles2008analysis}. 
+ 
+ A {\em passive learner} trains on whatever data it is given (the Naive Bayes and
+ $k$-means algorithms described above are passive learners). An {\em active
+learner}, on the other hand,  picks its own training set. Specifically, an active learner reflects on the
+model built so far to find the  most informative    example to label next. 
+It then updates its model and the process repeats. In practice,
+this means the active learner labels very few rows since it is 
+skipping over all the  examples that are noisy, redundant, or
+uninformative.  
+
+\subsection{Taming the Cost of Model Update}
+
+The cost of active learning is in the model updates. New labels arrive
+one at a time. After each arrival, the model has to be updated. If
+the model is an ensemble of regression trees (as in
+SMAC3~\cite{hutter2011sequential}), this update means rebuilding all the trees.
+
+EZR's active learner 
+was inspired by SMAC3. For every part of SMAC3, we asked if   analogous
+functionality could be achieved in a simpler way.
+For example,   SMAC maintains many models in its ensemble.
+Why not try just two models?  We tried:
+\begin{itemize}
+\item A \cls{Data} called \textsf{best} holding the top $\sqrt{N}$
+(where ``best'' is defined by \textsf{disty} from line~\ref{disty}), where $N$ is the total number of
+labeled rows so far.
+\item A second \cls{Data} called \textsf{rest} holds the
+remaining $N - \sqrt{N}$.
+\item When a new label arrives, it enters \textsf{best}. If
+  \textsf{best} grows larger than  $\sqrt{N+1}$, the worst row in
+\textsf{best} is demoted to \textsf{rest}.
+\end{itemize}
+EZR implements this demotion using the same \textsf{add} function used
+above for $k$-means and our Naive Bayes classifier:
 \begin{minted}{python}
-def acc_ea(e, en, h, budget):
-  return en <= e
+def rebalance(best, rest, lab): 
+  if len(best.rows) > sqrt(len(lab.rows)):
+    best.rows.sort( |\label{sorting}|
+     key=lambda row:disty(lab,row)) # for "disty" see line |\ref{disty}|
+    add(rest.cols, 
+       sub(best.cols,
+         best.rows[-1]))
+    rest.rows.append(best.rows.pop())
 \end{minted}
+The only computationally expensive part of this loop
+is the call to \textsf{best.rows.sort} on line \ref{sorting}. But even this
+is not particularly expensive since \textsf{best} is bounded to $\sqrt{N}$;
+i.e.\ 
+this sort only has to rearrange a handful of items.  As to the larger \textsf{rest} sets,  EZR never needs to resort those rows.
 
-Local search accepts only strict improvements. Plateaus stop it.
+Ganguly et al.~\cite{ganguly2026lowgodatalightse} report that this use of \textsf{rebalance}
+makes EZR run
+ 500 times faster than SMAC3.  
+The reason for this is simple: 
+ SMAC3 has to rebuild
+all its trees each time a new row is labeled.
+EZR, on the other hand, just jumps a row from
+{\em best} to {\em rest}.
+As seen above (at line \ref{add}), adding or subtracting a row for a \cls{Data} requires very little computation.  
 
-\begin{minted}{python}
-def acc_ls(e, en, h, budget):
-  return en < e
-\end{minted}
+Having tamed the cost of model update, we can now define the active learning loop that calls
+\textsf{rebalance}.
 
-Simulated annealing always accepts improvements, and accepts
-worse candidates with probability $\exp(\Delta/T)$, where $T$
-cools from 1 to 0 as the budget is spent.
+ \subsection{ From Active Learning to Models}
+In order to test the generality
+ of a learning process,
+ it is best to learn a model
+ from some training data, then apply it to
+ test data.
+ Hence, in order to test the code presented
+ in the last section,
+ we have to commit
+ to a specific  model format (in order to transfer knowledge from   training to testing). But in that process, what model format should be used?
 
-\begin{minted}{python}
-def acc_sa(e, en, h, budget):
-  if en < e: return True
-  T = 1 - h/budget
-  return T > 0 and rand() < exp((e-en) / (T+1e-9))
-\end{minted}
+% One format supported by EZR is the tin
 
-That is the whole story. Three classical metaheuristics, three
-one-line callbacks, surrounded by identical code.
-
-\subsection{Empirical: indistinguishable on MOOT}
-
-If three algorithms differ only by a one-line callback, their
-results should be similar. We tested this on MOOT (full corpus
-described in \S\ref{sec:using}; for now, treat it as 120-plus
-real-world SE optimization tasks scored by \textsf{disty}).
-
-Each task got the same per-trial budget. Each optimizer ran 20
-times. We recorded final \textsf{disty}.
-
-For each pair of optimizers on each task, we tested whether
-their distributions of final scores were statistically
-distinguishable using the Cliff's-delta plus Kolmogorov--Smirnov
-test from \S\ref{sec:active}. The test rejects ``different''
-when the effect is small and the distributions overlap.
-
-% (REVIEWER NOTE: replace with actual numbers from the
-% experimental run. The shape of result we expect, following
-% Ganguly~\cite{kashin}, is that EA, SA, and LS are not
-% statistically separated on the majority of MOOT tasks.)
-
-On most MOOT tasks, no pair of the three is distinguishable.
-Where one wins, the effect is small enough to fall under
-Sawilowsky's negligible threshold of $0.35\sigma$
-\cite{sawilowsky2009new}.
-
-We also ran a fourth condition: pure random search. We replaced
-\textsf{accept} with a function that always returns true and
-mutated freely. Random loses. But it loses by a margin smaller
-than the metaheuristics literature predicts. On a meaningful
-fraction of MOOT tasks, it is statistically tied with the named
-methods.
-
-\subsection*{The lesson: random is good enough}
-
-The named-vs-random gap is small. The named-vs-named gaps are
-mostly invisible.
-
-A reasonable conclusion is that the loop shape matters and the
-accept rule barely does. The metaheuristics literature
-distinguishes EA from SA from LS as if they were different
-algorithms. They are the same algorithm with a different
-one-liner. On real SE data, that one-liner is rarely the thing
-that determines whether the search succeeds.
-
-A second conclusion is that the substrate did not need new
-abstractions. \textsf{pick} was already there for kpp seeding.
-\textsf{nearest} was already there for distance queries.
-\textsf{disty} was already there for goal-column scoring. The
-new code in this section is \textsf{picks} (six lines),
-\textsf{oracleNearest} (three lines), and the search loop
-\textsf{oneplus1} (about fifteen lines with restart logic).
-Under 25 new lines covered three textbook chapters.
-
-This matches what we saw in \S\ref{sec:famous}. The textbook
-treats classification, clustering, and optimization as three
-separate fields. The code treats them as three queries against
-the same incrementally maintained
-\cls{Num}/\cls{Sym}/\cls{Data} distributions.
-
-\section{Using EZR}\label{sec:using}
-
-This section is the test bed. We need a corpus of realistic
-tasks, a way to say which row of a task is better than another,
-and a way to compare scores across tasks of very different
-scales. Each is short. Each appears unchanged in every later
-experiment.
-
-\textsf{disty} already showed up in \S\ref{sec:opt}. Here we
-revisit it as the active learner's objective and add the
-\textsf{wins} score that compares across MOOT.
-
-\subsection{Input: the MOOT repository}
-
-For input we use the 120-plus multi-objective tasks in the MOOT
-repository~\cite{menzies2025moot}. Most are taken from recent SE
-papers. A few (car engine design, for instance) are included for
-teaching MOOT to people outside SE.
-
-MOOT is the largest collection of real multi-objective SE
-optimization tasks we know of. It covers configuration tuning,
-cloud optimization, project health prediction, feature and
-process modeling, behavioral analytics, financial risk, churn
-prediction, health analytics, sales forecasting, testing, and
-text mining. The original studies appeared at ICSE, FSE, TSE,
-IST, EMSE, TOSEM, and ASE.
-
-We use MOOT rather than synthetic benchmarks like ZDT (Pygmo,
-Platypus) because synthetic data lets you tune your method until
-it wins on synthetic data. Real data is harsher.
-
-We saw an example MOOT data set already (Table~\ref{moot}).
-Across the repository, the column conventions from
-\S\ref{sec:peek} hold throughout: ``+'' or ``-'' suffixes mark
-goals to maximize or minimize, ``!'' marks a class column, ``X''
-marks ignored columns, and an upper-case first letter marks
-numerics. The other tasks differ in size and shape (some have
-hundreds of $x$ columns; some have a single $y$ goal; some have
-five or six), but the parsing code is the same.
-
-\subsection{Defining ``better'' via \textsf{disty}}
-
-Most MOOT tasks have multiple goals. We need a single number
-that says how good a row is.
-
-The early SE multi-objective literature used measures like
-spread, hypervolume, IGD, and GD~\cite{Li22}. Later
-work~\cite{chen2026promisetune,ganguly2025lowgodatalightse}
-showed those broad coverage measures are inefficient when the
-high-quality region of the frontier is small. So \IT{} uses
-something simpler.
-
-Each goal column knows its ideal value (1 for ``+'' columns, 0
-for ``-'' columns; see line~\ref{heaven}). \textsf{disty} is the
-Euclidean distance from a row to that all-ideal point, computed
-over the goal columns only:
-
-\begin{minted}{python}
-the.p = 2 # config: distance order
-
-def disty(data, row):
-  """Distance to heaven on Y vars."""
-  return minkowski(
-    abs(norm(col, row[col.at]) - col.heaven)
-    for col in data.cols.ys)
-
-def minkowski(items):
-  """Minkowski distance (param: the.p)."""
-  tot, n = 0, 1e-32
-  for item in items:
-    tot, n = tot + item**the.p, n + 1
-  return (tot/n) ** (1/the.p)
-\end{minted}
-
-Lower \textsf{disty} is better, since lower means closer to
-heaven. The active learner in \S\ref{sec:active} uses
-\textsf{disty} as its objective. The validation rig in
-\S\ref{sec:valid} uses \textsf{disty} to score predictions.
+%  Rayegan et al.~\cite{Amiraliminimaldata} recommend  
+%  {\em tiny regression trees} as
+%  an appropriate model format. 
+%  EZR's
+%  active learning methods select
+%  just a few dozen most
+%  informative examples. Why build complex models
+%  that no one understands, argues
+%  Rayegan et al., when we can just
+%  generate  tiny trees from those few dozen examples? 
 
 
-\begin{figure}[!b]
+
+
+
+ One model format supported by EZR is the {\em tiny regression tree}
+ such as shown in 
+Figure~\ref{htree}.
+That tree was grown using the code from \S\ref{trees}.
+These trees are tiny since they are learned   from just the few dozen most
+informative examples selected by EZR's active learner.
+We use this regression tree format since a recent study by
+ Rayegan et al.~\cite{Amiraliminimaldata} showed that these trees can rank features   (via mean decrease in impurity) just as well as other explanation
+ algorithms such as  SHAP and ReliefF. Further, when it ranks features,
+ EZR needs only  150 labels while SHAP and ReliefF need
+ hundreds to thousands of rows.
+ 
+Figure~\ref{htree} shows a software process control task where some manager must 
+build a team with (e.g.):
+\begin{itemize}
+\item
+The appropriate programmer capability ({\em pcap});
+\item
+In order to deliver a system where upper management
+is enforcing some   {\em time} crunch on  completion;
+\item
+While working
+in an environment with some level of process maturity ({\em  pmat})
+\end{itemize}
+Figure~\ref{htree} was built by EZR studying  a data set with 10,000 rows
+generated by running what-if queries
+on Boehm's COCOMO software models. These models have been extensively
+researched and applied, particularly in the United States by the
+Department of Defense~\cite{Boehm,boehm2000cost,Boehm:2006,cocomo}.
+
+The left-hand-side of that figure
+reports the mean \textsf{disty} of
+the rows that fall into different  parts of the tree:
+\begin{itemize}
+\item
+The mean \textsf{disty} of the
+untreated rows is 0.52 (see \rc{1}). 
+\item The most useful branch of the tree
+collects rows whose \textsf{disty} is 0.45
+(see \rc{2}).
+\end{itemize}
+This gap of $0.52-0.45 = 0.07$ looks too
+small to be useful. However:
+\begin{itemize}
+\item
+If we look closer at the raw $y$ values,
+we see that   even small
+changes in \textsf{disty}
+can have great business significance.
+\item
+The
+0.52 rows have median DEFECTS=4698, EFFORT=771, KLOC=113.
+\item The
+0.45 rows have median DEFECTS=4381, EFFORT=379, KLOC=162.
+\item That is to say,
+the constraints  in the branch down to 
+\rc{2}  delivers $(162-113)/113 = 43\%$ more code with
+$379/771 = 49\%$ of the effort, with defects roughly unchanged.
+ \end{itemize}
+\begin{figure}[!t]
 {\fontsize{6pt}{7.2pt}\selectfont
 \begin{alltt}
 disty                                  DEFECTS-   EFFORT-   KLOC- 
@@ -1296,46 +1726,225 @@ disty                                  DEFECTS-   EFFORT-   KLOC-
 .66    |  |  |  plex != h          |          |         |
 \end{alltt}
 }
-\caption{EZR's regression trees predict for  \textsf{disty}.}\label{htree}
+\caption{EZR's regression trees (built using
+code from \S\ref{trees}) predict for  \textsf{disty}.
+As a method of focusing on essential details, the  $y$ values
+are hidden except on two rows.}\label{htree}
 \end{figure}
+% To evaluate the effectiveness of MDI's explanatory rankings, Rayegan et al.
+% ran optimization studies on MOOT data where downstream regressors
+% (LR, RF, SVR, ANN, LGBM) were trained using either
+% (a)~all attributes, or
+% (b)~the top half-dozen attributes as ranked by (b1)~MDI
+% or (b2)~two other prominent explanation algorithms:
+% SHAP~\cite{lundberg2017unified} and ReliefF~\cite{robnik1997adaptation}.
+%  Across 60 datasets, the MDI rankings learned from tiny regression
+%  trees were competitive with  SHAP and ReliefF on downstream optimization.
+%  But the key result was this: SHAP and ReliefF had to look at all the
+%  data while MDI was calculated from a tiny regression tree that only looked
+%  at 150 labeled rows.  
+% That is, a regression tree grown from a few dozen actively-selected
+% examples ranks features about as well as methods that consume the entire
+% labeled dataset.
+Our tiny regression trees are built from rows selected by an active 
+learner. That learner, \textsf{acquire}, relies on two helpers: 
+\textsf{warm\_start} (to seed the pool) and a \textsf{score} function 
+(to pick what to label next). We describe each, then \textsf{acquire} 
+itself.
 
-A worked example helps. Figure~\ref{htree} (shown earlier) is a
-tree learned from one MOOT task. The mean \textsf{disty} of the
-untreated rows is 0.52. The most useful branch of the tree
-collects rows whose \textsf{disty} is 0.45.
+\textsf{warm\_start} labels \textsf{the.start} random rows 
+(default 4), sorts them by \textsf{disty}, and splits them into 
+\textit{best} and \textit{rest}. The leftover pool is returned for 
+later scoring.
+\begin{minted}{python}
+the.start = 4 # config
 
-The gap of 0.07 looks small. The raw goal numbers do not. The
-0.52 rows have median DEFECTS=4698, EFFORT=771, KLOC=113. The
-0.45 rows have median DEFECTS=4381, EFFORT=379, KLOC=162. The
-treatment delivers $(162-113)/113 = 43\%$ more code with
-$379/771 = 49\%$ of the effort, with defects roughly unchanged.
-A small \textsf{disty} change is a large business change.
+def warm_start(data, rows, label): |\label{warmstart}|
+  lab = clone(data, rows[:the.start])
+  lab.rows.sort(key=lambda row: disty(lab, label(data, row)))
+  n = int(sqrt(len(lab.rows)))
+  return (lab, 
+          clone(data, lab.rows[:n]),
+          clone(data, lab.rows[n:]),
+          rows[the.start:])
+\end{minted}
+EZR allows  customization of the 
+\textsf{score} function. For example,
+here is a function that ranks unlabeled rows by the difference between their 
+distance to the \textit{best} and \textit{rest} centroids. 
+\begin{minted}{python}
+def acquireWithCentroid(data, best, rest, row): |\label{acqqqq}|
+  return (distx(data, row, mids(best)) -
+          distx(data, row, mids(rest)))
+\end{minted}
+In practice, this code is not slow. Recall that 
+\cls{Data.mids()} caches centroids until new data invalidates them 
+(line~\ref{zap}); hence the centroid
+can be  built once  then reused across all unlabeled rows.
 
-\subsection{Comparing across data sets via \textsf{wins}}
+(Aside: to stress the main 
+message of this paper, observe how the active learning optimizer reuses the 
+clustering architecture described above).
 
-The 0.07 \textsf{disty} change above is interesting because it
-is most of the available improvement on that data set. On a
-different MOOT task with a tighter goal frontier, the same 0.07
-might be the entire gap; on a looser one, it might be trivial.
-Raw \textsf{disty} numbers do not compare across tasks.
 
-We normalize. For each task, find the best \textsf{disty} ($lo$)
-and the median ($med$). The score \textsf{wins} for a row is the
-fraction of the way from median to best, scaled to 100. So 100
-means we matched the best row in the data set. 0 means we
-matched the median. Negative means we did worse than median.
+\textbf{acquire} stitches everything together. After \textsf{warm\_start}, 
+it loops up to \textsf{the.budget} times.
+In each loop it uses \textsf{score} to guess  much how unlabeled rows
+belong to {\em best} or {\em rest}. These guesses
+are used to (a) sort the   unlabeled rows; (b) select the most promising
+unlabeled example; (c)~which is then labeled
+before (d) it is passed to   \textsf{rebalance}  in order to
+u\textit{best} and 
+\textit{rest}.
+\begin{minted}{python}
+the.few = 128   # config
+the.budget = 50 # config
 
-To avoid spurious conclusions on tasks where the gap is tiny, we
+def acquire(data, score=acquireWithCentroid, |\label{acquiring}|
+                  label=lambda _,row:row): 
+  rows = data.rows[:]
+  shuffle(rows)
+  lab, best, rest, unlab = warm_start(
+    data, rows[:the.few], label) |\label{fewing}|
+  for _ in range(the.budget):
+    if not unlab: break
+    pick, *unlab = sorted(unlab,
+                     key=lambda row:score(lab,best,rest,row))
+    add(lab, add(best, label(data, pick))) |\label{labelling}|
+    rebalance(best, rest, lab)
+  lab.rows.sort(
+    key=lambda row: disty(lab, row))
+  return lab |\label{acqured}|
+\end{minted}
+Three details:
+\begin{itemize}
+\item
+On  line~\ref{fewing}, 
+the \textsf{few} caps the number of unlabeled rows searched
+ per iteration; larger values did not improve performance.
+\item
+On line~\ref{labelling},
+the 
+\textsf{label} function is 
+a hook for an oracle  that assigns $y$ values,
+For MOOT data, $y$ labels are already present on the row data, so it just returns
+the   row. But for other domains, \textsf{label} could (e.g.) call some
+simulator to collect new data.
+\item
+Other active learners have adaptive sampling policies where, early in the run,
+they focus on   most uncertain
+examples (e.g. where the likelihood of {\em best}) and {\em rest}) is nearly equal). Later in the run, that same learner  might favor  certainty sampling (i.e. find unlabeled examples that are most
+likely to be {\em best}). After two years of exploring that kind of adaption, and after extensive
+experimentation with the MOOT data, we found   nothing   better than
+a
+greedy search guided by line~\ref{acqqqq}.
+\end{itemize}
+
+
+ 
+ \subsection{Testing Active Learning}
+The \textsf{acquire} function described above returns a set of labeled
+rows. How to test if those conclusions are useful? 
+
+In any realistic 
+deployment, a human inspects a short list of recommendations before 
+committing to one.
+We can evaluate our active learners the same way. This is the standard 
+``at-$k$'' practice from information retrieval (precision@$k$, 
+hit@$k$, top-$k$ accuracy);
+i.e., rather than asking ``did the model rank 
+the single best item first?'', we ask ``is a good item somewhere in 
+the model's top $k$ picks?''.
+
+In EZR,  $k=$\textsf{the.check} is set to, say, 5.
+This \textsf{check} parameter  encodes how much we trust the model: 
+\textsf{check}=1 means we trust it enough to just apply its
+top recommendation, without checking anything else.
+Larger 
+values of \textsf{check} are appropriate if we are not 100\% certain about a model.
+
+This  \textsf{check}  is applied in two scenarios:
+\begin{itemize}
+\item
+The \textsf{w1} scenario runs and checks the {\em training data}.
+ Given that  we are only allowed to label $M\ll N$ of the rows,
+ \textsf{w1} asks,   how good are those $M$ labels at finding the best of the $N$ training
+examples? 
+\item
+\textsf{w2} runs its checks on the {\em testing data}.
+Here, we import a model from some past training session and use it
+to check some test data. 
+\end{itemize}
+There is an important difference between these two scenarios.
+\begin{itemize}
+\item
+ Anyone applying the
+\textsf{w1} check must do all the active learning, and then all the checking. 
+Hence   the \textsf{w1} check requires labeling \textsf{budget}  +  \textsf{check} 
+\item
+But the \textsf{w2} is far cheaper. Here, some   team has built a model
+using some \textsf{budget} which a second team
+is  now reusing in a novel situation.
+Hence     \textsf{w2} check   just   requires \textsf{check}s.
+\end{itemize}
+ 
+
+\subsubsection{Calculating \textsf{w1} and \textsf{w2}}
+To implement those checks, EZR splits each data set in half.
+The first half (capped at \textsf{the.few} = 128 rows) goes to
+the active learner as the training pool. The second half is
+kept separate, and never touched during acquisition.
+\begin{minted}{python}
+def ready(file):
+  d = (file if Data == type(file)
+       else Data(csv(file)))
+  random.shuffle(d.rows)
+  half = len(d.rows) // 2
+  return (d, 
+          clone(d, d.rows[:half][:the.few]),
+          d.rows[half:])
+\end{minted}
+The controller for this process is \textsf{test\_acquire}. This runs 
+20 times, collecting the best row found by the active learner. Each 
+repeat (a)~shuffles the data; (b)~gives the first half to the active 
+learner; (c)~lets it spend its budget; (d)~grows a tree from the 
+labeled rows; and (e)~scores the result using \textsf{w1,w2}  on lines~\ref{w1} 
+and~\ref{w2}:
+\begin{minted}{python}
+the.check  = 5    # config
+the.budget = 50   # config
+
+def test_acquire(file=egopt1):
+  d0 = Data(csv(file))
+  w1, w2 = Num(), Num()
+  win = wins(d0) |\label{wins}|
+  for _ in range(20):
+    d, d_train, test_rows = ready(d0)
+    lab = acquire(d_train)
+    t   = treeGrow(d_train, lab.rows)
+    guess = sorted(test_rows,
+              key=lambda r: mid(treeLeaf(t, r).ynum))
+    add(w1, win(min( |\label{w1}|
+                  lab.rows[:the.check], |\label{check1}|
+                 key=lambda r: disty(d_train, r))))
+    add(w2, win(min( |\label{w2}|
+                 guess[:the.check], |\label{check2}|
+                 key=lambda r: disty(d_train, r))))
+  return w1,w2
+\end{minted}
+Since we want to compare results across
+many data sets,
+our \textsf{win} function used
+Equation~\ref{eq:wins}. Further,
+to avoid spurious conclusions based on trivially
+small distances, we
 clamp small improvements to 0. ``Small'' here is Sawilowsky's
 threshold of $0.35\sigma$~\cite{sawilowsky2009new}, with $\sigma$
-estimated robustly as the (90th $-$ 10th)/2.56 percentile range
+estimated robustly via  the standard method of   (90th $-$ 10th)/2.56 percentile range
 of \textsf{disty}.
-
 \begin{minted}{python}
-def wins(data): |\label{wins}|
-  """Score rows by distance to heaven."""
-  ys = sorted(disty(data, row1)
-              for row1 in data.rows)
+def wins(data): |\label{wins}| 
+  ys = sorted(disty(data, row1) for row1 in data.rows)
   ten = len(ys) // 10
   lo  = ys[0]
   med = ys[5*ten]
@@ -1344,308 +1953,124 @@ def wins(data): |\label{wins}|
     x = disty(data, row2)
     if x < lo + 0.35*sd: x = lo
     return max(-100,
-      int(100 * (1 - (x - lo)/(med - lo + 1e-32))))
+          int(100 * (1 - (x - lo)/(med - lo + 1e-32))))
   return f
 \end{minted}
 
-A few things about \textsf{wins}. It returns a {\em function},
-not a number. We pre-compute $lo$, $med$, and $sd$ once per data
-set, then score arbitrarily many candidate rows in $O(1)$. The
-clamp on the third line of the inner function is what stops a
-spurious 0.05-better row from getting credit.
-
-For readers from reinforcement learning: \textsf{wins} is the
-complement of {\em regret}, normalized by the achievable
-improvement range.
-
-\textsf{wins} is the comparison metric for everything that
-follows. Active learning experiments in \S\ref{sec:active}
-report median \textsf{wins} over MOOT. The validation heatmap
-in \S\ref{sec:valid} maps \textsf{wins} to colors. The text
-mining case study in \S\ref{sec:textmine} uses recall and false
-alarm instead, because the task is a binary classification not
-a multi-objective optimization, but the rest of the paper
-reports \textsf{wins}.
-
-\section{Active Learning}\label{sec:active}
-
-\IT{} builds models from very little data. The MOOT tasks
-typically have hundreds to thousands of rows, and \IT{} usually
-labels under 100. This section explains how. The mechanism is
-{\em active learning}~\cite{settles2009active,van2020survey}:
-the model selects what to label next.
-
-\subsection{Why so few labels?}
-
-A passive learner trains on whatever data it is given. An active
-learner picks. Specifically, an active learner reflects on the
-model built so far, identifies which unlabeled example would be
-most informative if labeled, asks an oracle to label it, updates
-the model, and repeats. Examples that are noisy, redundant, or
-uninformative never get labeled. The labeling budget concentrates
-on the examples that move the model.
-
-This is appealing in SE, where labeling costs are the bottleneck.
-Labels can mean compiling and timing a configuration (hours per
-label for x264~\cite{DBLP:conf/wosp/ValovPGFC17}), running an
-expert review of a security-relevant change~\cite{hours39}, or
-auditing technical debt where 90\% of historical labels are
-known to be wrong~\cite{td71}.
-
-The cost of active learning is in the model. New labels arrive
-one at a time. After each one, the model has to be updated. If
-the model is a forest of regression trees (as in
-SMAC~\cite{hutter2011sequential}), every new label triggers a
-forest rebuild. SMAC works, but each iteration is expensive.
-
-\IT{} took the opposite approach. We asked: what is the
-simplest model that supports active learning? The answer turned
-out to be two \cls{Data}s, summarized incrementally.
-
-\begin{itemize}
-\item A \cls{Data} called \textsf{best} holds the top $\sqrt{N}$
-labeled rows by \textsf{disty}, where $N$ is the total number of
-labeled rows so far.
-\item A second \cls{Data} called \textsf{rest} holds the
-remaining $N - \sqrt{N}$.
-\item When a new label arrives, it goes into \textsf{best}. If
-that puts \textsf{best} over $\sqrt{N+1}$, the worst row in
-\textsf{best} gets demoted to \textsf{rest}.
-\end{itemize}
-
-That is the model. Two summaries, no trees, no forests. Updates
-are constant time, because they ride the \textsf{add}/\textsf{sub}
-machinery from \S\ref{sec:peek}.
-
-\subsection{Incremental \textsf{add} and \textsf{sub}}
-
-The cost story matters here, so let us be concrete.
-
-When SMAC adds a label, it rebuilds its tree ensemble. Each
-tree in the forest is recomputed against the new training set.
-Even with smart implementation, this is $O(N \log N)$ per tree,
-times the number of trees in the ensemble.
-
-When \IT{} adds a label, it updates two things. The
-\cls{Sym}/\cls{Num} columns inside the receiving \cls{Data} are
-incremented. Symbol counts increment by $+1$ in a dictionary.
-Numeric statistics update by Welford's algorithm in $O(1)$. No
-sort. No retraining. No batch pass.
-
-We saw this code in \S\ref{sec:peek}. The relevant lines are
-\ref{symaddsub} (symbol increment) and \ref{welford} (Welford
-update for numerics). Adding a row to a \cls{Data} cascades
-through \cls{Cols} (line~\ref{addrec1}, \ref{addrec2}) which
-distributes the cells to the right column.
-
-Removal is symmetrical. \textsf{sub} is a one-line wrapper:
-
-\begin{minted}{python}
-def sub(it, v): return add(it, v, w=-1)
-\end{minted}
-
-When \textsf{best} grows past $\sqrt{N}$, the worst row gets
-moved to \textsf{rest} by exactly two operations:
-
-\begin{minted}{python}
-def rebalance(best, rest, lab):
-  """Cap best at sqrt(|lab|); evict worst."""
-  if len(best.rows) > sqrt(len(lab.rows)):
-    best.rows.sort(
-      key=lambda row: disty(lab, row))
-    add(rest.cols, sub(best.cols,
-                       best.rows[-1]))
-    rest.rows.append(best.rows.pop())
-\end{minted}
-
-The \textsf{best.rows.sort} on the first line is the only sort
-in the loop. Because \textsf{best} is bounded at $\sqrt{N}$, that
-sort is over a set far smaller than the full pool. We never sort
-\textsf{rest}.
-
-The nested \textsf{add(rest.cols, sub(best.cols, ...))} is the
-return-value idiom from \S\ref{sec:peek}. \textsf{sub} removes
-the row from \textsf{best.cols} and returns it. \textsf{add}
-then puts it into \textsf{rest.cols}. The same row, two updates,
-no copying.
-
-This is most of the speed advantage over SMAC. Ganguly's
-benchmark~\cite{kashin} reports model updates 10{,}000 times
-faster than SMAC, with no loss in solution quality.
-
-\subsection{The acquisition loop}
-
-Given \textsf{best} and \textsf{rest}, the active learner needs
-to decide which unlabeled row to label next. It should pick the
-row most likely to belong in \textsf{best}.
-
-\IT{} offers two scoring functions. The first uses centroids:
-score a row by its $x$-distance to the \textsf{best} centroid
-minus its $x$-distance to the \textsf{rest} centroid. Smaller
-scores mean closer to \textsf{best}.
-
-\begin{minted}{python}
-def acquireWithCentroid(data, best, rest, row):
-  """Score: dist(best) - dist(rest)."""
-  return (distx(data, row, mids(best)) -
-          distx(data, row, mids(rest)))
-\end{minted}
-
-\textsf{mids} (\S\ref{sec:peek}) is the cached centroid. The
-cache invalidation in \textsf{add} (line~\ref{zap}) means
-\textsf{mids} is free until the next label arrives.
-
-The second scoring function uses the Naive Bayes likelihoods
-from \S\ref{sec:famous}: a row gets a higher score if it is
-more likely under \textsf{rest} than under \textsf{best}.
-Smaller scores still mean closer to \textsf{best}.
-
-\begin{minted}{python}
-def acquireWithBayes(data, best, rest, row):
-  """Score: rest - best likelihood."""
-  n = len(best.rows) + len(rest.rows)
-  return (likes(rest, row, n, 2) -
-          likes(best, row, n, 2))
-\end{minted}
-
-That is two acquisition strategies in eight lines. They sit on
-top of \textsf{distx}, \textsf{mids}, and \textsf{likes}, all of
-which already existed. The \textsf{best}/\textsf{rest}
-\cls{Data}s are simultaneously a centroid model {\em and} a
-Bayes model, because \textsf{add} kept them fitted along the way.
-Active learning gets two acquisition strategies for free.
-
-The full loop calls \textsf{warm\_start} to get an initial set
-of labeled rows, then sorts the unlabeled pool by
-\textsf{score}, labels the top one, and repeats.
-
-\begin{minted}{python}
-def acquire(data, score=acquireWithCentroid,
-            label=lambda _,row:row):
-  """Active learning. Returns labeled Data."""
-  rows = data.rows[:]
-  shuffle(rows)
-  lab, best, rest, unlab = warm_start(
-    data, rows[:the.few], label) |\label{few}|
-  for _ in range(the.learn.budget):
-    if not unlab: break
-    pick, *unlab = sorted(unlab,
-      key=lambda row:
-        score(lab, best, rest, row))
-    add(lab, add(best, label(data, pick)))
-    rebalance(best, rest, lab)
-  lab.rows.sort(
-    key=lambda row: disty(lab, row))
-  return lab
-\end{minted}
-
-Three things to note.
-
-\textsf{label} defaults to the identity function for MOOT data
-where labels are already in the file. Real applications swap in
-something expensive: a compile-and-time job, a human reviewer.
-The rest of the loop does not change.
-
-\textsf{the.few} caps the unlabeled pool we score per iteration
-at 128. We tried larger values. Performance does not improve.
-Sorting 128 candidates by \textsf{score} is fast enough that
-this is not a bottleneck even for large MOOT tasks.
-
-\textsf{warm\_start} kicks things off by labeling \textsf{the.learn.start}
-random rows (default 4), splitting them into \textsf{best} and
-\textsf{rest} by \textsf{disty}, and returning the leftover pool:
-
-\begin{minted}{python}
-def warm_start(data, rows, label):
-  """Init lab/best/rest from start rows."""
-  lab = clone(data, rows[:the.learn.start])
-  lab.rows.sort(key=lambda row:
-    disty(lab, label(data, row)))
-  n = int(sqrt(len(lab.rows)))
-  return (lab, clone(data, lab.rows[:n]),
-          clone(data, lab.rows[n:]),
-          rows[the.learn.start:])
-\end{minted}
-
-After 30 to 100 labels (typical \textsf{the.learn.budget}),
-\textsf{acquire} returns a labeled \cls{Data} sorted by
-\textsf{disty}. The first row is the best candidate the active
-learner found. The validation rig in \S\ref{sec:valid}
-investigates how good a candidate that is.
-
-\subsection*{The lesson: 10{,}000$\times$ faster than SMAC}
-
-Two facts hold together.
-
-The first is that \IT{}'s active learner uses two
-\cls{Data}s instead of a regression-tree ensemble. The summaries
-inside those \cls{Data}s update in $O(1)$ per label, because
-that is what \textsf{add} and \textsf{sub} do. The full
-acquisition loop, including the per-iteration sort over 128
-candidates, is fast enough that 100 labels finish in
-milliseconds.
-
-The second is that this lighter machinery does not give up
-anything in solution quality. Ganguly's
-benchmark~\cite{kashin} ran \IT{}, SMAC, TPE, and HyperOpt on
-120-plus MOOT tasks. \IT{} matched or exceeded the heavy
-optimizers on solution quality while running 10{,}000 times
-faster on model updates and using 5--10 times fewer labels.
-
-The cost reduction traces directly to the design choices in this
-section: $N=2$ models instead of $N \geq 10$, $O(1)$ Welford
-updates instead of tree refits, and $\sqrt{N}$-bounded sorting.
-None of the choices are clever. They are all consequences of
-asking what the simplest possible active learner would look like.
-
-There is one more piece of the story. Active learning produces
-labeled data; it does not produce an explanation. The labeled
-data has to be turned into a model the engineer can read. That
-is what \S\ref{sec:tiny} is about. After the active learner
-returns its 30--100 labels, \IT{} grows a small regression tree
-from those labels. The tree fits on a page. Less than ten of
-the available variables appear in it.
-
-\section{Many Models Can Be Tiny}\label{sec:tiny}
-
-\S\ref{sec:active} ends with the active learner returning 30 to
-100 labeled rows. The labels are useful but the engineer cannot
-read them. Something has to turn the labels into a model that
-fits on a page. \IT{} grows a small regression tree.
-
-The tree code is in the appendix. It is short. \textsf{treeGrow}
-recursively splits the labeled rows by Y-variance, where Y is
-the \textsf{disty} of each row. \textsf{treeShow} prints the
-tree from best leaf to worst. The whole tree builder fits in
-about 70 lines.
-
-This section is about what those trees look like, and what they
-do not contain.
-
-\subsection{Trees on MOOT}
-
-Figure~\ref{htree} (we have used it before) is one such tree, on
-one MOOT data set. The data set has 24 unique attributes. The
-tree uses 8.
-
+ 
 \begin{figure*}
+\noindent
+\begin{tabular}{@{}>{\raggedleft\arraybackslash}m{0.35\textwidth}@{\hspace{1em}}m{4in}@{}}
+\textsf{w1} results (test on a 50\% training set):\newline
+(all values computes using line~\ref{wins})\newline
+  & \includegraphics[width=4in]{train.pdf} \\[1ex]
+\textsf{w2} results (test on a separate 50\% hold-out set):\newline
+(all values computes using line~\ref{wins})\newline
+  & \includegraphics[width=4in]{test.pdf}
+\end{tabular}
+\caption{\textsf{w1} and \textsf{w2} results in 100,000 trials.
+For each trial:
+(a)~pick a MOOT data set at random;
+(b)~pick \textsf{budget} and \textsf{check} at random from
+$1 \le B \le 150$ and $1\le C \le 10$;
+(c)~apply active learning report the wins
+calculated from line~\ref{wins}.
+ Contour lines mark \textsf{wins} of 60, 75,
+85, 95. Each cell aggregates the median over many trials
+at that (\textsf{budget}, \textsf{check}) pair, smoothed by a
+small Gaussian blur from neighboring cells
+(where cells $c_1,c_2,c_3$ at distance
+1, 2, 3 contribute a weight $(71c_1 + 25c_2 + 4c_3)/100$).
+ Contours flatten
+toward the upper right, indicating diminishing returns from
+larger budgets.}
+\label{check}
+\end{figure*}
+
+
+\subsubsection{Parameter Effects}
+Using the \textsf{w1} and \textsf{w2} scores,
+we can comment on the validity of   EZR's default active
+learning parameters of  \[\textsf{budget},\textsf{check}) = (50,5)\]
+In this section, we test if better settings (e.g. a larger training budget)
+would lead to fundamentally better results.
+
+ Figure~\ref{check} presents the results of a study where   MOOT data sets were selected
+at random, then explored with \textsf{budget},\textsf{check} between 
+  $[1,150]$ and  $[1,10]$. This process was repeated    100{,}000 times.
+
+The top panel of Figure~\ref{check} reports \textsf{w1}: i.e. 
+it is  scored on rows drawn
+from its own training pool. 
+The bottom panel of Figure~\ref{check} reports the  \textsf{w2}
+results where we score on
+  held-out rows     not seen during acquisition.
+Recall from the above discussion that \textsf{w2} occurs when
+a second team is reusing a model developed by another team
+(and in  this \textsf{w2} scenario, this second team
+only has to label \textsf{check} number of rows).
+
+There are several noteworthy effects in     Figure~\ref{check}:
+\begin{itemize}
+\item The \textsf{w1} scores
+are less than the \textsf{w2} scores. This is to be expected:
+testing on training data tends to overestimate the performance on as-yet-unseen future testing data. 
+\item At EZR's default values of (\textsf{budget},\textsf{check}) = (50,5),
+we see our active learners usually achieve above an  85\% \textsf{win}.
+That is to say, reusing someone else's model and only labeling five new examples
+is enough to get most of the way to the reference optimum. 
+\item
+If we increase either of  (\textsf{budget},\textsf{check}) = (50,5), then we move to the top-right
+of the bottom panel. In that region, we can see improvement of    the performance score on hold-out data.
+
+\item
+That said, the improvements above (50,5) are modest.   As we move towards the top right of the bottom panel, the performance contours start flattening
+out as  performance grows to 100 (which is the maximum score possible on these data sets).
+\end{itemize}
+From this we conclude that for safety-critical and mission-critical applications,
+it can be useful to move beyond (\textsf{budget},\textsf{check}) = (50,5): specifically,
+{\em more checks} seem more useful than {\em more training budget}. And checking beyond (say) 7 items
+seems not particularly useful. 
+But for many engineering applications, EZR's current default settings would  suffice. 
+
+\begin{figure*} 
 \begin{center}
-\includegraphics[width=.9\linewidth]{used.pdf}
+\includegraphics[width=\linewidth]{used.pdf}
 \end{center}
-\caption{Across 120-plus MOOT tasks, the
+\caption{Across 120+  MOOT tasks, the
 \color{darkyellow}{\bf yellow line}\color{black}~shows the
 number of $x$ attributes available (rising to over a thousand).
 The \color{red}{\bf red line}\color{black}~shows the number of
 unique attributes \IT{}'s trees actually used (under ten,
 throughout). The \color{blue}{\bf blue line}\color{black}~shows
-the \textsf{wins} score (\S\ref{sec:using}) of those trees,
-hovering near 100 across the entire range. The blue line does
-not slope downward as available attributes grow.}
+the \textsf{w2} (calculated using \textsf{wins}   from line~\ref{wins}) of those trees,
+hovering near 100 across the entire range. Note that the  blue line does
+{\bf not} slope downward from left to right.
+That is, it is not true that performance drops if  EZR ignores more and more of the attributes.}
 \label{used}
 \end{figure*}
 
-This is not a one-off. Figure~\ref{used} shows the same
-measurement across all 120-plus MOOT tasks. Three lines:
+ ~\\~\\
+\subsubsection{Model Size}
+
+ 
+Returning to Figure~\ref{htree}, that tree 
+had an interesting feature that was not previously discussed. 
+That tree splits its data on 8 different  attributes.
+This is noteworthy since that data  set has 24 unique attributes;
+i.e. EZR  built that model by ignoring most of the attributes.
+
+
+This is not a one-off result: in the usual case,
+EZR ignores most of the attributes.
+Figure~\ref{used} shows how many attributes were used
+in the tiny regression trees built after active
+learning on   120+ MOOT tasks. 
+ For example, in the {\em auto93} data set,
+the goal is to maximize miles-per-gallon and acceleration without
+increasing the weight of the car.
+
+For these optimization tasks, Figure~\ref{used} shows three lines:
 
 \begin{itemize}
 \item The \color{darkyellow}{\bf yellow line}\color{black}~ is
@@ -1656,23 +2081,18 @@ MOOT.
 of unique attributes that actually appear in any of the trees
 \IT{} grew on each task. It stays under ten throughout.
 \item The \color{blue}{\bf blue line}\color{black}~ is the
-\textsf{wins} score (\S\ref{sec:using}) of those trees. It
-hovers near 100 across the entire range.
-\end{itemize}
-
-The blue line does not slope downward as we move right. Tasks
-with thousands of available attributes get scored just as well
-by trees with under ten attributes as tasks with a handful of
-attributes do. The available column count does not predict the
-useful column count.
-
-\begin{hence}{The Small Data Effect}
-On the 120-plus MOOT tasks, fewer than ten variables suffice to
+\textsf{w2} 
+\textsf{wins} score (from line~\ref{wins}) of those trees. 
+This line  hovers near 100 across the entire range.
+\item
+This  \color{blue}{\bf blue line}\color{black}~line does not slope downward as we move from left to right. 
+That is, 
+for the  120+ MOOT tasks, fewer than ten variables suffice to
 build effective predictive models, even when the data set
 contains hundreds or thousands of attributes.
-\end{hence}
-
-We did not invent this observation. Pearson described principal
+\end{itemize}
+This {\em feature selection} result
+has a long history in AI. Pearson described principal
 components in 1902~\cite{pca}. Chang showed in 1974 that a
 handful of exemplar rows can replace a full nearest-neighbor
 training set without loss of classification
@@ -1691,32 +2111,27 @@ set~\cite{settles2009active}. Our own work on SE ``keys'' across
 behavior of many software
 models~\cite{me03a,me07a,me21a,menzies2008implications}.
 
-What is new in \IT{} is that the small-data effect extends to
+What is new in \IT{} is that we extends this feature selection effect
+to
 multi-objective optimization. Most of the prior work cited above
-was about classification or regression. \IT{} grows trees that
+was about classification or regression. \IT{}, on the other hand, grows trees that
 predict \textsf{disty}, which means the trees are doing
 multi-objective ranking. The same effect (under ten variables
 suffice) holds in that setting too.
 
-\subsection{Comparison with state-of-the-art XAI}
+\subsubsection{Comparison with State-of-the-Art}\label{sota}
 
-A small tree is not just compact. It is also competitive as an
-explanation.
+In other publications, we have compared the \textsf{w2} scores generated
+ with state-of-the-art explanation and optimization algorithms.
 
-Amirali et al.~\cite{amirali} compared \IT{}'s trees against
-SHAP, LIME, and Anchors on standard XAI benchmarks. The metrics
-were actionability (does the explanation tell you what to
-change?) and faithfulness (does following the explanation
+
+Rayegan et al.~\cite{Amiraliminimaldata} compared \IT{}'s trees against
+standard AI explanation algorithms
+(SHAP, LIME, and Anchors) on standard XAI benchmarks. The metrics collected
+were {\em actionability} (does the explanation tell you what to
+change?) and {\em faithfulness} (does following the explanation
 actually move the prediction?). \IT{}'s trees matched or
 exceeded the named baselines on both metrics.
-
-The structural difference is worth flagging. SHAP and LIME
-approximate a black-box model with a local linear surrogate.
-Anchors approximates with rule predicates. \IT{}'s trees do not
-approximate. The tree {\em is} the model the active learner
-built. There is nothing to be unfaithful to. The tree describes
-itself.
-
 This is a useful property in safety-relevant settings. A
 practitioner reading a SHAP report cannot easily tell whether
 the surrogate has departed from the underlying model. Reading a
@@ -1724,241 +2139,185 @@ the surrogate has departed from the underlying model. Reading a
 boundary. If the tree says \texttt{pcap == vh} buys 49\% effort
 reduction, then \texttt{pcap == vh} buys 49\% effort reduction.
 
-\subsection*{The lesson: the small-data effect, again}
+Ganguly et al.~\cite{ganguly2026lowgodatalightse}    compare \IT{}'s
+optimizations against state-of-the-art optimizers including SMAC3~\cite{hutter2011sequential}
+and others.
+As mentioned above, they found that  EZR ran 500 times faster than SMAC3. 
+They also found that EZR delivered competitive results using a fraction
+of the data needed by other methods.
 
-Two findings landed at once. Trees on MOOT use under ten
-variables across the board. Those trees match or beat
-SHAP/LIME/Anchors on actionability and faithfulness.
+So, in summary,
+on the MOOT data, a  fewer labels,
+fewer features, and lighter model updates each match or beat
+more complete alternatives. And the software that achieves all
+this is a very small extension to the EZR substrate used
+for classification, regression and optimization.
 
-The two findings are connected. SHAP and LIME exist because the
-underlying model is a black box. \IT{}'s tree is small enough
-that nothing is being explained from the outside; the model
-explains itself. The cognitive bias toward additive
-complexity~\cite{adams2021people} predicts that a researcher
-faced with a hard prediction problem will reach for a heavier
-model. The MOOT data say the heavier model is rarely required.
 
-% --- end of section ---
+\section{Text Mining}\label{sec:textmine}
 
-\section{Validation: Does the Model Travel?}\label{sec:valid}
+Some of the above results have been published before (e.g. all the results
+in \S\ref{sota}). 
+Hence, to cap off this paper,
+ we offer a new text mining result. Specifically, we successfully
+ apply all the above machinery
+ to text mining and relevancy filtering of documents.
+ 
+ In the current literature,  such text mining is often
+ explored using a RAG-like approach (retrieval-augmented
+ generation, described in the next section). 
+This requires LLM-grade embedding spaces, billion-parameter encoders,
+and similarity queries against a vector database. 
 
-The previous section showed that \IT{}'s trees use few
-variables and explain themselves well. That is interesting only
-if the trees also predict accurately. A small tree built on 30
-labels is not useful if it fits the training labels and falls
-over on new rows.
+Older
+approaches explored text mining and relevancy filtering using
+support vector machines. ~\cite{yu2018total,yu2018finding}. This section shows
+that 30 lines of complementary Bayes~\cite{rennie2003tackling}
+on the substrate from \S\ref{sec:peek}. These results
+are so good  that there is little point
+in exploring other methods (e.g. LLMs). Hence we have to ask:
+just how simple is text mining? Perhaps it it time
+to conduct more experiments
+comparing LLMs to simpler alternatives.
 
-This section is the held-out test.
 
-\subsection{Train versus test}
 
-The validation rig in \texttt{ezr.py} is called
-\textsf{test\_acquire}. It splits each MOOT data set in half.
-The first half (capped at \textsf{the.few} = 128 rows) goes to
-the active learner as the training pool. The second half is
-hidden, and never touched during acquisition.
+ \subsection{Retrieval-Augmented Generation} 
+ RAG~\cite{lewis2020rag} was a large language model
+ technique that was used extensively when LLMs
+ had smaller context
+ windows. In order to avoid exhausting the space
+ inside a context window,
+   queries to an LLM were 
+augmented (on a query-by-query basis)
+with a small number of relevant chunks
+from (e.g.)  documents stored on disk. 
 
-\begin{minted}{python}
-def ready(file):
-  d = (file if Data == type(file)
-       else Data(csv(file)))
-  random.shuffle(d.rows)
-  half = len(d.rows) // 2
-  return (d, clone(d, d.rows[:half][:the.few]),
-             d.rows[half:])
-\end{minted}
+A RAG system has two halves: a post-query dialog generator and a
+ search method for relevant documents. While EZR (as yet)
+has no dialog generation method, we show below
+that finding relevant documents is surprisingly easy using
+a Naive Bayes trick built
+around EZR.
 
-\textsf{test\_acquire} runs 20 repeats per setting. Each repeat:
-shuffle the data, give the first half to the active learner,
-let it spend its budget, grow a tree from the labeled rows, and
-score the result two ways.
+\subsection{Yu et al. and FASTREAD}
 
-\begin{minted}{python}
-the.learn.check  = 5    # config
-the.learn.budget = 30   # config
+In this section, we compare our results to prior work 
+by
+Yu et al.~\cite{yu2018total}.
+That work
+explored methods for 
+finding relevant text documents.
+They explored  
+{``primary study selection'' for
+systematic literature reviews (SLR)
+in software engineering. 
+That is, the goal here is 
+to read
+the research literature
+to find the $M\ll N$
+papers that are most relevant
+to some research query.
+ Reading
+every candidate takes weeks or months~\cite{yu2017feature,yu2018}. 
+To reduce the number of papers that must be read, Yu's tool 
+(called FASTREAD) used a linear SVM with
+some sampling tricks:
+\begin{itemize}
+\item 
+When initializing his SVM classifiers for {\em positive examples},
+they began with a small number of ``warm start'' papers offered by domain experts. 
 
-def test_acquire(file=egopt1):
-  d0 = Data(csv(file))
-  w1, w2 = Num(), Num()
-  win = wins(d0)
-  for _ in range(20):
-    d, d_train, test_rows = ready(d0)
-    lab = acquire(d_train)
-    t   = treeGrow(d_train, lab.rows)
-    guess = sorted(test_rows,
-      key=lambda r: mid(treeLeaf(t, r).ynum))
-    add(w1, win(min(
-      lab.rows[:the.learn.check],
-      key=lambda r: disty(d_train, r))))
-    add(w2, win(min(
-      guess[:the.learn.check],
-      key=lambda r: disty(d_train, r))))
-\end{minted}
-
-The two scores answer two different questions.
-
-\textsf{w1} is the train view. Sort the labels the active
-learner acquired by their known \textsf{disty}, take the top
-\textsf{check}, return the best of those, score with
-\textsf{wins}. This asks: how good is the model on rows it has
-seen?
-
-\textsf{w2} is the test view. Sort the held-out rows by the tree's
-predicted \textsf{disty}, take the top \textsf{check}, return
-the best of those, score with \textsf{wins}. This asks: does the
-model travel?
-
-\textsf{check} is the small follow-up budget the engineer is
-willing to spend after deployment. Five oracle calls is realistic.
-
-\subsection{The Budget--Check trade-off}
-
-Figure~\ref{check} sweeps both budgets. We ran 100,000 trials
-across MOOT, drawing \textsf{Budget} uniformly from $[1, 150]$
-and \textsf{Check} uniformly from $[1, 10]$. Each cell of the
-heatmap is the median \textsf{wins} at that
-(\textsf{Budget}, \textsf{Check}) pair, averaged across all
-runs that landed there. A small Gaussian blur over neighboring
-cells smooths the noise.\footnote{Cells $c_1, c_2, c_3$ at
-distance 1, 2, 3 in any direction contribute weights
-$(71 c_1 + 25 c_2 + 4 c_3)/100$.}
-
-\begin{figure*}
-\begin{center}
-\includegraphics[width=5in]{train.pdf}\\
-\includegraphics[width=5in]{test.pdf}
-\end{center}
-\caption{Median \textsf{wins} score as a function of
-acquisition \textsf{Budget} (rows) and check budget
-\textsf{Check} (columns). {\bf Top:} performance scored on
-the training labels (\textsf{w1}); the model is being asked
-about rows it built itself from. {\bf Bottom:} performance
-scored on held-out test rows ranked by the learned tree
-(\textsf{w2}). Contour lines mark \textsf{wins} of 60, 70,
-80, 90, 95. Each cell aggregates the median over many trials
-at that (\textsf{Budget}, \textsf{Check}) pair, smoothed by a
-small Gaussian blur over neighboring cells. Contours flatten
-toward the upper right, indicating diminishing returns from
-larger budgets.}
-\label{check}
-\end{figure*}
-
-The top panel reports \textsf{w1} (train). The bottom panel
-reports \textsf{w2} (test).
-
-The train panel is forgiving. \textsf{wins} reaches 95
-nearly everywhere. This is unsurprising. The model is being
-asked about rows it built itself from.
-
-The test panel is the interesting one. The tree is being asked
-to rank rows it has never seen.
-
-The picture is encouraging. With a deployment-side budget of 4
-to 7 oracle calls, the tree reaches 85--95\% of the reference
-optimum across most of the heatmap. The contour lines flatten
-toward the upper right. Pushing \textsf{Budget} past 50--100
-buys very little. The cost of optimization is dominated by the
-small initial labeling phase. After that, a handful of test-time
-checks does the rest.
-
-\subsection*{The lesson: a two-phase economy}
-
-The shape of the heatmap mirrors the economics of larger AI
-systems.
-
-A pre-trained LLM costs hundreds of millions of dollars to
-train. Downstream users then spend a few cents per query
-nudging conditional probabilities with in-context examples. The
-training cost is amortized; the per-query cost is small.
-
-\IT{}'s training cost is 50 to 100 labels of the active
-learner's choosing. Its per-query cost is 4 to 7 oracle calls
-on held-out rows. Neither cost is enormous. The shape is the
-same as the LLM economy: build the model once, reuse it
-cheaply.
-
-The difference is the absolute cost. An LLM costs
-$10^{12}$ tokens of training data and runs on a data center.
-\IT{} costs 50 labels and runs on a laptop. The shape is shared.
-The scale is not.
-
-\section{Case Study: Light-Weight Relevance Filtering}\label{sec:textmine}
-
-The previous sections covered classification, clustering,
-optimization, regression-tree explanation, and active learning.
-This section is a single case study showing what happens when we
-point the same machinery at a problem from a different domain:
-text mining.
-
-\subsection{The relevance problem}
-
-Modern AI systems often use Retrieval-Augmented Generation, or
-RAG~\cite{lewis2020retrieval}, to answer questions about a
-document collection. RAG has two halves. The first finds
-documents relevant to a query. The second feeds those documents
-to an LLM, which writes the answer.
-
-The first half is an old problem. Given a corpus and a query,
-return the documents that match. Modern implementations use
-dense neural embeddings (BERT, sentence-transformers, OpenAI's
-embedding APIs). Older approaches used active learning with
-classical classifiers. The active-learning approaches predate
-the embedding approaches and, in some domains, still beat them
-on cost.
-
-Yu et al.~\cite{yu2018finding} studied this problem in 2018 in a
-particularly painful instance: primary study selection for
-systematic literature reviews in software engineering. An SLR
-conductor starts with a search query that returns thousands of
-papers, of which a few dozen are actually relevant. Reading
-every candidate takes weeks or months~\cite{kitchenham2010,
-carver2013}. Yu's tool, FASTREAD, used a linear SVM with
-uncertainty sampling to early candidates and certainty sampling
-later. It reached 95\% recall on Yu's four corpora after labeling
-roughly 300--800 papers out of 1,700--8,900. That was a
+\item To
+find a set of initial {\em negative examples}, Yu used {\em presumptive sampling}:
+  an equal number of randomly-selected papers, declared negative on
+  the assumption that, when the target class is rare, a random draw
+  is overwhelmingly unlikely to belong to it.
+  \item After initialization, Yu et al.\ used their own active learning
+  methods to incrementally decide what to sample next.
+\end{itemize}
+Their approach yielded a 95\% recall on Yu's four corpora after labeling
+roughly 300--800 papers out of 1,700--8,900. 
+Yu et al.\ report that that was a
 20--50\% improvement over the prior state of the
-art~\cite{wallace2010,miwa2014,cormack2014}.
+art.
 
-We asked: can \IT{}'s substrate, plus TWCNB (Rennie et al.,
-2003~\cite{rennie2003}), do the same thing in fewer lines?
+For the rest of this paper,  we  ask if EZR can perform the same task using, say,
+Naive Bayes and the {\em best} and {\em rest} models
+used in our active learning.  
+In this study ``best'' means most relevant to the human conducting an SLR.
 
-\subsection{TWCNB on \IT{}'s substrate}
+\subsection{Rennie et al. and Complementary Bayes}
+Standard classifiers like Naive Bayes have problems with text mining. 
+Rennie et al.~\cite{rennie2003tackling} diagnose the problem as one
+of ``bursty'' low frequency counts inherent in the sparse data used to train text miners.
+Relevancy filtering in text mining is a particularly challenging low frequency problem since, within 10,000s of documents, there may only be (say) 50 relevant documents;
+i.e., we are asking a classifier to predict for a class with a one-in-200 frequency (or rarer).  
 
-TWCNB is the four-trick refinement of Naive Bayes that closes
-the gap to SVMs on text classification. Each of the four tricks
-is short, and three of the four ride on the substrate.
 
-\begin{enumerate}
-\item Estimate per-word weights from each class's
-{\em complement} (rows {\em not} in the class) rather than the
-class itself. This corrects bias when class sizes are very
-skewed, which they are here: ``relevant'' is 1--2\% of the
-corpus.
-\item L1-normalize the per-class weight vectors. Rennie's
-intent was to keep classes with stronger word dependencies from
-dominating.
-\item Replace raw term frequencies with $\log(1 + f)$. Real text
-follows a power-law (``bursty'') distribution, not the
-multinomial that Naive Bayes assumes.
-\item Down-weight common terms by inverse document frequency.
-\end{enumerate}
+Rennie et al.'s approach to this problem was 
+to invert the normal classification algorithm:
+\begin{itemize}
+\item
+When training their {\em complementary Bayes classifier} (CNB), a new row updates the \cls{Data} distributions
+for all the classes to which it does {\em not} belong. 
+\item
+Then, when classifying, 
+instead of
+reporting what class is most likely,    {\em complementary Bayes}
+reports the class that a row is least likely to {\em not} belong.
+\end{itemize}
+We inserted this complementary Bayes classifier into our active learner as follows.
+Recall that 
+the \textsf{acquire} function of line~\ref{acquiring} accepts a \textsf{score} function
+that guesses which unlabeled row is more likely to be  {\em best}. The following relevancy filter  hooks into the likelihood calculation of complementary Bayes.
+\begin{minted}{python}
+def acquireWithBayes(data, best, rest, row): 
+  n = len(best.rows) + len(rest.rows)
+  return likes(rest, row, n, 2) - likes(best, row, n, 2)
+\end{minted}
+We tested if this active learner approach can solve
+the same problems   explored by Yu et al.\ (see Table~\ref{slr}).
+Yu's test cases  come from 
+four real-world published SE SLRs:
+\begin{itemize}
+\item
+Hall et al.'s work~\cite{hall2012} on fault
+prediction;
+\item
+Wahono~\cite{wahono2015systematic}'s study  on defect prediction;
+\item
+Radjenovi\'c et al.'s study~\cite{radjenovic2013software} on software fault
+metrics;
+\item
+Kitchenham et al.'s study~\cite{kitchenham2013systematic} on a
+tertiary review of SLR practice.
+\end{itemize}
+In each case, these humans (all expert
+in the field of SE) read thousands of papers to select a few dozen
+relevant to their research. 
+The data sets of Table~\ref{slr} were extracted from the careful 
+logs
+they kept of their reading process. 
 
-The implementation reuses the substrate. Each class is a
-\cls{Data}. The per-word weights live in the \cls{Sym} columns
-inside that \cls{Data}. \textsf{add} maintains the term
-frequencies as papers are labeled. The complement weights are
-computed from the union of {\em other} classes via \textsf{sub}.
-The full TWCNB scoring code is around 30 lines.
-
-\subsection{Datasets, metrics, and rig}
-
-Yu's four corpora come from real published SE SLRs. Each was
-reverse-engineered from the source paper's search query and
-inclusion list. The datasets are named after the lead authors
-of the source SLRs.
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\linewidth]{kit.pdf}
+\caption{Recall (top row) and false alarm (bottom row) as a
+function of labels acquired, for non-normalized CNB (blue)
+and normalized CNB (red) on Yu's four SLR corpora. Warm-start
+= 24 for all runs. Each curve is the median over 20 repeats,
+with shaded IQR. Vertical bars on the recall panels mark the
+labeling budget at which Yu et al.~\cite{yu2018finding} reached
+the same recall with FASTREAD. Numerical labels at the left
+edge of each recall panel mark the recall achieved
+immediately after the warm start.}
+\label{slrfig}
+\end{figure*}
+ 
 
 \begin{table}[!t]
-\caption{Yu's four SLR corpora~\cite{yu2018finding}. Each is a
+\caption{Yu's four SLR corpora~\cite{yu2018total}. Each is a
 search-engine query result where a small minority of candidates
 are relevant. The Kitchenham corpus has two relevance levels:
 132 papers passed title-and-abstract review, of which 45
@@ -1973,277 +2332,223 @@ Dataset & \#Candidate & \#Relevant \\
 Wahono       & 7002 & 62 \\
 Hall         & 8911 & 104 \\
 Radjenovi\'c & 6000 & 48 \\
-Kitchenham   & 1704 & 45 (132) \\
+Kitchenham   & 1704 & 132 \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-The four sources are: Hall et al.~\cite{hall2012} on fault
-prediction, Wahono~\cite{wahono2015} on defect prediction,
-Radjenovi\'c et al.~\cite{radjenovic2013} on software fault
-metrics, and Kitchenham et al.~\cite{kitchenham2010} on a
-tertiary review of SLR practice.
-
-We track two metrics from the IR literature.
+\subsection{Results}
+To assess these results, we tracked
+ two metrics:
+ \begin{itemize}
+ \item
 
 \textit{Recall} is $\mathit{tp}/(\mathit{tp} + \mathit{fn})$:
-the fraction of truly relevant papers found. Higher is better.
-The Yu-style target is 95\%.
-
+the fraction of truly relevant papers found. 
+{\em Higher} recalls are {\em better} since it means we are finding
+more relevant papers.
+  Yu's study achieved a recall of  95\%.
+\item
 \textit{False alarm} (sometimes called pf, the false positive
 rate) is $\mathit{fp}/(\mathit{fp} + \mathit{tn})$: the fraction
-of irrelevant papers incorrectly returned as relevant. Lower is
-better.
-
-Yu reported only recall. Reporting recall alone hides how much
-irrelevant reading the user still has to do. We report both.
-
-The rig: warm-start with 25 randomly drawn papers, train TWCNB,
-add one paper at a time chosen by certainty sampling (the
-unlabeled paper TWCNB ranks most strongly as ``yes''), retrain,
-re-score. Median and IQR over 20 repeats. Acquisition stops at
-95\% recall or budget exhaustion.
-
-We ran two configurations. {\bf Non-normalized} skips Rennie's
-L1 normalization; the other three tricks remain.
-{\bf Normalized} keeps all four tricks, exactly as TWCNB
-recommends.
-
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=\linewidth]{kit.pdf}
-\caption{Recall (top row) and false alarm (bottom row) as a
-function of labels acquired, for non-normalized TWCNB (blue)
-and normalized TWCNB (red) on Yu's four SLR corpora. Warm-start
-= 25 for all runs. Each curve is the median over 20 repeats,
-with shaded IQR. Vertical bars on the recall panels mark the
-labeling budget at which Yu et al.~\cite{yu2018finding} reached
-the same recall with FASTREAD. Numerical labels at the left
-edge of each recall panel mark the recall achieved
-immediately after the warm start.}
-\label{slrfig}
-\end{figure*}
-
-\subsection{Results}
-
-Figure~\ref{slrfig} shows recall and false alarm for both
-configurations on all four datasets.
+of irrelevant papers incorrectly returned as relevant. 
+{\em Lower} false alarms are {\em better} since, otherwise,
+our human experts are wasting time reading irrelevancies.
+Yu's study did not report false alarm.
+\end{itemize}
+ 
 
 
-Three things stand out.
+\definecolor{slateblue}{RGB}{106,142,162}
 
-First, on Hall, Radjenovi\'c, and Wahono, non-normalized TWCNB
-reaches 95\% recall right after the warm start. The recall
-curves are flat across the rest of the budget. Forty labels are
-enough on three of four corpora. FASTREAD needed 290--630.
+\definecolor{ruby}{RGB}{177,98,143}
 
-Second, normalization (red) helps recall slightly but hurts
-false alarm a lot. Non-normalized false alarms sit at 10--20\%.
-Normalized false alarms sit at 40--50\%. A user following
-Rennie's literal recipe ends up reading 4--5 times more
-irrelevant papers than necessary. Rennie's L1 normalization
-helped on the original 20 Newsgroups / Reuters / Industry Sector
-benchmarks. It does not help here. We could only see this
-because we measured false alarm. Yu did not.
 
-Third, Kitchenham is the awkward case. On the strict 45-paper
-relevance label, recall plateaus around 85\%, well below the
-95\% target. But Kitchenham has two relevance levels. The looser
-132-paper label includes papers that passed title-and-abstract
-review but failed content review. At 82\% recall on the 132-paper
-label, TWCNB still finds about 108 relevant papers and misses
-fewer than 25. For an SLR conductor whose goal is ``find me
-many relevant papers, fast,'' that is still useful. And again:
-40 labels.
 
-\subsection*{The lesson: half of RAG, in 30 lines}
 
-Compared to Yu's FASTREAD, \IT{}+TWCNB:
+ Figure~\ref{slrfig} shows results of 20 repeated trials where,
+each time, the order of the training rows is shuffled
+(in this case, each ``row'' was the title and abstract of a different paper).
+Each run was initialized with a warm start of $N=24$ randomly drawn papers. 
+This number was selected after asking academics in our field ``for any particular area, how many dozen papers do you usually
+know?''
 
+After that,
+complementary Bayes selected one paper at a time (the unlabeled paper
+it ranked most strongly as ``yes''), and recall and false alarm were
+updated after each new label. The total labeling budget was 50. 
+
+
+ 
+
+In  Figure~\ref{slrfig}, 
+solid lines show the 50\% percentile, and the shaded
+regions show the 25th to 75th range:
 \begin{itemize}
-\item uses fewer labels (40 vs. 290--630) on three of four
-corpora;
-\item uses a simpler classifier (Naive Bayes vs. linear SVM);
-\item uses a smaller codebase (around 30 lines of TWCNB plus a
-small driver, riding on the substrate);
-\item reports both recall {\em and} false alarm, surfacing that
-one of TWCNB's recommended tricks is counterproductive in this
-domain. Yu's study could not have found this because Yu reported
-only recall.
+\item
+The four columns show results from our four 
+corpora.
+\item
+The top row
+of plots shows recall.
+\item
+The second row shows  false alarm rates
+\item The 
+ \color{ruby}{\bf red lines}\color{black}~ shows results using
+ Rennie et al.'s recommendation of normalizing a likelihood
+ by dividing it by the sum of all likelihoods.
+ \item
+ The  \color{slateblue}{\bf blue lines}\color{black}~
+ shows results where normalization was disabled.
+ \end{itemize}
+Note that the false alarm rate is far lower than
+ when normalization is disabled; i.e., that part of
+ the Rennie et al.\ result should not be applied
+ uncritically to new data.
+Clearly,  measuring {\em both} recall and false
+alarms is informative for relevancy filtering.
+ Yu et al.\ did not measure false alarms, and we would now
+ call that a methodological error.
+  
+The most striking result here is the early plateaus.
+High recalls and low false alarms are possible in all our 
+datasets, and these can be achieved after 100 examples or less. By comparison, Yu et al.\ required 300 to 600   labels to reach the
+same recall. On Kitchenham, the recall plateaus near 82\%, below
+the 95\% target, but complementary Bayes still recovers 108 of the 132 relevant
+papers within 40 labels. For an SLR conductor whose goal is to
+find relevant papers quickly, that is a useful result.
+
+The contrast with FASTREAD is sharper than the absolute numbers
+suggest. Yu's recall curves begin at very low values and climb
+only about 7\% across several hundred labels. Ours begin near
+the ceiling and remain there. Same data, same task, very
+different rates of convergence.
+
+In summary, compared to Yu's methods, EZR+complementary Bayes:
+\begin{itemize}
+\item Needs fewer labels (100 vs.\ 300+);
+\item Uses a simpler classifier (Naive Bayes rather than a
+  linear SVM);
+\item Uses a smaller codebase (based on EZR, complementary
+Bayes is just three dozen lines of code);
+\item Reports both recall and false alarm, which exposed the
+  finding that one of Rennie's recommended preprocessing
+  steps is counterproductive in this domain.
 \end{itemize}
 
-This last point is the methodological one. Re-running prior
-work with simple methods is not just a way to compress the code.
-It is a way to revisit prior measurements. Yu's data was fine.
-The choice of metrics was incomplete. The simpler tool exposed
-the gap.
+That last item carries the methodological lesson of this
+section. Yu's data was fine, but the choice of metrics was
+incomplete, as revealed by an investigation with  simpler tools
+  \IT{}).
+We suspect that
+similar gaps exist elsewhere in the empirical SE literature,
+masked by tools too slow to encourage re-checks. Compact
+toolkits like EZR make those re-checks cheap, and we suggest
+the community should run them.
 
-The retrieval task TWCNB does here is half of what RAG does.
-The other half is dialog generation, which is genuinely the LLM
-half. We are not arguing LLMs are unnecessary. We are arguing
-that a non-trivial fraction of what RAG pipelines do can be
-done by methods that pre-date the deep-learning revolution,
-when those methods are built on a substrate that makes them
-small.
+A broader point bears on the main argument of this paper.
+Relevancy filtering in RAG is increasingly framed as a task for large
+language models, using embedding spaces of billions of
+parameters and similarity queries against a vector database.
+Our experiment achieved comparable or better results with 30
+lines of complementary Bayes riding on the same
+\cls{Num}/\cls{Sym}/\cls{Data} substrate used throughout
+EZR. We wonder how many other methods from the LLM community could be greatly simplified by simpler methods.
 
-The cognitive bias toward additive complexity~\cite{adams2021people}
-shows up here too. It is easier to add a vector database than
-to ask whether one is needed. Trying the simple thing first
-costs almost nothing. Sometimes it ends the investigation.
+% In summary (a)~relevance filtering may not always need
+% billion-parameter embeddings nor engineered linear SVMs since
+% (b)~thirty
+% lines of complementary Bayes on a shared substrate can work surprisingly well.
 
 % --- end of section ---
 
-\section{Discussion: Is Simple Also Stupid?}\label{sec:disc}
+\section{Summary and Discussion}\label{sec:disc}
 
-We started with a question. Five lessons in, with three
-empirical comparisons on the table, this is where we answer it.
+This paper set out to defend the claims of
+Table~\ref{truisms}: that new problems need not always be
+tackled with more complex algorithms and more data. We
+offered 400 lines of Python that:
+\begin{itemize}
+\item Built a simple substrate (\cls{Data}, \cls{Num},
+\cls{Sym}, and \textsf{add}) in \S\ref{sec:peek};
+\item Used that substrate to implement, in just a few lines,
+Naïve Bayes, $k$-means, and $k$-means++ (\S\ref{sec:famous});
+\item Then classification and regression trees
+(\S\ref{trees});
+\item Then two optimizers, simulated annealing and local
+search (\S\ref{sec:opt});
+\item Then an active learner (\S\ref{sec:active});
+\item And a text-mining relevance filter
+(\S\ref{sec:textmine}).
+\end{itemize}
 
-\subsection{The five lessons, in light of the evidence}
+Along the way we found that:
+\begin{itemize}
+\item In its 1983 default configuration, simulated annealing
+can beat 1990s local-search variants, despite a decade of
+papers claiming the newer variants had surpassed it
+(\S\ref{sec:opt});
+\item Our active learner reached the reference optimum with
+fewer than 100 labels and fewer than 10 features (even when
+thousands of features were available), and ran 500$\times$
+faster than state-of-the-art algorithms like SMAC3
+(\S\ref{sec:active});
+\item Text-mining tasks that are now routinely handed to
+massive language models can be implemented by 30 lines of
+complementary Bayes on the substrate above, and the same
+experiment exposed a measurement gap that the prior
+heavyweight evaluation had missed (\S\ref{sec:textmine}).
+\end{itemize}
+Just to be clear, we have not shown 
+that  all SE problems can be simplified using \IT{}.
+This study has a clear sample bias. The six counter-findings
+of Table~\ref{truisms} were extracted from experience with
+the MOOT data, which holds examples of a specific family of
+SE problems:
+\begin{itemize}
+\item Structured tabular data with explicit $x$ and $y$
+columns, where $y$ is expensive to obtain.
+\item That family is very broad (see Table~\ref{mootdata})
+and includes configuration tuning, performance prediction,
+defect prediction, test selection, cost estimation, and (as
+\S\ref{sec:textmine} shows) some text-mining tasks.
+\item But broad is not universal. Some problems are
+fundamentally complex. The certification of safety-critical
+software is not (and should not be) a simple process.
+Generation tasks (translation, summarization,
+natural-language interfaces, code synthesis) genuinely need
+the data scaling that LLMs provide.
+\end{itemize}
+ Another bias in this study is how we measured success. Our
+own experiments reported medians over 20 or more repeats
+using the \textsf{wins} score (Equation~\ref{eq:wins}), which
+clamps trivially small differences ($<0.35\sigma$) to zero
+per Sawilowsky~\cite{sawilowsky2009new}. State-of-the-art
+comparisons against SHAP, LIME, Anchors, SMAC3, TPE, and
+HyperOpt come from independent replications by Rayegan et
+al.~\cite{Amiraliminimaldata} and Ganguly et
+al.~\cite{ganguly2026lowgodatalightse}, using their own
+methodologies. By these criteria, every comparison we ran, on 120+ MOOT tasks, on Yu et al.'s four SLR
+corpora~\cite{yu2018total}, and in the independent
+replications, showed the tiny EZR-based approach running
+faster and performing as well as or better than the heavier
+state-of-the-art tool. A different metric could change which
+method appears to win, and we cannot rule that out.
 
-The introduction listed five lessons. We can now check each one
-against what the body of the paper showed.
+The reverse statement is also worth making. The SE empirical
+literature has many examples where the published advantage
+of a heavyweight method shrank or disappeared once re-tested
+against a carefully built simple baseline~\cite{Fu17,
+fu2016tuning,agrawal2019dodge,Nair17a,
+tantithamthavorn2016automated,grinsztajn2022why,Hou24}.
+\IT{} is one more entry in that pattern.
 
-\textit{Many models can be tiny.} Across 120-plus MOOT tasks,
-trees with under ten variables matched or beat heavier
-explanation tools (\S\ref{sec:tiny}, citing Amirali et
-al.~\cite{amirali}).
-
-\textit{Random search works better than expected.} On MOOT, the
-(1+1)-EA, simulated annealing, and local search were
-statistically indistinguishable. They differed only in a one-line
-accept rule (\S\ref{sec:opt}).
-
-\textit{One data structure suffices.} Naive Bayes, $k$-means,
-$k$-means++, three optimizers, the active learner, and TWCNB all
-sit on the same \cls{Num}/\cls{Sym}/\cls{Data} substrate
-(\S\ref{sec:peek} through \S\ref{sec:textmine}).
-
-\textit{Optimization, classification, and regression are nearly
-the same algorithm.} The textbook gives them separate chapters.
-The code gives them five sections of the same source file
-(\S\ref{sec:famous}, \S\ref{sec:opt}, \S\ref{sec:active}).
-
-\textit{Small codebases work.} \IT{} is around 500 lines, with
-no heavy dependencies. The active learner runs 10{,}000 times
-faster than SMAC~\cite{kashin}. The text-mining classifier runs
-in milliseconds on a laptop (\S\ref{sec:textmine}).
-
-Three independent comparisons, three domains, the same pattern.
-Simple, when carefully built, is not stupid.
-
-\subsection{Where simple genuinely fails}
-
-\IT{} is not a universal substitute. There are real tasks for
-which no simple method we know of works.
-
-Generation is the clearest case. Translation, summarization,
-code synthesis, and natural-language interfaces require an
-understanding of language that no \cls{Num}/\cls{Sym} substrate
-can carry. The training data and compute budget that build LLMs
-are not bypass-able for these tasks.
-
-Dense perception is another. Image classification at scale,
-speech recognition under noise, and protein structure prediction
-have all moved decisively to large neural models. Smaller
-methods exist but lose on benchmarks that matter.
-
-Tasks with strong sequential dependencies are a third case.
-Sequence-to-sequence problems where context windows of thousands
-of tokens carry meaning are not what \IT{} is designed for.
-
-What \IT{} is good at is structured tabular data with explicit
-$x$ and $y$ columns where the $y$ column is expensive to
-compute. That covers a lot of SE: configuration tuning, defect
-prediction, hyperparameter search, test selection, cost
-estimation, and (as the case study showed) some text mining
-problems too. It does not cover everything.
-
-\subsection{The cognitive bias toward additive complexity}
-
-The simplification we found in \IT{} was not invisible. It was
-in the code. We had to read it.
-
-Adams et al.~\cite{adams2021people} document a robust cognitive
-bias: people, when given a problem, tend to add new components
-rather than remove existing ones. The bias survives when
-subtraction is the better choice and when the addition has a
-cost. \IT{} is the product of repeatedly subtracting. We removed
-multi-generational genetic algorithms in favor of one-generation
-sampling. We removed adaptive active learning samplers in favor
-of greedy search. We removed pandas in favor of 14 lines of CSV
-parsing. We removed regression tree ensembles in favor of two
-\cls{Data}s.
-
-A survey by Hou et al.~\cite{Hou24} of 229 SE papers using LLMs
-found that only 5\% baselined against non-LLM alternatives.
-That is the additive bias at scale: the field reaches for the
-heavy method without checking whether the light one would have
-worked. When checked, the light method often does
-work~\cite{grinsztajn2022why,somvanshi2024survey,Tawosi23,
-majumder2018500+,Ling24,Fu17,johnson2024ai}.
-
-\IT{} is one demonstration. We do not claim it generalizes
-beyond SE multi-objective optimization, classification, and the
-relevance-filtering case study. We do claim that within those
-boundaries, the simpler tool kept reaching state-of-the-art
-results, and the simpler tool exposed gaps in prior measurement
-that the heavier tools missed.
-
-\subsection{Threats to validity}
-
-\textit{Construct.} ``State of the art'' depends on the metric.
-We compared on actionability and faithfulness for explanations
-(following Amirali et al.~\cite{amirali}); on solution quality
-under fixed budgets for optimization (following
-Ganguly~\cite{kashin}); on recall and false alarm for relevance
-filtering. Different metrics could give different results. We
-chose metrics that were either standard in the prior work or
-(in the relevance case) more complete than the prior work.
-
-\textit{Internal.} Active learning is stochastic. We report
-medians over 20 repeats with IQR shading throughout. Larger
-repeat counts might reveal smaller effects. The 100,000-trial
-heatmap in \S\ref{sec:valid} is one defense against this.
-
-\textit{External.} Our comparisons rest on MOOT (120-plus SE
-tasks) and Yu's four SLR corpora. Generalization beyond these
-data sets is an open question. SE is itself a limited domain;
-results may not transfer to other application areas.
-
-\textit{Conclusion.} The headline claim that \IT{} ``matches
-state of the art'' uses Cliff's-delta plus
-Kolmogorov--Smirnov tests for statistical sameness. Like any
-tied-or-better claim, this allows that another study could
-report a clear win for the heavier method. We have not seen
-such a study, but we cannot rule it out.
-
-\subsection{Conclusion}
-
-We started with the question {\em is simple also stupid?}\
-Across MOOT, across Yu's SLR corpora, and across the
-explanation comparisons of Amirali et al., the answer was no.
-
-The simplification was not in the algorithms. The algorithms in
-\IT{} are textbook. The simplification was in noticing that
-five textbook algorithms shared one data structure, and writing
-the data structure once.
-
-That noticing took years of reading and rewriting code.
-It cannot happen in a workflow that treats the code as something
-the AI emits and the human consumes. It happens when the human
-sits with the code, deletes things, and watches what survives.
-The 500 lines of \IT{} are what survived.
-
-If the field continues toward methods that are large and
-opaque, this paper is a vote in the other direction. The simple
-thing is worth trying first. It often works. When it does, the
-code fits on the page.
-
-\appendix
-\section{Building and Displaying Trees}\label{app:trees}
-\input{tree}
-
+In conclusion, just because some tasks are hard does not
+mean all tasks are hard. The challenge we put to the
+community is this: have we really checked what is genuinely
+complex, and what is, on careful reading, actually very
+simple?
 
 \bibliography{bib3,main}
 \end{document}
