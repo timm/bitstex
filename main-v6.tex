@@ -18,7 +18,14 @@
 \usepackage{enumitem}
 \usepackage{alltt}
 \usepackage{array}
-\usepackage{fontspec}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{inconsolata}
+\else
+  \usepackage{fontspec}
+\fi
 \usepackage{tabularx}
 \usepackage{booktabs} 
 \usepackage{ragged2e}
@@ -33,19 +40,24 @@
 
 
 \usepackage[most]{tcolorbox}
-\usepackage{minted}
+\usepackage{listings}
 \usepackage{hyperref}
 \hypersetup{hidelinks}
 
 % ---------------- Fonts ----------------
-\setmonofont{JetBrainsMono}[
-  Path=./Fonts/JetBrainsMono/,
-  Extension=.ttf,
-  UprightFont=*-Regular,
-  BoldFont=*-Bold,
-  ItalicFont=*-Italic,
-  BoldItalicFont=*-BoldItalic,
-]
+% pdflatex: inconsolata loaded above. xelatex: load JetBrainsMono if present.
+\ifPDFTeX\else
+  \IfFontExistsTF{JetBrainsMono-Regular.ttf}{%
+    \setmonofont{JetBrainsMono}[
+      Path=./,
+      Extension=.ttf,
+      UprightFont=*-Regular,
+      BoldFont=*-Bold,
+      ItalicFont=*-Italic,
+      BoldItalicFont=*-BoldItalic,
+    ]%
+  }{}%
+\fi
 
 % ---------------- Spacing ----------------
 \renewcommand{\baselinestretch}{0.9}
@@ -92,33 +104,33 @@
   boxrule=0.5pt, arc=2pt,
 }
 
-% ---------------- Minted setup ----------------
-\captionsetup[listing]{skip=0pt,position=top}
-\setminted{
-  fontsize=\fontsize{6.5}{7.5}\selectfont,
-  bgcolor=codebg, 
+% ---------------- Listings setup (pdflatex-safe, no Pygments) ----------------
+\captionsetup[lstlisting]{skip=0pt,position=top}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\fontsize{6.5}{7.5}\selectfont,
+  keywordstyle=\bfseries\color{Maroon},
+  commentstyle=\itshape\color{gray!70},
+  stringstyle=\color{darkyellow},
+  backgroundcolor=\color{codebg},
   frame=none,
-  framerule=0.5pt,
-  rulecolor=\color{gray},
-  framesep=2mm,
-  xleftmargin=0pt,
-  numbersep=2mm,
-  linenos,
+  numbers=left,
   firstnumber=last,
-  baselinestretch=0.95,
+  numberstyle=\color{gray}\fontsize{6}{6}\selectfont,
+  numbersep=2mm,
+  xleftmargin=0pt,
   breaklines=true,
-  breakanywhere=true,
-  autogobble=true,
-  escapeinside=||,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  escapeinside={|}{|},
 }
-\setminted[python]{style=trac}
-\renewcommand{\theFancyVerbLine}{%
-  \color{gray}\fontsize{4}{4}\selectfont\arabic{FancyVerbLine}}
-\newminted[repl]{python}{linenos=false,firstnumber=last}
+\lstnewenvironment{repl}{\lstset{numbers=none}}{}
 
-% Keep minted blocks from breaking across columns
-\BeforeBeginEnvironment{minted}{\par\nopagebreak\minipage{\linewidth}}
-\AfterEndEnvironment{minted}{\endminipage\par\noindent}
+% Keep listings blocks from breaking across columns
+\BeforeBeginEnvironment{lstlisting}{\par\nopagebreak\minipage{\linewidth}}
+\AfterEndEnvironment{lstlisting}{\endminipage\par\noindent}
 
 % ---------------- Wiley journal metadata ----------------
 \articletype{Research Paper}
@@ -417,7 +429,7 @@ Table~\ref{truisms} in turn:
 \item
 \S\ref{sec:peek} introduces the four-class substrate that is used, extensively, by the rest of the paper;
 \item
-\S\ref{sec:famous} implements Naïve Bayes, $k$-means, and
+\S\ref{sec:famous} implements Na\"{\i}ve Bayes, $k$-means, and
 $k$-means++ on top of that substrate;
 \item
 \S\ref{trees} adds classification and regression trees;
@@ -466,7 +478,7 @@ tens of thousands of downstream packages without the primary
 developer's knowledge~\cite{martinez2021}. To sidestep that
 risk, \IT{} shuns \texttt{pandas} and instead ships with the
 following CSV reader of 14 lines:
-\begin{minted}{python}
+\begin{lstlisting}
 def csv(f, ok=lambda txt: txt.partition("#")[0].split(",")):
   with open(f, encoding="utf-8") as file:
     for txt in file: |\label{csv}|
@@ -481,7 +493,7 @@ def thing(txt):
   for f in [int, float, b]:
     try: return f(txt)
     except ValueError: pass
-\end{minted}
+\end{lstlisting}
 This reader skips comments after \texttt{\#}, splits on commas,
 and yields typed rows. \textsf{Thing} coerces each cell to int,
 float, bool, or string in turn. 
@@ -507,47 +519,47 @@ end in ``+'' are to be maximized and columns whose names end in
 ``-'' are to be minimized. \textsf{heaven} is set to 1 or 0
 respectively. Smaller distance to \textsf{heaven} is always
 better.
-\begin{minted}{python}
+\begin{lstlisting}
 class Num:
   def __init__(i, txt="", at=0):
     i.txt, i.at, i.n = txt, at, 0
     i.mu = i.m2 = i.sd = 0
     i.heaven = txt[-1:] != "-" |\label{heaven}|
-\end{minted}
+\end{lstlisting}
 \cls{Sym}bolic columns hold frequency counts in a \textsf{has}
 dictionary:
-\begin{minted}{python}
+\begin{lstlisting}
 class Sym:
   def __init__(i, txt="", at=0):
     i.txt, i.at, i.n, i.has = txt, at, 0, {}
-\end{minted}
+\end{lstlisting}
 The \textsf{mid} of a column is its mean (for \cls{Num}) or
 mode (for \cls{Sym}):
-\begin{minted}{python}
+\begin{lstlisting}
 def mid(col): |\label{mid0}|
   return (col.mu if Num==type(col) else mode(col.has))
 
 def mode(dct): return max(dct, key=dct.get)
-\end{minted}
+\end{lstlisting}
 The \textsf{spread} is its standard deviation (for \cls{Num})
 or entropy (for \cls{Sym}):
-\begin{minted}{python}
+\begin{lstlisting}
 def spread(col): |\label{spread0}|
   return (col.sd if Num==type(col) else entropy(col.has))
 
 def entropy(dct):
   n = sum(dct.values())
   return -sum(v/n*log2(v/n) for v in dct.values())
-\end{minted}
+\end{lstlisting}
 Numeric values can also be normalized to $[0,1]$ via a logistic
 sigmoid clamped to $\pm3$ standard deviations. Missing values
 (``?'') pass through:
-\begin{minted}{python}
+\begin{lstlisting}
 def norm(num, v): |\label{norml}|
   if v == "?": return v
   z = max(-3, min(3, (v - num.mu)/(num.sd + 1e-32)))
   return 1/(1 + exp(-1.7*z))
-\end{minted}
+\end{lstlisting}
 \textsf{norm} makes rows from different scales comparable for
 the distance calculations later in the paper.
 
@@ -624,7 +636,7 @@ constructor accepts an iterator (e.g.\ from \textsf{csv}) or a
 list of rows. The first row becomes the header and is handed
 to \cls{Cols} to build the column objects. The rest are added
 in turn:
-\begin{minted}{python}
+\begin{lstlisting}
 class Data:
   def __init__(i, src=None):
     src = iter(src or [])
@@ -636,7 +648,7 @@ def adds(src, it=None):
   it = it or Num()
   [add(it, v) for v in (src or [])]
   return it
-\end{minted}
+\end{lstlisting}
 Two usage patterns appear throughout:
 \begin{repl}
 >>> data1 = Data(csv(fileName))           # from disk
@@ -644,10 +656,10 @@ Two usage patterns appear throughout:
 \end{repl}
 The second pattern (an empty \cls{Data} that mimics another's
 column structure) is wrapped in a helper:
-\begin{minted}{python}
+\begin{lstlisting}
 def clone(data, rows=None): |\label{cloning}|
   return adds(rows or [], Data([data.cols.names]))
-\end{minted}
+\end{lstlisting}
 \textsf{clone} appears nine times in the rest of
 \texttt{ezr.py}. Each appearance spawns a fresh \cls{Data} that
 shares its parent's schema.
@@ -658,7 +670,7 @@ marks a symbolic class column, ``+'' or ``-'' mark goal columns
 (\textsf{ys}), everything else is an independent attribute
 (\textsf{xs}). Names starting with an upper-case letter become
 \cls{Num}; everything else becomes \cls{Sym}.
-\begin{minted}{python}
+\begin{lstlisting}
 def Col(txt="", at=0):
   return (Num if txt[:1].isupper() else Sym)(txt, at)
 
@@ -672,7 +684,7 @@ class Cols:
         if txt[-1] == "!": i.klass = col |\label{klass}|
         role = (i.ys if txt[-1] in "+-!" else i.xs)
         role.append(col)
-\end{minted}
+\end{lstlisting}
 After \cls{Cols} runs, every \cls{Data} carries three views of
 its columns: \textsf{xs} (independent), \textsf{ys} (dependent
 goals), and \textsf{klass} (the optional symbolic target). The
@@ -723,7 +735,7 @@ calls \textsf{add} with the appropriate cell.
 exact and incremental method for updating mean and standard
 deviation.
 \end{itemize}
-\begin{minted}{python}
+\begin{lstlisting}
 def add(it, v, w=1): |\label{add}|
   if Data is type(it):
     it._centroid = None |\label{zap}|
@@ -743,15 +755,15 @@ def add(it, v, w=1): |\label{add}|
       it.m2 += w * delta * (v - it.mu)
       it.sd = (sqrt(max(0,it.m2)/(it.n-1)) if it.n>1 else 0)
   return v
-\end{minted}
+\end{lstlisting}
 Three details inside \textsf{add} are worth flagging.
 
 \textit{First, the symmetry that makes data movement cheap.}
 The \textsf{w} parameter handles both addition (\textsf{w=1})
 and subtraction \mbox{(\textsf{w=-1})}, via:
-\begin{minted}{python}
+\begin{lstlisting}
 def sub(it, v): return add(it, v, w=-1)
-\end{minted}
+\end{lstlisting}
 This symmetry matters because it lets us move a row from one
 \cls{Data} to another in two constant-time operations: $\pm 1$
 to a counter for symbols, or a single Welford update for
@@ -763,12 +775,12 @@ rests on this property.
 carries a \textsf{\_centroid} field that \textsf{add}
 invalidates on any change (line~\ref{zap}). The \textsf{mids}
 accessor lazily rebuilds it:
-\begin{minted}{python}
+\begin{lstlisting}
 def mids(data): |\label{mids}|
   data._centroid = data._centroid or [
                        mid(col) for col in data.cols.all]
   return data._centroid
-\end{minted}
+\end{lstlisting}
 Without the cache, each \textsf{mids} call would walk every
 column. With it, the call is one dictionary lookup until the
 next \textsf{add}. This detail will become important when we
@@ -856,7 +868,7 @@ machinery they share. This section asks whether that separation
 is necessary at the level of code.
  This section shows that, on top of the
 substrate from \S\ref{sec:peek}, they are nearly the same
-algorithm asking slightly different questions. Naïve Bayes takes two
+algorithm asking slightly different questions. Na\"{\i}ve Bayes takes two
 functions. $k$-means takes thirteen lines. $k$-means++ takes
 eleven. Between them, they add 30 lines of new code and one new
 primitive (\textsf{pick}, which earns its place by also serving
@@ -865,14 +877,14 @@ as the mutation operator in \S\ref{sec:opt}).
 The deep reason these three algorithms collapse together is
 simple: each one reduces to the same underlying question. Given
 some columns that summarize what we have seen, how does a new
-row score against them? Naïve Bayes scores by likelihood;
+row score against them? Na\"{\i}ve Bayes scores by likelihood;
 $k$-means scores by distance; $k$-means++ scores by squared
 distance weighted into a probability. The scoring rule changes;
 the substrate that holds the summaries does not.
 
-\subsection{Naïve Bayes}
+\subsection{Na\"{\i}ve Bayes}
 
-The core of Naïve Bayes is one question: how much does a column
+The core of Na\"{\i}ve Bayes is one question: how much does a column
 {\em like} a value? \textsf{like} answers that question. For a
 \cls{Sym}, the answer is a smoothed frequency count from
 \textsf{has} (the same dictionary \textsf{add} updates at
@@ -880,7 +892,7 @@ line~\ref{symaddsub}). For a \cls{Num}, the answer is a Gaussian
 PDF using the running \textsf{mu} and \textsf{sd} that
 \textsf{add} maintains via Welford (line~\ref{welford}):
 
-\begin{minted}{python}
+\begin{lstlisting}
 the.bayes.k = 1   # smoothing config
 
 def like(col, v, prior):
@@ -890,7 +902,7 @@ def like(col, v, prior):
   sd = col.sd + 1e-32
   z  = 2*sd*sd
   return exp(-(v-col.mu)**2 / z) / sqrt(pi*z)
-\end{minted}
+\end{lstlisting}
 Note what is not here: no fitting pass, no separate training
 phase. The \cls{Num} and \cls{Sym} columns inside a \cls{Data}
 are already a fitted Bayes model, because \textsf{add} kept them
@@ -902,7 +914,7 @@ the distinction between fitting and using.
 multiplies per-column likelihoods (in log space, for numerical
 stability) with an $m$-estimate prior on class size:
 
-\begin{minted}{python}
+\begin{lstlisting}
 the.bayes.m = 2   # prior config
 
 def likes(data, row, n_rows, n_klasses):
@@ -912,11 +924,11 @@ def likes(data, row, n_rows, n_klasses):
         for col in data.cols.xs
         if (v := row[col.at]) != "?"]
   return log(prior) + sum(log(v)  for v in ls if v > 0)
-\end{minted}
+\end{lstlisting}
 Two functions, complete with Laplace and $m$-estimate smoothing,
 Gaussian numeric attributes, and missing-value handling. The
 streaming test-then-train protocol that ordinarily accompanies
-Naïve Bayes (classify each row with the model so far, then add
+Na\"{\i}ve Bayes (classify each row with the model so far, then add
 it to its true class's \cls{Data}) is a thin loop on top of
 these two functions; we omit it here to keep the focus on the
 algorithm itself.\footnote{The full \textsf{classify} loop is
@@ -941,7 +953,7 @@ across columns. The per-column distance is \textsf{aha} (after
 Aha's 1991 instance-based reasoning algorithm~\cite{aha91}); the
 combiner is the Minkowski $p$-norm:
 
-\begin{minted}{python}
+\begin{lstlisting}
 the.p = 2 # config
 
 def distx(data, r1, r2):
@@ -960,7 +972,7 @@ def minkowski(items, p=2): # p=2 means "Euclidean"  |\label{minkowski}|
   tot, n = 0, 1e-32
   for item in items:  tot, n = tot + item**p, n + 1
   return (tot/n) ** (1/p)
-\end{minted}
+\end{lstlisting}
 The \textsf{aha} rules encode three   policies. If both
 values are missing, their distance is maximal (Aha's
 heuristic). For symbolic columns, distance is whether the two
@@ -973,7 +985,7 @@ With \textsf{distx} in hand, $k$-means itself is short. EZR uses
 the \cls{Data} class to store each cluster: a ``cluster'' in
 \IT{} is just a \cls{Data} populated by \textsf{add}:
 
-\begin{minted}{python}
+\begin{lstlisting}
 def kmeans(d, rs=None, k=10, n=10, cents=None):
   rs = rs or d.rows
   cents = cents or choices(rs, k=k)
@@ -986,7 +998,7 @@ def kmeans(d, rs=None, k=10, n=10, cents=None):
     cents = [mids(kid)  # for "mids" see line |\ref{mids}|
              for kid in out if kid.rows]
   return out
-\end{minted}
+\end{lstlisting}
 What is worth noting about \textsf{kmeans} is what it does
 \emph{not} introduce. Every function it calls already existed
 before \textsf{kmeans} was written. \textsf{clone}
@@ -1021,7 +1033,7 @@ generate mutants for simulated annealing and local search.
 roulette-wheel sampler: successively subtract from a probability mass,
 stopping when we run out of values
  (lines~\ref{wheel0} to \ref{wheel1}).
-\begin{minted}{python}
+\begin{lstlisting}
 def pick(it, v=None): |\label{pick}|
   if Sym == type(it): return pick(it.has)
   if Num == type(it):
@@ -1035,7 +1047,7 @@ def pick(it, v=None): |\label{pick}|
     for k, v in it.items():
       if (n := n - v) <= 0: break
     return k | \label{wheel1} |
-\end{minted}
+\end{lstlisting}
 To pick from \cls{Num}s, we draw from a distribution centered on a supplied $\mu$ (defaulting to
 the column mean) using the Irwin-Hall
 sampler~\cite{johnson1995continuous}. 
@@ -1050,7 +1062,7 @@ a specific row's value); $k$-means++ uses the dict branch.
 Once \textsf{pick} is available, $k$-means++ is just (a)~build
 the weighted dict, (b)~pick from it, (c)~repeat:
 
-\begin{minted}{python}
+\begin{lstlisting}
 def kpp(d, rs=None, k=10, few=256): |\label{kpp}|
   rs = rs or d.rows
   out = [choice(rs)]
@@ -1060,7 +1072,7 @@ def kpp(d, rs=None, k=10, few=256): |\label{kpp}|
           for i in range(len(t))}
     out.append(t[pick(ws)])
   return out
-\end{minted}
+\end{lstlisting}
 The \textsf{few=256} parameter  (on line \ref{kpp}) is a pragmatic shortcut. On large
 data sets, scanning every row to score each new centroid is
 expensive; 256 random candidates give an interesting weighted
@@ -1075,7 +1087,7 @@ new support function. None needed a new training phase. Each was
 a way of asking the substrate a different question:
 
 \begin{itemize}
-\item Naïve Bayes asks: how much does a column like a value?
+\item Na\"{\i}ve Bayes asks: how much does a column like a value?
 \item $k$-means asks: which centroid is this row closest to?
 \item $k$-means++ asks: which row should be the next centroid,
 weighted by squared distance?
@@ -1088,7 +1100,7 @@ pre-existing functionality.
 
 This is the kind of structural similarity that becomes invisible
 when humans no longer read the code. An LLM asked separately for
-``Naïve Bayes,'' ``$k$-means,'' and ``$k$-means++'' will
+``Na\"{\i}ve Bayes,'' ``$k$-means,'' and ``$k$-means++'' will
 generate three independent implementations, with three separate
 data structures and three separate maintenance burdens. The
 code emitted by such generators is not wrong;
@@ -1116,13 +1128,13 @@ but differ  in how they score  their leaves:
  for each leaf;
  \item Regression trees return numeric scores such as \textsf{disty}.
  \end{itemize}
-\begin{minted}{python}
+\begin{lstlisting}
 def disty(data, row): |\label{disty}| 
   return minkowski(  # for "minkowski", see line |\ref{minkowski}|
           (abs(norm(col, row[col.at]) # for "norm", see line |\ref{norml}|
            - col.heaven)  # for "heaven", see line |\ref{heaven}|
            for col in data.cols.ys), p=the.p)
-\end{minted}       
+\end{lstlisting}       
 EZR's   trees are formed by recursively splitting the rows in order
  to decrease conclusion uncertainty. 
  For example,   for the following data about human beings,
@@ -1143,7 +1155,7 @@ the split; i.e. $(n_1\, s_1 + n_2\, s_2)/(n_1 + n_2)$.
 
 To assess a {\em cut},
 we can the following information:
-\begin{minted}{python}
+\begin{lstlisting}
 def treeSplit(data, col, cut, rows, klass=None, y=Num):
   klass = klass or (lambda r: disty(data, r))
   l_rows, r_rows, l_y, r_y = [], [], y(), y()
@@ -1154,7 +1166,7 @@ def treeSplit(data, col, cut, rows, klass=None, y=Num):
     add(l_y if go else r_y, klass(row)) |\label{effects}|
   s = l_y.n*spread(l_y) + r_y.n*spread(r_y)
   return s, col, cut, l_rows, r_rows
-\end{minted}
+\end{lstlisting}
 Note how this code  uses  \textsf{spread} (from line \ref{spread0}). This is an abstract term
 that covers standard deviation (for \cls{Num}s) and entropy (for \cls{Sym}s.
 
@@ -1176,19 +1188,19 @@ One way to generate {\em cut}s is to try every unique value in the rows. Numeric
 {\em cut} per bin. After trying  various bin sizes,
  {\em bins=2} tends to work best.
 (i.e. splitting numerics on the median).
-\begin{minted}{python}
+\begin{lstlisting}
 def treeCuts(col, rows, bins=2):
   vs = [row[col.at] for row in rows if row[col.at]!="?"]
   if not vs: return []
   if Sym == type(col): return set(vs)
   vs = sorted(vs)
   return [vs[bin*len(vs)//bins] for bin in range(1, bins)]
-\end{minted}
+\end{lstlisting}
 Once we can generate and score the {\em cut}s, then the rest of tree learning is just
 a recursive descent that tries to add \textsf{tree.left} and \textsf{tree.right} to the
 current \textsf{tree} node.  In EZR, this recursion stops when
 we can no longer cut rows into two splits of size 3 (see line \ref{stop}):
-\begin{minted}{python}
+\begin{lstlisting}
 the.learn.leaf = 3 # config
 
 def treeGrow(data, rows, klass=None, y=Num):
@@ -1204,24 +1216,24 @@ def treeGrow(data, rows, klass=None, y=Num):
       tree.left  = treeGrow(data, left,  klass, y)
       tree.right = treeGrow(data, right, klass, y)
   return tree
-\end{minted}
+\end{lstlisting}
  Once a tree is generated,
  to make a prediction, a new row has to be pushed down its appropriate
 branch. 
-\begin{minted}{python}
+\begin{lstlisting}
 def treeLeaf(tree, row): 
   if not tree.left: return tree
   v = row[tree.col.at]
   go = v!="?" and (v<=tree.cut if Num==type(tree.col) 
                                else v==tree.cut)
   return treeLeaf(tree.left if go else tree.right,row)
-\end{minted}
+\end{lstlisting}
 At the end that branch is a leaf containing a \cls{Data}
 which can be used to make predictions.
 To facilitate that, as a side-effect of making a new tree node on line~\ref{newTree}
 we compute \textsf{ynum} (which is the distribution of 
 the \textsf{disty}s seen in that node).
-\begin{minted}{python}
+\begin{lstlisting}
 class Tree:
   def __init__(i, data, rows, klass=None, y=Num):
     klass = klass or (lambda r: disty(data, r))
@@ -1229,7 +1241,7 @@ class Tree:
     i.ynum = adds((klass(row) for row in rows), y())
     i.col, i.cut = None, 0
     i.left = i.right = None
-\end{minted}
+\end{lstlisting}
  Later in this paper, when we discuss active learning, we will show
  that the trees learned in this manner are very effective.
  
@@ -1307,7 +1319,7 @@ annealing mutates a random subset of attributes. Local search, on the other hand
 probability $p$, freezes all attributes except one, then sweeps over the range
 of that single attribute.
 
-\begin{minted}{python}
+\begin{lstlisting}
 def ls(d, oracle, restart=100, p=0.5, tries=20, budget=1000): 
   def accept(e, en, *_): return en < e
   def mutate(s):
@@ -1333,7 +1345,7 @@ def picks(data, row, n=1):
   for col in sample(data.cols.xs, min(n, len(data.cols.xs))):
     s[col.at] = pick(col,s[col.at]) # for "pick" see line |\ref{pick}|
   return s
-\end{minted}
+\end{lstlisting}
 Simulated annealing and local search are often presented as separate
 algorithms. But as seen here, both can be coded by calling an
 underlying \textsf{oneplus1} function while specializing the
@@ -1361,7 +1373,7 @@ only way to validate that  model would be via the Pfisterer
 and Zela procedure, since our tabular data holds all   ground
 truth. Since some form of nearest-neighbor testing is unavoidable,
 		EZR adopts it from the outset.)
-\begin{minted}{python}
+\begin{lstlisting}
 d0 = Data(csv(file))   
 shuffle(d0.rows)
 known  = Data([d0.cols.names] + d0.rows[:50])
@@ -1377,7 +1389,7 @@ def oracleNearest(data, row):
 def nearest(data, row): 
   return min(data.rows, 
              key=lambda r: distx(data, row, r))
-\end{minted}
+\end{lstlisting}
 Finally, we can present \textsf{oneplus1}.   It runs the (1+1) loop
 (mutate, score, accept, track the best) and nothing else. The
 tactics used by \textsf{mutate} and \textsf{accept} are passed in
@@ -1385,7 +1397,7 @@ from \textsf{sa} and \textsf{ls}.
 In the following code,
 \textsf{restart=0} means ``never restart'' and \textsf{restart=100}
 means ``restart if no improvements after 100 mutations'':
-\begin{minted}{python}
+\begin{lstlisting}
 def oneplus1(data, mutate, accept, oracle, |\label{oneplus1}|
              budget=1000, restart=0): 
   h, best, best_e = 0, None, 1E32
@@ -1403,7 +1415,7 @@ def oneplus1(data, mutate, accept, oracle, |\label{oneplus1}|
         s = choice(data.rows)[:]
         e, imp = 1E32, h
         break
-\end{minted}
+\end{lstlisting}
 \begin{table*}[t]
 \centering\scriptsize
 \caption{Four treatments across 20 randomly selected MOOT benchmarks. Cells show
@@ -1683,7 +1695,7 @@ remaining $N - \sqrt{N}$.
 \end{itemize}
 EZR implements this demotion using the same \textsf{add} function used
 above for $k$-means and our Naive Bayes classifier:
-\begin{minted}{python}
+\begin{lstlisting}
 def rebalance(best, rest, lab): 
   if len(best.rows) > sqrt(len(lab.rows)):
     best.rows.sort( |\label{sorting}|
@@ -1692,7 +1704,7 @@ def rebalance(best, rest, lab):
        sub(best.cols,
          best.rows[-1]))
     rest.rows.append(best.rows.pop())
-\end{minted}
+\end{lstlisting}
 The only computationally expensive part of this loop
 is the call to \textsf{best.rows.sort} on line \ref{sorting}. But even this
 is not particularly expensive since \textsf{best} is bounded to $\sqrt{N}$;
@@ -1856,7 +1868,7 @@ itself.
 (default 4), sorts them by \textsf{disty}, and splits them into
 \textit{best} and \textit{rest}. The leftover pool is returned for
 later scoring.
-\begin{minted}{python}
+\begin{lstlisting}
 the.learn.start = 4 # config
 
 def warm_start(data, rows, label): |\label{warmstart}|
@@ -1867,16 +1879,16 @@ def warm_start(data, rows, label): |\label{warmstart}|
           clone(data, lab.rows[:n]),
           clone(data, lab.rows[n:]),
           rows[the.learn.start:])
-\end{minted}
+\end{lstlisting}
 EZR allows  customization of the 
 \textsf{score} function. For example,
 here is a function that ranks unlabeled rows by the difference between their 
 distance to the \textit{best} and \textit{rest} centroids. 
-\begin{minted}{python}
+\begin{lstlisting}
 def acquireWithCentroid(data, best, rest, row): |\label{acqqqq}|
   return (distx(data, row, mids(best)) -
           distx(data, row, mids(rest)))
-\end{minted}
+\end{lstlisting}
 In practice, this code is not slow. Recall that 
 \cls{Data.mids()} caches centroids until new data invalidates them 
 (line~\ref{zap}); hence the centroid
@@ -1896,7 +1908,7 @@ unlabeled example; (c)~which is then labeled
 before (d) it is passed to   \textsf{rebalance}  in order to
 u\textit{best} and 
 \textit{rest}.
-\begin{minted}{python}
+\begin{lstlisting}
 the.few = 128   # config
 the.learn.budget = 50 # config
 
@@ -1915,7 +1927,7 @@ def acquire(data, score=acquireWithCentroid, |\label{acquiring}|
   lab.rows.sort(
     key=lambda row: disty(lab, row))
   return lab |\label{acqured}|
-\end{minted}
+\end{lstlisting}
 Three details:
 \begin{itemize}
 \item
@@ -1987,52 +1999,7 @@ using some \textsf{budget} which a second team
 is  now reusing in a novel situation.
 Hence     \textsf{w2} check   just   requires \textsf{check}s.
 \end{itemize}
- 
-
-\subsubsection{Calculating \textsf{w1} and \textsf{w2}}
-To implement those checks, EZR splits each data set in half.
-The first half (capped at \textsf{the.few} = 128 rows) goes to
-the active learner as the training pool. The second half is
-kept separate, and never touched during acquisition.
-\begin{minted}{python}
-def ready(file):
-  d = (file if Data == type(file)
-       else Data(csv(file)))
-  random.shuffle(d.rows)
-  half = len(d.rows) // 2
-  return (d, 
-          clone(d, d.rows[:half][:the.few]),
-          d.rows[half:])
-\end{minted}
-The controller for this process is \textsf{test\_acquire}. This runs 
-20 times, collecting the best row found by the active learner. Each 
-repeat (a)~shuffles the data; (b)~gives the first half to the active 
-learner; (c)~lets it spend its budget; (d)~grows a tree from the 
-labeled rows; and (e)~scores the result using \textsf{w1,w2}  on lines~\ref{w1} 
-and~\ref{w2}:
-\begin{minted}{python}
-the.learn.check  = 5    # config
-the.learn.budget = 50   # config
-
-def test_acquire(file=egopt1):
-  d0 = Data(csv(file))
-  w1, w2 = Num(), Num()
-  win = wins(d0) |\label{wins}|
-  for _ in range(20):
-    d, d_train, test_rows = ready(d0)
-    lab = acquire(d_train)
-    t   = treeGrow(d_train, lab.rows)
-    guess = sorted(test_rows,
-              key=lambda r: mid(treeLeaf(t, r).ynum))
-    add(w1, win(min( |\label{w1}|
-                  lab.rows[:the.learn.check], |\label{check1}|
-                 key=lambda r: disty(d_train, r))))
-    add(w2, win(min( |\label{w2}|
-                 guess[:the.learn.check], |\label{check2}|
-                 key=lambda r: disty(d_train, r))))
-  return w1,w2
-\end{minted}
-\begin{figure*}[!b]
+ \begin{figure*}[!b]
 \noindent
 \begin{tabular}{@{}>{\raggedleft\arraybackslash}m{0.35\textwidth}@{\hspace{1em}}m{4in}@{}}
 \textsf{w1} results (test on a 50\% training set):\newline
@@ -2064,6 +2031,51 @@ larger budgets. Raw data and scripts:
 \url{https://github.com/timm/ezr}).}
 \label{check}
 \end{figure*}
+
+\subsubsection{Calculating \textsf{w1} and \textsf{w2}}
+To implement those checks, EZR splits each data set in half.
+The first half (capped at \textsf{the.few} = 128 rows) goes to
+the active learner as the training pool. The second half is
+kept separate, and never touched during acquisition.
+\begin{lstlisting}
+def ready(file):
+  d = (file if Data == type(file)
+       else Data(csv(file)))
+  random.shuffle(d.rows)
+  half = len(d.rows) // 2
+  return (d, 
+          clone(d, d.rows[:half][:the.few]),
+          d.rows[half:])
+\end{lstlisting}
+The controller for this process is \textsf{test\_acquire}. This runs 
+20 times, collecting the best row found by the active learner. Each 
+repeat (a)~shuffles the data; (b)~gives the first half to the active 
+learner; (c)~lets it spend its budget; (d)~grows a tree from the 
+labeled rows; and (e)~scores the result using \textsf{w1,w2}  on lines~\ref{w1} 
+and~\ref{w2}:
+\begin{lstlisting}
+the.learn.check  = 5    # config
+the.learn.budget = 50   # config
+
+def test_acquire(file=egopt1):
+  d0 = Data(csv(file))
+  w1, w2 = Num(), Num()
+  win = wins(d0) |\label{wins}|
+  for _ in range(20):
+    d, d_train, test_rows = ready(d0)
+    lab = acquire(d_train)
+    t   = treeGrow(d_train, lab.rows)
+    guess = sorted(test_rows,
+              key=lambda r: mid(treeLeaf(t, r).ynum))
+    add(w1, win(min( |\label{w1}|
+                  lab.rows[:the.learn.check], |\label{check1}|
+                 key=lambda r: disty(d_train, r))))
+    add(w2, win(min( |\label{w2}|
+                 guess[:the.learn.check], |\label{check2}|
+                 key=lambda r: disty(d_train, r))))
+  return w1,w2
+\end{lstlisting}
+
 Since we want to compare results across
 many data sets,
 our \textsf{win} function used
@@ -2074,7 +2086,7 @@ clamp small improvements to 0. ``Small'' here is Sawilowsky's
 threshold of $0.35\sigma$~\cite{sawilowsky2009new}, with $\sigma$
 estimated robustly via  the standard method of   (90th $-$ 10th)/2.56 percentile range
 of \textsf{disty}.
-\begin{minted}{python}
+\begin{lstlisting}
 def wins(data): |\label{wins}| 
   ys = sorted(disty(data, row1) for row1 in data.rows)
   ten = len(ys) // 10
@@ -2087,7 +2099,7 @@ def wins(data): |\label{wins}|
     return max(-100,
           int(100 * (1 - (x - lo)/(med - lo + 1e-32))))
   return f
-\end{minted}
+\end{lstlisting}
 
  
 
@@ -2103,16 +2115,6 @@ would lead to fundamentally better results.
 at random, then explored with \textsf{budget},\textsf{check} between 
   $[1,150]$ and  $[1,10]$. This process was repeated    100{,}000 times.
 
-The top panel of Figure~\ref{check} reports \textsf{w1}: i.e. 
-it is  scored on rows drawn
-from its own training pool. 
-The bottom panel of Figure~\ref{check} reports the  \textsf{w2}
-results where we score on
-  held-out rows     not seen during acquisition.
-Recall from the above discussion that \textsf{w2} occurs when
-a second team is reusing a model developed by another team
-(and in  this \textsf{w2} scenario, this second team
-only has to label \textsf{check} number of rows).
 \begin{figure*}[!b]
 \begin{center}
 \includegraphics[width=\linewidth]{used.pdf}
@@ -2129,6 +2131,18 @@ hovering near 100 across the entire range. Note that the  blue line does
 That is, it is not true that performance drops if  EZR ignores more and more of the attributes.}
 \label{used}
 \end{figure*}
+
+
+The top panel of Figure~\ref{check} reports \textsf{w1}: i.e. 
+it is  scored on rows drawn
+from its own training pool. 
+The bottom panel of Figure~\ref{check} reports the  \textsf{w2}
+results where we score on
+  held-out rows     not seen during acquisition.
+Recall from the above discussion that \textsf{w2} occurs when
+a second team is reusing a model developed by another team
+(and in  this \textsf{w2} scenario, this second team
+only has to label \textsf{check} number of rows).
 
 There are several noteworthy effects in     Figure~\ref{check}:
 \begin{itemize}
@@ -2274,7 +2288,7 @@ and similarity queries against a vector database.
 
 Older
 approaches explored text mining and relevancy filtering using
-support vector machines. ~\cite{yu2018total,yu2018finding}. This section shows
+support vector machines. ~\cite{yu2018total,Yu2018}. This section shows
 that 30 lines of complementary Bayes~\cite{rennie2003tackling}
 on the substrate from \S\ref{sec:peek}. These results
 are so good  that there is little point
@@ -2322,7 +2336,7 @@ to find the $M\ll N$
 papers that are most relevant
 to some research query.
  Reading
-every candidate takes weeks or months~\cite{yu2017feature,yu2018}. 
+every candidate takes weeks or months~\cite{yu2017feature,Yu2018}.
 To reduce the number of papers that must be read, Yu's tool 
 (called FASTREAD) used a linear SVM with
 some sampling tricks:
@@ -2369,29 +2383,15 @@ instead of
 reporting what class is most likely,    {\em complementary Bayes}
 reports the class that a row is least likely to {\em not} belong.
 \end{itemize}
-\begin{figure*}[!b]
-\centering
-\includegraphics[width=.9\linewidth]{kit.pdf}
-\caption{Recall (top row) and false alarm (bottom row) as a
-function of labels acquired, for non-normalized CNB (blue)
-and normalized CNB (red) on Yu's four SLR corpora. Warm-start
-= 24 for all runs. Each curve is the median over 20 repeats,
-with shaded IQR. Vertical bars on the recall panels mark the
-labeling budget at which Yu et al.~\cite{yu2018finding} reached
-the same recall with FASTREAD. Numerical labels at the left
-edge of each recall panel mark the recall achieved
-immediately after the warm start.}
-\label{slrfig}
-\end{figure*}
 We inserted this complementary Bayes classifier into our active learner as follows.
 Recall that 
 the \textsf{acquire} function of line~\ref{acquiring} accepts a \textsf{score} function
 that guesses which unlabeled row is more likely to be  {\em best}. The following relevancy filter  hooks into the likelihood calculation of complementary Bayes.
-\begin{minted}{python}
+\begin{lstlisting}
 def acquireWithBayes(data, best, rest, row): 
   n = len(best.rows) + len(rest.rows)
   return likes(rest, row, n, 2) - likes(best, row, n, 2)
-\end{minted}
+\end{lstlisting}
 We tested if this active learner approach can solve
 the same problems   explored by Yu et al.\ (see Table~\ref{slr}).
 Yu's test cases  come from 
@@ -2439,6 +2439,21 @@ Kitchenham   & 1704 & 132 \\
 \end{center}
 \end{table}
 
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=.9\linewidth]{kit.pdf}
+\caption{Recall (top row) and false alarm (bottom row) as a
+function of labels acquired, for non-normalized CNB (blue)
+and normalized CNB (red) on Yu's four SLR corpora. Warm-start
+= 24 for all runs. Each curve is the median over 20 repeats,
+with shaded IQR. Vertical bars on the recall panels mark the
+labeling budget at which Yu et al.~\cite{Yu2018} reached
+the same recall with FASTREAD. Numerical labels at the left
+edge of each recall panel mark the recall achieved
+immediately after the warm start.}
+\label{slrfig}
+\end{figure*}
 \subsection{Results}
 To assess these results, we tracked
  two metrics:
@@ -2585,6 +2600,7 @@ EZR. We wonder how many other methods from the LLM community could be greatly si
 
 % --- end of section ---
 
+
 \section{Threats to Validity}\label{sec:ttv}
 Feldt et al.~\cite{feldt2010validity} note that a critical
 element of any empirical study is to analyze and mitigate
@@ -2614,8 +2630,9 @@ beyond the scope of this study.
 Table~\ref{truisms} were derived from MOOT, which holds 124
 tabular SE tasks with explicit $x$ and $y$ columns where $y$
 is expensive to obtain. Drawn from ICSE, FSE, TSE, IST, EMSE,
-TOSEM, and ASE, MOOT is broad but not universal.
-Conclusions may not transfer to:
+TOSEM, and ASE, MOOT is broad but not universal;
+i.e. the 
+conclusions reached here may not transfer to:
 \begin{itemize}
 \item generation tasks (translation, summarization, code
 synthesis), where LLM-scale data is genuinely required;
@@ -2746,7 +2763,7 @@ tackled with more complex algorithms and more data. We offered
 \item Built a simple substrate (\cls{Data}, \cls{Num},
 \cls{Sym}, and \textsf{add}) in \S\ref{sec:peek};
 \item Used that substrate to implement, in just a few lines,
-Naïve Bayes, $k$-means, and $k$-means++ (\S\ref{sec:famous});
+Na\"{\i}ve Bayes, $k$-means, and $k$-means++ (\S\ref{sec:famous});
 \item Then classification and regression trees
 (\S\ref{trees});
 \item Then two optimizers, simulated annealing and local
@@ -2801,7 +2818,7 @@ be configured, critiqued, taught, and maintained by their
 users. We do not prove this here; we only note that, in the
 one corner of AI we examined closely, the smaller-and-unified
 approach matched or beat the larger-and-specialized one
-along all eleven axes of Table~\ref{tab:light}. Whether the
+along all ten axes of Table~\ref{tab:light}. Whether the
 same pattern holds for generation, perception, or
 safety-critical certification is an open question; the
 methods of \IT{} (read, refactor, measure against simple
@@ -2814,9 +2831,10 @@ disappeared once re-tested against a carefully built simple
 baseline~\cite{Fu17,fu2016tuning,agrawal2019dodge,Nair17a,
 tantithamthavorn2016automated,grinsztajn2022why,Hou24}. \IT{}
 is one more entry in that pattern. We invite the same scrutiny
-applied to \IT{} itself. The artifacts are public at
+applied to \IT{} itself. All our artifacts are public at
 \url{https://github.com/timm/ezr} and
-\url{https://github.com/timm/bitstex}; refutations are welcome.
+\url{https://github.com/timm/bitstex} we would readily support any and all
+refutation attempts.
 
 For practitioners, the immediate implication is procedural:
 before deploying a heavyweight pipeline, run a simple baseline
